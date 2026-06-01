@@ -642,24 +642,18 @@
       return data;
     }
 
-    async function updateCandidateStatus(token, attendanceEmployeeId, employeeCode) {
-      if (!token) return;
+    async function updateCandidateStatus(token) {
+  if (!token) return;
 
-      const { error } = await supabaseClient
-        .from("onboarding_candidates")
-        .update({
-          form_status: "回答済み",
-          submitted_at: new Date().toISOString(),
-          reflected_employee_id: attendanceEmployeeId,
-          reflected_employee_code: employeeCode,
-          updated_at: new Date().toISOString()
-        })
-        .eq("form_token", token);
+  const { error } = await supabaseClient
+    .from("onboarding_candidates")
+    .delete()
+    .eq("form_token", token);
 
-      if (error) {
-        throw new Error("入社予定者ステータスの更新に失敗しました。" + error.message);
-      }
-    }
+  if (error) {
+    throw new Error("入社予定者の仮データ削除に失敗しました。" + error.message);
+  }
+}
 
     employmentTypeSelect.addEventListener("change", updateTransportArea);
     updateTransportArea();

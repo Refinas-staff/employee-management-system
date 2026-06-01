@@ -1049,20 +1049,19 @@
         <div class="page-title-row">
           <div>
             <h3>交通費管理</h3>
-            <p>全社員を一覧で並べるのではなく、検索して対象スタッフの交通費だけを確認・修正します。通常は「未確認」「変更申請あり」だけを表示します。</p>
+            <p>スタッフを検索して、対象スタッフの交通費だけを確認・修正します。変更時は履歴も残します。</p>
           </div>
-          <button class="secondary-btn">交通費CSV出力</button>
+          <button class="secondary-btn" type="button">交通費CSV出力</button>
         </div>
 
         <div class="box">
           <div class="box-header"><h4>スタッフ検索</h4></div>
           <div class="box-body">
             <div class="filters" style="margin-bottom:0;">
-              <input type="text" placeholder="氏名・社員IDで検索" />
-              <select><option>全店舗</option><option>渋谷本店</option><option>横浜</option><option>大阪梅田</option><option>名古屋</option></select>
-              <select><option>全雇用形態</option><option>正社員</option><option>アルバイト</option></select>
-              <select><option>すべて表示</option><option>未確認</option><option>変更申請あり</option><option>確認済み</option></select>
-              <button class="primary-btn">検索</button>
+              <input id="transportSearchInput" type="text" placeholder="氏名・社員IDで検索" />
+              <select id="transportStoreFilter"><option value="">全店舗</option></select>
+              <select id="transportTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select>
+              <button class="primary-btn" type="button" onclick="loadTransportManagement()">検索</button>
             </div>
           </div>
         </div>
@@ -1070,10 +1069,9 @@
         <div class="section-heading">検索結果</div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>氏名</th><th>雇用形態</th><th>主な店舗</th><th>現在の交通費</th><th>最終更新</th><th>操作</th></tr></thead>
-            <tbody>
-              <tr><td>山田太郎</td><td>正社員</td><td>渋谷本店</td><td>三軒茶屋駅 → 渋谷駅 / 12,000円</td><td>2026/06/01</td><td><button class="small-btn">詳細・修正</button></td></tr>
-              <tr><td>佐藤花子</td><td>アルバイト</td><td>横浜</td><td>2店舗登録 / 片道0〜230円</td><td>2026/06/01</td><td><button class="small-btn">詳細・修正</button></td></tr>
+            <thead><tr><th>社員ID</th><th>氏名</th><th>雇用形態</th><th>主な店舗</th><th>現在の交通費</th><th>最終更新</th><th>操作</th></tr></thead>
+            <tbody id="transportSearchBody">
+              <tr><td colspan="7">スタッフを読み込み中...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1081,12 +1079,13 @@
         <div class="section-heading">選択中スタッフの交通費詳細</div>
         <div class="detail-layout">
           <div class="profile-card">
-            <p class="profile-name">佐藤花子</p>
-            <p class="profile-sub">R20260002 / 横浜 / アルバイト</p>
+            <p id="transportSelectedName" class="profile-name">未選択</p>
+            <p id="transportSelectedSub" class="profile-sub">検索結果からスタッフを選択してください。</p>
             <div class="info-list">
-              <div class="info-item"><div class="info-label">現在の登録</div><div>2件</div></div>
-              <div class="info-item"><div class="info-label">最終更新</div><div>2026/06/01</div></div>
-                          </div>
+              <div class="info-item"><div class="info-label">現在の登録</div><div id="transportRecordCount">-</div></div>
+              <div class="info-item"><div class="info-label">最終更新</div><div id="transportLastUpdated">-</div></div>
+              <div class="info-item"><div class="info-label">社員ID</div><div id="transportEmployeeCode">-</div></div>
+            </div>
           </div>
 
           <div class="box">
@@ -1094,9 +1093,8 @@
             <div class="table-wrap">
               <table>
                 <thead><tr><th>店舗</th><th>種別</th><th>経路</th><th>金額</th><th>適用開始日</th><th>操作</th></tr></thead>
-                <tbody>
-                  <tr><td>横浜</td><td>片道</td><td>川崎駅 → 横浜駅</td><td>230円</td><td>2026/06/01</td><td><button class="small-btn">修正</button></td></tr>
-                  <tr><td>川崎</td><td>片道</td><td>川崎駅 → 川崎駅</td><td>0円</td><td>2026/06/01</td><td><button class="small-btn">修正</button></td></tr>
+                <tbody id="transportRecordsBody">
+                  <tr><td colspan="6">スタッフを選択してください。</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1105,19 +1103,20 @@
 
         <div class="section-heading">交通費修正フォーム</div>
         <div class="box">
-          <div class="box-header"><h4>選択したスタッフの交通費を修正</h4></div>
+          <div class="box-header"><h4 id="transportFormTitle">交通費を追加・修正</h4></div>
           <div class="box-body">
+            <input type="hidden" id="transportRecordId" />
             <div class="form-grid">
-              <label>対象店舗<select><option>横浜</option><option>川崎</option><option>渋谷本店</option><option>大阪梅田</option></select></label>
-              <label>交通費種別<select><option>片道</option><option>1ヶ月定期</option></select></label>
-              <label>出発駅<input type="text" value="川崎駅" /></label>
-              <label>到着駅<input type="text" value="横浜駅" /></label>
-              <label>金額<input type="number" value="230" /></label>
-              <label>適用開始日<input type="date" value="2026-06-01" /></label>
-              <label class="full">修正理由<textarea placeholder="例：引っ越し、研修店舗変更、運賃改定、勤務可能店舗の追加など"></textarea></label>
+              <label>対象店舗<select id="transportEditStore"><option value="">選択してください</option></select></label>
+              <label>交通費種別<select id="transportEditType"><option>片道</option><option>1ヶ月定期</option></select></label>
+              <label>出発駅<input id="transportEditFrom" type="text" placeholder="例：川崎駅" /></label>
+              <label>到着駅<input id="transportEditTo" type="text" placeholder="例：横浜駅" /></label>
+              <label>金額<input id="transportEditAmount" type="number" min="0" placeholder="例：230" /></label>
+              <label>適用開始日<input id="transportEditApplyDate" type="date" /></label>
+              <label class="full">修正理由<textarea id="transportEditReason" placeholder="例：引っ越し、研修店舗変更、運賃改定、勤務可能店舗の追加など"></textarea></label>
             </div>
-            <button class="primary-btn">修正内容を保存</button>
-            <button class="secondary-btn">勤務可能店舗を追加</button>
+            <button class="primary-btn" type="button" onclick="saveTransportationRecord()">修正内容を保存</button>
+            <button class="secondary-btn" type="button" onclick="prepareNewTransportationRecord()">勤務可能店舗を追加</button>
           </div>
         </div>
 
@@ -1125,8 +1124,8 @@
         <div class="table-wrap">
           <table>
             <thead><tr><th>変更日</th><th>変更前</th><th>変更後</th><th>適用開始日</th><th>修正理由</th><th>更新者</th></tr></thead>
-            <tbody>
-              <tr><td>2026/06/01</td><td>川崎駅 → 横浜駅 / 220円</td><td>川崎駅 → 横浜駅 / 230円</td><td>2026/06/01</td><td>運賃変更</td><td>管理本部</td></tr>
+            <tbody id="transportHistoryBody">
+              <tr><td colspan="6">スタッフを選択してください。</td></tr>
             </tbody>
           </table>
         </div>
@@ -1245,6 +1244,10 @@
 
     let allEmployees = [];
     let tshirtTargets = [];
+    let transportEmployees = [];
+    let transportRecords = [];
+    let transportHistories = [];
+    let selectedTransportEmployee = null;
 
     const pageInfo = {
       dashboard: {
@@ -1387,6 +1390,309 @@
       loadEmployees();
     }
 
+    function escapeJs(value) {
+      return String(value ?? "").replaceAll("\", "\\").replaceAll("'", "\'");
+    }
+
+    function formatMoney(value) {
+      if (value === null || value === undefined || value === "") return "-";
+      return `${Number(value).toLocaleString()}円`;
+    }
+
+    function summarizeTransportRecords(records) {
+      if (!records.length) return "未登録";
+      if (records.length === 1) {
+        const record = records[0];
+        return `${record.from_station || "-"} → ${record.to_station || "-"} / ${formatMoney(record.amount)}`;
+      }
+      const amounts = records.map(record => Number(record.amount || 0));
+      const min = Math.min(...amounts);
+      const max = Math.max(...amounts);
+      return `${records.length}件登録 / ${formatMoney(min)}〜${formatMoney(max)}`;
+    }
+
+    function getTransportLastUpdated(records) {
+      if (!records.length) return "-";
+      const dates = records.map(record => record.updated_at || record.created_at).filter(Boolean).sort().reverse();
+      return formatDate(dates[0]);
+    }
+
+    function getTransportRecordsForEmployee(employeeCode) {
+      return transportRecords.filter(record => record.employee_code === employeeCode);
+    }
+
+    function applyTransportFilters() {
+      const tbody = document.getElementById("transportSearchBody");
+      if (!tbody) return;
+
+      const keyword = (document.getElementById("transportSearchInput")?.value || "").trim().toLowerCase();
+      const store = document.getElementById("transportStoreFilter")?.value || "";
+      const type = document.getElementById("transportTypeFilter")?.value || "";
+
+      const filtered = transportEmployees.filter(employee => {
+        const searchTarget = [employee.employee_code, employee.harmos_id, employee.employee_name, employee.last_name, employee.first_name]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        if (keyword && !searchTarget.includes(keyword)) return false;
+        if (store && employee.store !== store) return false;
+        if (type && employee.employment_type !== type) return false;
+        return true;
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="7">該当するスタッフがいません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(employee => {
+        const records = getTransportRecordsForEmployee(employee.employee_code);
+        return `
+          <tr>
+            <td>${escapeHtml(employee.employee_code || "-")}</td>
+            <td>${escapeHtml(employee.employee_name || `${employee.last_name || ""}${employee.first_name || ""}` || "-")}</td>
+            <td>${escapeHtml(employee.employment_type || "-")}</td>
+            <td>${escapeHtml(employee.store || "-")}</td>
+            <td>${escapeHtml(summarizeTransportRecords(records))}</td>
+            <td>${getTransportLastUpdated(records)}</td>
+            <td><button class="small-btn" type="button" onclick="selectTransportEmployee('${escapeJs(employee.employee_code)}')">詳細・修正</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function loadTransportManagement() {
+      const tbody = document.getElementById("transportSearchBody");
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7">交通費データを読み込み中...</td></tr>';
+
+      const { data: employeesData, error: employeesError } = await supabaseClient
+        .from("employees")
+        .select("employee_code,harmos_id,employee_name,last_name,first_name,store,employment_type,employment_status,created_at")
+        .order("created_at", { ascending: false });
+
+      if (employeesError) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7">スタッフ取得に失敗しました。${escapeHtml(employeesError.message)}</td></tr>`;
+        return;
+      }
+
+      const { data: recordsData, error: recordsError } = await supabaseClient
+        .from("transportation_records")
+        .select("id,employee_code,employee_id,transportation_type,store,from_station,to_station,amount,apply_start_date,confirmed,created_at,updated_at,is_active")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (recordsError) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7">交通費取得に失敗しました。${escapeHtml(recordsError.message)}</td></tr>`;
+        return;
+      }
+
+      transportEmployees = employeesData || [];
+      transportRecords = recordsData || [];
+      applyTransportFilters();
+    }
+
+    function selectTransportEmployee(employeeCode) {
+      selectedTransportEmployee = transportEmployees.find(employee => employee.employee_code === employeeCode) || null;
+      const records = getTransportRecordsForEmployee(employeeCode);
+
+      document.getElementById("transportSelectedName").textContent = selectedTransportEmployee?.employee_name || "未選択";
+      document.getElementById("transportSelectedSub").textContent = selectedTransportEmployee
+        ? `${selectedTransportEmployee.employee_code || "-"} / ${selectedTransportEmployee.store || "-"} / ${selectedTransportEmployee.employment_type || "-"}`
+        : "検索結果からスタッフを選択してください。";
+      document.getElementById("transportRecordCount").textContent = `${records.length}件`;
+      document.getElementById("transportLastUpdated").textContent = getTransportLastUpdated(records);
+      document.getElementById("transportEmployeeCode").textContent = selectedTransportEmployee?.employee_code || "-";
+
+      renderTransportRecords(records);
+      prepareNewTransportationRecord();
+      loadTransportHistory(employeeCode);
+    }
+
+    function renderTransportRecords(records) {
+      const tbody = document.getElementById("transportRecordsBody");
+      if (!tbody) return;
+
+      if (!records.length) {
+        tbody.innerHTML = '<tr><td colspan="6">交通費が未登録です。下のフォームから追加できます。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = records.map(record => `
+        <tr>
+          <td>${escapeHtml(record.store || "-")}</td>
+          <td>${escapeHtml(record.transportation_type || "-")}</td>
+          <td>${escapeHtml(record.from_station || "-")} → ${escapeHtml(record.to_station || "-")}</td>
+          <td>${formatMoney(record.amount)}</td>
+          <td>${formatDate(record.apply_start_date)}</td>
+          <td><button class="small-btn" type="button" onclick="editTransportationRecord(${Number(record.id)})">修正</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function editTransportationRecord(recordId) {
+      const record = transportRecords.find(item => Number(item.id) === Number(recordId));
+      if (!record) return;
+
+      document.getElementById("transportFormTitle").textContent = "交通費を修正";
+      document.getElementById("transportRecordId").value = record.id;
+      document.getElementById("transportEditStore").value = record.store || "";
+      document.getElementById("transportEditType").value = record.transportation_type || "片道";
+      document.getElementById("transportEditFrom").value = record.from_station || "";
+      document.getElementById("transportEditTo").value = record.to_station || "";
+      document.getElementById("transportEditAmount").value = record.amount ?? "";
+      document.getElementById("transportEditApplyDate").value = record.apply_start_date || "";
+      document.getElementById("transportEditReason").value = "";
+    }
+
+    function prepareNewTransportationRecord() {
+      document.getElementById("transportFormTitle").textContent = "交通費を追加";
+      document.getElementById("transportRecordId").value = "";
+      document.getElementById("transportEditStore").value = selectedTransportEmployee?.store || "";
+      document.getElementById("transportEditType").value = selectedTransportEmployee?.employment_type === "正社員" ? "1ヶ月定期" : "片道";
+      document.getElementById("transportEditFrom").value = "";
+      document.getElementById("transportEditTo").value = "";
+      document.getElementById("transportEditAmount").value = "";
+      document.getElementById("transportEditApplyDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("transportEditReason").value = "";
+    }
+
+    function getTransportFormData() {
+      return {
+        store: document.getElementById("transportEditStore").value,
+        transportation_type: document.getElementById("transportEditType").value,
+        from_station: document.getElementById("transportEditFrom").value.trim(),
+        to_station: document.getElementById("transportEditTo").value.trim(),
+        amount: Number(document.getElementById("transportEditAmount").value),
+        apply_start_date: document.getElementById("transportEditApplyDate").value,
+        reason: document.getElementById("transportEditReason").value.trim()
+      };
+    }
+
+    async function saveTransportationRecord() {
+      if (!selectedTransportEmployee?.employee_code) {
+        alert("先にスタッフを選択してください。");
+        return;
+      }
+
+      const recordId = document.getElementById("transportRecordId").value;
+      const formData = getTransportFormData();
+
+      if (!formData.store || !formData.transportation_type || !formData.from_station || !formData.to_station || !formData.apply_start_date || Number.isNaN(formData.amount)) {
+        alert("店舗・種別・出発駅・到着駅・金額・適用開始日を入力してください。");
+        return;
+      }
+
+      const payload = {
+        employee_code: selectedTransportEmployee.employee_code,
+        employee_id: selectedTransportEmployee.employee_id || null,
+        store: formData.store,
+        transportation_type: formData.transportation_type,
+        from_station: formData.from_station,
+        to_station: formData.to_station,
+        amount: formData.amount,
+        apply_start_date: formData.apply_start_date,
+        confirmed: true,
+        confirmed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      };
+
+      if (recordId) {
+        const beforeRecord = transportRecords.find(item => Number(item.id) === Number(recordId));
+
+        const { error } = await supabaseClient
+          .from("transportation_records")
+          .update(payload)
+          .eq("id", recordId);
+
+        if (error) {
+          alert("交通費の更新に失敗しました。" + error.message);
+          return;
+        }
+
+        await supabaseClient.from("transportation_histories").insert({
+          transportation_record_id: Number(recordId),
+          employee_code: selectedTransportEmployee.employee_code,
+          employee_id: beforeRecord?.employee_id || null,
+          before_data: beforeRecord || null,
+          after_data: payload,
+          apply_start_date: formData.apply_start_date,
+          reason: formData.reason || "管理画面から修正",
+          updated_by: "管理本部"
+        });
+      } else {
+        const { data, error } = await supabaseClient
+          .from("transportation_records")
+          .insert(payload)
+          .select("id")
+          .single();
+
+        if (error) {
+          alert("交通費の追加に失敗しました。" + error.message);
+          return;
+        }
+
+        await supabaseClient.from("transportation_histories").insert({
+          transportation_record_id: data?.id || null,
+          employee_code: selectedTransportEmployee.employee_code,
+          employee_id: payload.employee_id,
+          before_data: null,
+          after_data: payload,
+          apply_start_date: formData.apply_start_date,
+          reason: formData.reason || "管理画面から追加",
+          updated_by: "管理本部"
+        });
+      }
+
+      await loadTransportManagement();
+      selectTransportEmployee(selectedTransportEmployee.employee_code);
+      alert("交通費を保存しました。");
+    }
+
+    async function loadTransportHistory(employeeCode) {
+      const tbody = document.getElementById("transportHistoryBody");
+      if (!tbody) return;
+
+      tbody.innerHTML = '<tr><td colspan="6">変更履歴を読み込み中...</td></tr>';
+
+      const { data, error } = await supabaseClient
+        .from("transportation_histories")
+        .select("created_at,before_data,after_data,apply_start_date,reason,updated_by")
+        .eq("employee_code", employeeCode)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="6">変更履歴の取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;
+        return;
+      }
+
+      if (!data || !data.length) {
+        tbody.innerHTML = '<tr><td colspan="6">変更履歴はありません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.map(history => {
+        const beforeText = history.before_data
+          ? `${history.before_data.from_station || "-"} → ${history.before_data.to_station || "-"} / ${formatMoney(history.before_data.amount)}`
+          : "新規追加";
+        const afterText = history.after_data
+          ? `${history.after_data.from_station || "-"} → ${history.after_data.to_station || "-"} / ${formatMoney(history.after_data.amount)}`
+          : "-";
+
+        return `
+          <tr>
+            <td>${formatDate(history.created_at)}</td>
+            <td>${escapeHtml(beforeText)}</td>
+            <td>${escapeHtml(afterText)}</td>
+            <td>${formatDate(history.apply_start_date)}</td>
+            <td>${escapeHtml(history.reason || "-")}</td>
+            <td>${escapeHtml(history.updated_by || "-")}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
     function renderEmployees(list) {
       if (!employeesTableBody) return;
 
@@ -1451,9 +1757,21 @@
         return;
       }
 
-      employeeStoreFilter.innerHTML = '<option value="">全店舗</option>' + (data || [])
+      const optionsHtml = (data || [])
         .map(store => `<option value="${escapeHtml(store.store_name)}">${escapeHtml(store.store_name)}</option>`)
         .join("");
+
+      employeeStoreFilter.innerHTML = '<option value="">全店舗</option>' + optionsHtml;
+
+      const transportStoreFilter = document.getElementById("transportStoreFilter");
+      if (transportStoreFilter) {
+        transportStoreFilter.innerHTML = '<option value="">全店舗</option>' + optionsHtml;
+      }
+
+      const transportEditStore = document.getElementById("transportEditStore");
+      if (transportEditStore) {
+        transportEditStore.innerHTML = '<option value="">選択してください</option>' + optionsHtml;
+      }
     }
 
     async function loadEmployees() {
@@ -1493,6 +1811,10 @@
       if (page === "tshirt") {
         loadTshirtTargets();
       }
+
+      if (page === "transport") {
+        loadTransportManagement();
+      }
     }
 
     navItems.forEach(item => {
@@ -1508,9 +1830,16 @@
       if (element) element.addEventListener("change", applyEmployeeFilters);
     });
 
+    ["transportSearchInput", "transportStoreFilter", "transportTypeFilter"].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) element.addEventListener("input", applyTransportFilters);
+      if (element) element.addEventListener("change", applyTransportFilters);
+    });
+
     loadStoresForFilters();
     loadEmployees();
     loadTshirtTargets();
+    loadTransportManagement();
   </script>
 </body>
 </html>

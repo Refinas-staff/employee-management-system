@@ -3,24 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>入社情報入力フォーム</title>
+  <title>Refinas 入社情報入力フォーム</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
+    :root {
+      --brand-red: #e60012;
+      --brand-blue: #0071bc;
+      --brand-navy: #003f7f;
+      --brand-dark: #111827;
+      --brand-bg: #f4f7fb;
+      --brand-border: #d8dee8;
+      --text-muted: #64748b;
     }
+
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #eef2f7;
-      color: #1f2937;
+      background: var(--brand-bg);
+      color: var(--brand-dark);
     }
 
     .top-bar {
-      background: #002f6c;
-      color: white;
+      background: #fff;
+      color: var(--brand-dark);
       padding: 18px 20px;
+      border-bottom: 1px solid var(--brand-border);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
     }
 
     .top-inner {
@@ -32,52 +43,45 @@
     }
 
     .logo {
+      width: 170px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .logo-fallback {
       width: 54px;
       height: 38px;
-      background: white;
-      color: #002f6c;
+      background: linear-gradient(135deg, var(--brand-red) 0 48%, var(--brand-blue) 48% 100%);
+      color: #fff;
       border-radius: 4px;
       display: grid;
       place-items: center;
       font-weight: 900;
-      letter-spacing: 1px;
       font-size: 20px;
-      flex-shrink: 0;
     }
 
-    .top-inner h1 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .top-inner p {
-      margin: 4px 0 0;
-      font-size: 13px;
-      color: #dbeafe;
-    }
+    .top-inner h1 { margin: 0; font-size: 22px; }
+    .top-inner p { margin: 4px 0 0; font-size: 13px; color: var(--text-muted); }
 
     .hero {
-      background: linear-gradient(120deg, #003f88 0%, #005bac 55%, #1e88e5 100%);
+      background: linear-gradient(120deg, var(--brand-red) 0%, #c90010 38%, var(--brand-blue) 38%, var(--brand-navy) 100%);
       color: white;
       padding: 34px 20px 78px;
     }
 
-    .hero-inner {
-      max-width: 980px;
-      margin: 0 auto;
-    }
-
-    .hero h2 {
-      margin: 0 0 10px;
-      font-size: 30px;
-      letter-spacing: 0.02em;
-    }
-
-    .hero p {
-      margin: 0;
-      line-height: 1.8;
-      color: #e5eefb;
-    }
+    .hero-inner { max-width: 980px; margin: 0 auto; }
+    .hero h2 { margin: 0 0 10px; font-size: 30px; letter-spacing: 0.02em; }
+    .hero p { margin: 0; line-height: 1.8; color: #fff; }
 
     .container {
       max-width: 980px;
@@ -87,10 +91,10 @@
 
     .notice {
       background: white;
-      border: 1px solid #bdd7f2;
+      border: 1px solid #c7d7ea;
       border-radius: 10px;
       padding: 18px 20px;
-      color: #1e3a5f;
+      color: var(--brand-dark);
       line-height: 1.8;
       font-size: 14px;
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
@@ -106,7 +110,7 @@
     .card {
       background: white;
       border-radius: 10px;
-      border: 1px solid #d8dee8;
+      border: 1px solid var(--brand-border);
       box-shadow: 0 4px 16px rgba(15,23,42,0.08);
       padding: 26px;
       margin-bottom: 20px;
@@ -115,8 +119,8 @@
     .section-title {
       font-size: 18px;
       font-weight: 900;
-      color: #0f2e55;
-      border-left: 4px solid #005bac;
+      color: var(--brand-dark);
+      border-left: 4px solid var(--brand-red);
       padding-left: 10px;
       margin: 0 0 20px;
     }
@@ -135,9 +139,7 @@
       color: #334155;
     }
 
-    input,
-    select,
-    textarea {
+    input, select, textarea {
       width: 100%;
       height: 43px;
       border: 1px solid #cbd5e1;
@@ -150,11 +152,7 @@
       line-height: 1.4;
     }
 
-    textarea {
-      height: auto;
-      min-height: 100px;
-      resize: vertical;
-    }
+    textarea { height: auto; min-height: 100px; resize: vertical; }
 
     input[type="date"] {
       height: 43px;
@@ -173,35 +171,16 @@
       margin: 0;
     }
 
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      cursor: pointer;
-      margin: 0;
-      padding: 0;
+    input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; margin: 0; padding: 0; }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid rgba(0, 113, 188, 0.24);
+      border-color: var(--brand-blue);
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      outline: 2px solid #9cc9f5;
-      border-color: #005bac;
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
-
-    .required {
-      color: #dc2626;
-      font-size: 12px;
-      margin-left: 4px;
-    }
-
-    .helper {
-      font-size: 12px;
-      color: #64748b;
-      font-weight: 500;
-      line-height: 1.5;
-    }
+    .full { grid-column: 1 / -1; }
+    .required { color: #dc2626; font-size: 12px; margin-left: 4px; }
+    .helper { font-size: 12px; color: var(--text-muted); font-weight: 500; line-height: 1.5; }
 
     .check-row {
       display: flex;
@@ -213,11 +192,7 @@
       font-weight: 700;
     }
 
-    .check-row input {
-      width: auto;
-      height: auto;
-      margin-top: 4px;
-    }
+    .check-row input { width: auto; height: auto; margin-top: 4px; }
 
     .fare-row {
       display: grid;
@@ -225,7 +200,7 @@
       gap: 12px;
       align-items: end;
       padding: 14px;
-      border: 1px solid #d8dee8;
+      border: 1px solid var(--brand-border);
       border-radius: 8px;
       background: #f8fafc;
       margin-bottom: 12px;
@@ -233,8 +208,8 @@
 
     .add-fare-btn {
       background: white;
-      color: #005bac;
-      border: 1px solid #005bac;
+      color: var(--brand-blue);
+      border: 1px solid var(--brand-blue);
       border-radius: 5px;
       padding: 10px 16px;
       cursor: pointer;
@@ -253,15 +228,10 @@
       white-space: nowrap;
     }
 
-    .actions {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 28px 0;
-    }
+    .actions { display: flex; justify-content: center; gap: 12px; margin: 28px 0; }
 
     .submit-btn {
-      background: #005bac;
+      background: var(--brand-blue);
       color: white;
       border: none;
       border-radius: 5px;
@@ -269,24 +239,17 @@
       font-weight: 900;
       font-size: 16px;
       cursor: pointer;
-      box-shadow: 0 2px 0 #003f7d;
+      box-shadow: 0 2px 0 var(--brand-navy);
     }
 
-    .submit-btn:hover {
-      background: #004b91;
-    }
-
-    .submit-btn:disabled {
-      background: #94a3b8;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
+    .submit-btn:hover { background: var(--brand-navy); }
+    .submit-btn:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
     .complete {
       display: none;
       background: white;
       border-radius: 10px;
-      border: 1px solid #d8dee8;
+      border: 1px solid var(--brand-border);
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
       padding: 34px;
       text-align: center;
@@ -305,62 +268,34 @@
       font-weight: 900;
     }
 
-    .complete h2 {
-      margin: 0 0 10px;
-      color: #0f2e55;
-      font-size: 24px;
-    }
-
-    .complete p {
-      color: #475569;
-      line-height: 1.8;
-      margin: 0;
-    }
-
-    .footer {
-      text-align: center;
-      color: #64748b;
-      font-size: 12px;
-      margin: 30px 0;
-    }
+    .complete h2 { margin: 0 0 10px; color: var(--brand-dark); font-size: 24px; }
+    .complete p { color: #475569; line-height: 1.8; margin: 0; }
+    .footer { text-align: center; color: var(--text-muted); font-size: 12px; margin: 30px 0; }
 
     @media (max-width: 900px) {
-      .fare-row {
-        grid-template-columns: 1fr;
-      }
-
-      .remove-fare-btn {
-        width: 100%;
-      }
+      .fare-row { grid-template-columns: 1fr; }
+      .remove-fare-btn { width: 100%; }
     }
 
     @media (max-width: 700px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .card {
-        padding: 20px;
-      }
-
-      .hero h2 {
-        font-size: 25px;
-      }
-
-      .top-inner h1 {
-        font-size: 18px;
-      }
+      .form-grid { grid-template-columns: 1fr; }
+      .card { padding: 20px; }
+      .hero h2 { font-size: 25px; }
+      .top-inner { align-items: flex-start; flex-direction: column; }
+      .top-inner h1 { font-size: 18px; }
+      .logo { width: 140px; height: 46px; }
     }
   </style>
 </head>
 
 <body>
-
   <header class="top-bar">
     <div class="top-inner">
-      <div class="logo">HR</div>
+      <div class="logo">
+        <img src="refinas-logo.png" alt="Refinas ロゴ" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;logo-fallback&quot;>R</div>'" />
+      </div>
       <div>
-        <h1>入社情報入力フォーム</h1>
+        <h1>Refinas 入社情報入力フォーム</h1>
         <p>Recruit & Onboarding Form</p>
       </div>
     </div>
@@ -369,469 +304,236 @@
   <section class="hero">
     <div class="hero-inner">
       <h2>入社手続きに必要な情報をご入力ください</h2>
-      <p>
-        ご入力いただいた情報は、勤怠登録、給与振込、交通費管理、社内ツールID発行、入社時の各種ご案内に使用します。
-      </p>
+      <p>ご入力いただいた情報は、勤怠登録、給与振込、交通費管理、社内ツールID発行、入社時の各種ご案内に使用します。</p>
     </div>
   </section>
 
   <main class="container">
-
     <div id="formArea">
-
       <div class="notice">
         入力完了後、登録されたメールアドレス宛に、ハーモス勤怠のID・初期パスワード、打刻用QRコードURL、各種マニュアルURLを送付します。<br>
         メールアドレスに誤りがあると案内が届かないため、必ず正しい内容をご入力ください。
       </div>
 
       <form id="onboardingForm">
-
         <section class="card">
           <h2 class="section-title">基本情報</h2>
-
           <div class="form-grid">
-            <label>
-              姓 <span class="required">必須</span>
-              <input type="text" name="last_name" required placeholder="山田" />
-            </label>
-
-            <label>
-              名 <span class="required">必須</span>
-              <input type="text" name="first_name" required placeholder="太郎" />
-            </label>
-
-            <label>
-              セイ <span class="required">必須</span>
-              <input type="text" name="last_name_kana" required placeholder="ヤマダ" />
-            </label>
-
-            <label>
-              メイ <span class="required">必須</span>
-              <input type="text" name="first_name_kana" required placeholder="タロウ" />
-            </label>
-
-            <label>
-              生年月日 <span class="required">必須</span>
-              <input type="date" name="birthday" required />
-              <span class="helper">ハーモス初期設定などに使用します。</span>
-            </label>
-
-            <label>
-              電話番号 <span class="required">必須</span>
-              <input
-                type="tel"
-                name="phone"
-                required
-                placeholder="09012345678"
-                inputmode="numeric"
-                pattern="[0-9]{10,11}"
-              />
-              <span class="helper">ハイフンなしで入力してください。</span>
-            </label>
-
-            <label>
-              メールアドレス <span class="required">必須</span>
-              <input type="email" name="email" required placeholder="example@example.com" />
-              <span class="helper">ハーモスID・PW、QRコードURL、マニュアルを送付します。</span>
-            </label>
-
-            <label>
-              メールアドレス確認用 <span class="required">必須</span>
-              <input type="email" name="email_confirm" required placeholder="example@example.com" />
-              <span class="helper">確認のため、同じメールアドレスを入力してください。</span>
-            </label>
-
-            <label>
-              郵便番号 <span class="required">必須</span>
-              <input
-                type="text"
-                name="postal_code"
-                required
-                placeholder="1500001"
-                inputmode="numeric"
-                pattern="[0-9]{7}"
-              />
-              <span class="helper">ハイフンなし7桁で入力してください。</span>
-            </label>
-
-            <label class="full">
-              住所 <span class="required">必須</span>
-              <input type="text" name="address" required placeholder="東京都〇〇区〇〇 1-2-3" />
-            </label>
+            <label>姓 <span class="required">必須</span><input type="text" name="last_name" required placeholder="山田" /></label>
+            <label>名 <span class="required">必須</span><input type="text" name="first_name" required placeholder="太郎" /></label>
+            <label>セイ <span class="required">必須</span><input type="text" name="last_name_kana" required placeholder="ヤマダ" /></label>
+            <label>メイ <span class="required">必須</span><input type="text" name="first_name_kana" required placeholder="タロウ" /></label>
+            <label>生年月日 <span class="required">必須</span><input type="date" name="birthday" required /><span class="helper">ハーモス初期設定などに使用します。</span></label>
+            <label>電話番号 <span class="required">必須</span><input type="tel" name="phone" required placeholder="09012345678" inputmode="numeric" pattern="[0-9]{10,11}" /><span class="helper">ハイフンなしで入力してください。</span></label>
+            <label>メールアドレス <span class="required">必須</span><input type="email" name="email" required placeholder="example@example.com" /><span class="helper">ハーモスID・PW、QRコードURL、マニュアルを送付します。</span></label>
+            <label>メールアドレス確認用 <span class="required">必須</span><input type="email" name="email_confirm" required placeholder="example@example.com" /><span class="helper">確認のため、同じメールアドレスを入力してください。</span></label>
+            <label>郵便番号 <span class="required">必須</span><input type="text" name="postal_code" required placeholder="1500001" inputmode="numeric" pattern="[0-9]{7}" /><span class="helper">ハイフンなし7桁で入力してください。</span></label>
+            <label class="full">住所 <span class="required">必須</span><input type="text" name="address" required placeholder="東京都〇〇区〇〇 1-2-3" /></label>
           </div>
         </section>
 
         <section class="card">
           <h2 class="section-title">入社情報</h2>
-
           <div class="form-grid">
-            <label>
-              最短勤務開始可能日 <span class="required">必須</span>
-              <input type="date" name="earliest_start_date" required />
-            </label>
-
-            <label>
-              所属店舗 <span class="required">必須</span>
+            <label>最短勤務開始可能日 <span class="required">必須</span><input type="date" name="earliest_start_date" required /></label>
+            <label>所属店舗 <span class="required">必須</span>
               <select name="store" required>
-                <option value="">選択してください</option>
-                <option>渋谷本店</option>
-                <option>池袋</option>
-                <option>横浜</option>
-                <option>川崎</option>
-                <option>浦和</option>
-                <option>千葉</option>
-                <option>名古屋</option>
-                <option>名古屋栄</option>
-                <option>静岡</option>
-                <option>浜松</option>
-                <option>京都烏丸</option>
-                <option>京都河原町</option>
-                <option>大阪梅田</option>
-                <option>大阪なんば本店</option>
-                <option>大阪心斎橋</option>
-                <option>神戸三宮</option>
-                <option>福岡天神</option>
-                <option>札幌</option>
-                <option>仙台</option>
-                <option>沖縄那覇</option>
-                <option>本部</option>
+                <option value="">選択してください</option><option>渋谷本店</option><option>池袋</option><option>横浜</option><option>川崎</option><option>浦和</option><option>千葉</option><option>名古屋</option><option>名古屋栄</option><option>静岡</option><option>浜松</option><option>京都烏丸</option><option>京都河原町</option><option>大阪梅田</option><option>大阪なんば本店</option><option>大阪心斎橋</option><option>神戸三宮</option><option>福岡天神</option><option>札幌</option><option>仙台</option><option>沖縄那覇</option><option>本部</option>
               </select>
             </label>
-
-            <label>
-              職種 <span class="required">必須</span>
-              <select name="job_type" required>
-                <option value="">選択してください</option>
-                <option>トレーナー</option>
-                <option>受付</option>
-                <option>一般事務</option>
-                <option>店舗責任者</option>
-                <option>本部スタッフ</option>
-              </select>
-            </label>
-
-            <label>
-              雇用形態 <span class="required">必須</span>
-              <select name="employment_type" required>
-                <option value="">選択してください</option>
-                <option>正社員</option>
-                <option>アルバイト</option>
-              </select>
-            </label>
+            <label>職種 <span class="required">必須</span><select name="job_type" required><option value="">選択してください</option><option>トレーナー</option><option>受付</option><option>一般事務</option><option>店舗責任者</option><option>本部スタッフ</option></select></label>
+            <label>雇用形態 <span class="required">必須</span><select name="employment_type" required><option value="">選択してください</option><option>正社員</option><option>アルバイト</option></select></label>
           </div>
         </section>
 
         <section class="card">
           <h2 class="section-title">交通費情報</h2>
+          <div class="notice inner">雇用形態に応じて、必要な交通費情報を入力してください。<br>正社員の方は定期区間と1ヶ月定期代、アルバイトの方は勤務可能性のある店舗ごとの経路と片道金額を入力してください。</div>
 
-          <div class="notice inner">
-            雇用形態に応じて、必要な交通費情報を入力してください。<br>
-            正社員の方は定期区間と1ヶ月定期代、アルバイトの方は勤務可能性のある店舗ごとの経路と片道金額を入力してください。
-          </div>
-
-          <div id="transportEmptyArea">
-            <p class="helper">
-              先に「雇用形態」を選択してください。
-            </p>
-          </div>
+          <div id="transportEmptyArea"><p class="helper">先に「雇用形態」を選択してください。</p></div>
 
           <div id="commuterPassArea" style="display:none;">
             <div class="form-grid">
-              <label>
-                定期区間 出発駅 <span class="required">必須</span>
-                <input type="text" name="commuter_from_station" placeholder="例：三軒茶屋駅" />
-              </label>
-
-              <label>
-                定期区間 到着駅 <span class="required">必須</span>
-                <input type="text" name="commuter_to_station" placeholder="例：渋谷駅" />
-              </label>
-
-              <label>
-                1ヶ月定期代 <span class="required">必須</span>
-                <input type="number" name="commuter_pass_1month" placeholder="例：12000" min="0" />
-              </label>
-
-              <label>
-                利用路線
-                <input type="text" name="commuter_route" placeholder="例：東急田園都市線、JR山手線" />
-              </label>
+              <label>定期区間 出発駅 <span class="required">必須</span><input type="text" name="commuter_from_station" placeholder="例：三軒茶屋駅" /></label>
+              <label>定期区間 到着駅 <span class="required">必須</span><input type="text" name="commuter_to_station" placeholder="例：渋谷駅" /></label>
+              <label>1ヶ月定期代 <span class="required">必須</span><input type="number" name="commuter_pass_1month" placeholder="例：12000" min="0" /></label>
+              <label>利用路線<input type="text" name="commuter_route" placeholder="例：東急田園都市線、JR山手線" /></label>
             </div>
           </div>
 
           <div id="partTimeFareArea" style="display:none;">
-            <div class="notice inner">
-              勤務する可能性がある店舗をすべて追加し、各店舗までの経路と片道金額を入力してください。<br>
-              例：三軒茶屋駅 → 渋谷駅　180円
-            </div>
-
+            <div class="notice inner">勤務する可能性がある店舗をすべて追加し、各店舗までの経路と片道金額を入力してください。<br>例：三軒茶屋駅 → 渋谷駅　180円</div>
             <div id="partTimeFareList">
               <div class="fare-row">
-                <label>
-                  勤務可能店舗 <span class="required">必須</span>
-                  <select name="part_time_store[]">
-                    <option value="">選択してください</option>
-                    <option>渋谷本店</option>
-                    <option>池袋</option>
-                    <option>横浜</option>
-                    <option>川崎</option>
-                    <option>浦和</option>
-                    <option>千葉</option>
-                    <option>名古屋</option>
-                    <option>名古屋栄</option>
-                    <option>静岡</option>
-                    <option>浜松</option>
-                    <option>京都烏丸</option>
-                    <option>京都河原町</option>
-                    <option>大阪梅田</option>
-                    <option>大阪なんば本店</option>
-                    <option>大阪心斎橋</option>
-                    <option>神戸三宮</option>
-                    <option>福岡天神</option>
-                    <option>札幌</option>
-                    <option>仙台</option>
-                    <option>沖縄那覇</option>
-                    <option>本部</option>
-                  </select>
-                </label>
-
-                <label>
-                  出発駅 <span class="required">必須</span>
-                  <input type="text" name="part_time_from_station[]" placeholder="例：三軒茶屋駅" />
-                </label>
-
-                <label>
-                  到着駅 <span class="required">必須</span>
-                  <input type="text" name="part_time_to_station[]" placeholder="例：渋谷駅" />
-                </label>
-
-                <label>
-                  片道金額 <span class="required">必須</span>
-                  <input type="number" name="part_time_fare[]" placeholder="例：180" min="0" />
-                </label>
-
+                <label>勤務可能店舗 <span class="required">必須</span><select name="part_time_store[]"><option value="">選択してください</option><option>渋谷本店</option><option>池袋</option><option>横浜</option><option>川崎</option><option>浦和</option><option>千葉</option><option>名古屋</option><option>名古屋栄</option><option>静岡</option><option>浜松</option><option>京都烏丸</option><option>京都河原町</option><option>大阪梅田</option><option>大阪なんば本店</option><option>大阪心斎橋</option><option>神戸三宮</option><option>福岡天神</option><option>札幌</option><option>仙台</option><option>沖縄那覇</option><option>本部</option></select></label>
+                <label>出発駅 <span class="required">必須</span><input type="text" name="part_time_from_station[]" placeholder="例：三軒茶屋駅" /></label>
+                <label>到着駅 <span class="required">必須</span><input type="text" name="part_time_to_station[]" placeholder="例：渋谷駅" /></label>
+                <label>片道金額 <span class="required">必須</span><input type="number" name="part_time_fare[]" placeholder="例：180" min="0" /></label>
                 <button type="button" class="remove-fare-btn" onclick="removeFareRow(this)">削除</button>
               </div>
             </div>
-
             <button type="button" class="add-fare-btn" onclick="addFareRow()">＋ 店舗を追加</button>
+            <p class="helper" style="margin-top:12px;">複数店舗で勤務する可能性がある場合は、「＋ 店舗を追加」から追加してください。</p>
+          </div>
+        </section>
 
-            <p class="helper" style="margin-top:12px;">
-              複数店舗で勤務する可能性がある場合は、「＋ 店舗を追加」から追加してください。
-            </p>
+        <section class="card">
+          <h2 class="section-title">Tシャツ情報</h2>
+          <div class="form-grid">
+            <label>Tシャツサイズ <span class="required">必須</span><select name="tshirt_size" required><option value="">選択してください</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></label>
+            <label>Tシャツ枚数 <span class="required">必須</span><input type="number" name="tshirt_quantity" required min="1" value="1" /></label>
           </div>
         </section>
 
         <section class="card">
           <h2 class="section-title">緊急連絡先</h2>
-
           <div class="form-grid">
-            <label>
-              緊急連絡先 氏名 <span class="required">必須</span>
-              <input type="text" name="emergency_name" required placeholder="山田花子" />
-              <span class="helper">スペースなしで入力してください。</span>
-            </label>
-
-            <label>
-              続柄 <span class="required">必須</span>
-              <input type="text" name="emergency_relation" required placeholder="母、父、配偶者など" />
-            </label>
-
-            <label>
-              緊急連絡先 電話番号 <span class="required">必須</span>
-              <input
-                type="tel"
-                name="emergency_phone"
-                required
-                placeholder="09012345678"
-                inputmode="numeric"
-                pattern="[0-9]{10,11}"
-              />
-              <span class="helper">ハイフンなしで入力してください。</span>
-            </label>
+            <label>緊急連絡先 氏名 <span class="required">必須</span><input type="text" name="emergency_name" required placeholder="山田花子" /><span class="helper">スペースなしで入力してください。</span></label>
+            <label>続柄 <span class="required">必須</span><input type="text" name="emergency_relation" required placeholder="母、父、配偶者など" /></label>
+            <label>緊急連絡先 電話番号 <span class="required">必須</span><input type="tel" name="emergency_phone" required placeholder="09012345678" inputmode="numeric" pattern="[0-9]{10,11}" /><span class="helper">ハイフンなしで入力してください。</span></label>
           </div>
         </section>
 
         <section class="card">
           <h2 class="section-title">給与振込先</h2>
-
           <div class="form-grid">
-            <label>
-              銀行名 <span class="required">必須</span>
-              <input type="text" name="bank_name" required placeholder="〇〇銀行" />
-            </label>
-
-            <label>
-              支店名 <span class="required">必須</span>
-              <input type="text" name="bank_branch" required placeholder="〇〇支店" />
-            </label>
-
-            <label>
-              口座種別 <span class="required">必須</span>
-              <select name="account_type" required>
-                <option value="">選択してください</option>
-                <option>普通</option>
-                <option>当座</option>
-              </select>
-            </label>
-
-            <label>
-              口座番号 <span class="required">必須</span>
-              <input type="text" name="account_number" required inputmode="numeric" />
-            </label>
-
-            <label class="full">
-              口座名義 カナ <span class="required">必須</span>
-              <input type="text" name="account_name_kana" required placeholder="ヤマダタロウ" />
-            </label>
+            <label>銀行名 <span class="required">必須</span><input type="text" name="bank_name" required placeholder="〇〇銀行" /></label>
+            <label>支店名 <span class="required">必須</span><input type="text" name="bank_branch" required placeholder="〇〇支店" /></label>
+            <label>口座種別 <span class="required">必須</span><select name="account_type" required><option value="">選択してください</option><option>普通</option><option>当座</option></select></label>
+            <label>口座番号 <span class="required">必須</span><input type="text" name="account_number" required inputmode="numeric" /></label>
+            <label class="full">口座名義 カナ <span class="required">必須</span><input type="text" name="account_name_kana" required placeholder="ヤマダタロウ" /></label>
           </div>
         </section>
 
         <section class="card">
           <h2 class="section-title">その他</h2>
-
           <div class="form-grid">
-            <label class="full">
-              備考
-              <textarea name="note" placeholder="事前に伝えておきたいことがあれば入力してください"></textarea>
-            </label>
-
-            <div class="full check-row">
-              <input type="checkbox" name="agree" required />
-              <span>入力内容に間違いがないことを確認しました。</span>
-            </div>
+            <label class="full">備考<textarea name="note" placeholder="事前に伝えておきたいことがあれば入力してください"></textarea></label>
+            <div class="full check-row"><input type="checkbox" name="agree" required /><span>入力内容に間違いがないことを確認しました。</span></div>
           </div>
         </section>
 
-        <div class="actions">
-          <button id="submitButton" type="submit" class="submit-btn">送信する</button>
-        </div>
-
+        <div class="actions"><button id="submitButton" type="submit" class="submit-btn">送信する</button></div>
       </form>
     </div>
 
     <section id="completeArea" class="complete">
       <div class="complete-icon">✓</div>
       <h2>送信が完了しました</h2>
-      <p>
-        入社情報の入力ありがとうございます。<br>
-        ご入力いただいたメールアドレス宛に、ハーモス勤怠のID・初期パスワード、打刻用QRコードURL、各種マニュアルを送付します。<br>
-        メールが届かない場合は、管理本部までご連絡ください。
-      </p>
+      <p>入社情報の入力ありがとうございます。<br>ご入力いただいたメールアドレス宛に、ハーモス勤怠のID・初期パスワード、打刻用QRコードURL、各種マニュアルを送付します。<br>メールが届かない場合は、管理本部までご連絡ください。</p>
     </section>
-
   </main>
 
-  <footer class="footer">
-    © Recruit & Human Resource Management System
-  </footer>
+  <footer class="footer">© Refinas fitness studio</footer>
 
   <script>
+    // ==============================
+    // Supabase接続設定
+    // ==============================
+    // URLは /rest/v1/ を付けず、https://xxxx.supabase.co までにしてください。
+    const SUPABASE_URL = "https://xcxrurktphdnpdumyzhn.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const form = document.getElementById("onboardingForm");
     const submitButton = document.getElementById("submitButton");
     const formArea = document.getElementById("formArea");
     const completeArea = document.getElementById("completeArea");
-
     const employmentTypeSelect = document.querySelector('select[name="employment_type"]');
     const transportEmptyArea = document.getElementById("transportEmptyArea");
     const commuterPassArea = document.getElementById("commuterPassArea");
     const partTimeFareArea = document.getElementById("partTimeFareArea");
 
-    const storeOptionsHtml = `
-      <option value="">選択してください</option>
-      <option>渋谷本店</option>
-      <option>池袋</option>
-      <option>横浜</option>
-      <option>川崎</option>
-      <option>浦和</option>
-      <option>千葉</option>
-      <option>名古屋</option>
-      <option>名古屋栄</option>
-      <option>静岡</option>
-      <option>浜松</option>
-      <option>京都烏丸</option>
-      <option>京都河原町</option>
-      <option>大阪梅田</option>
-      <option>大阪なんば本店</option>
-      <option>大阪心斎橋</option>
-      <option>神戸三宮</option>
-      <option>福岡天神</option>
-      <option>札幌</option>
-      <option>仙台</option>
-      <option>沖縄那覇</option>
-      <option>本部</option>
-    `;
+    const storeOptionsHtml = `<option value="">選択してください</option><option>渋谷本店</option><option>池袋</option><option>横浜</option><option>川崎</option><option>浦和</option><option>千葉</option><option>名古屋</option><option>名古屋栄</option><option>静岡</option><option>浜松</option><option>京都烏丸</option><option>京都河原町</option><option>大阪梅田</option><option>大阪なんば本店</option><option>大阪心斎橋</option><option>神戸三宮</option><option>福岡天神</option><option>札幌</option><option>仙台</option><option>沖縄那覇</option><option>本部</option>`;
 
     function getTokenFromUrl() {
       const params = new URLSearchParams(window.location.search);
       return params.get("token") || "";
     }
 
+    function generateRandomEmployeeId(length = 16) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const values = new Uint32Array(length);
+      window.crypto.getRandomValues(values);
+      let result = "";
+      for (let i = 0; i < length; i++) result += chars[values[i] % chars.length];
+      return result;
+    }
+
+    function formatBirthdayToPassword(dateString) {
+      return dateString ? dateString.replaceAll("-", "") : "";
+    }
+
     function updateTransportArea() {
       const employmentType = employmentTypeSelect.value;
-
       transportEmptyArea.style.display = "none";
       commuterPassArea.style.display = "none";
       partTimeFareArea.style.display = "none";
-
-      if (employmentType === "正社員") {
-        commuterPassArea.style.display = "block";
-        return;
-      }
-
-      if (employmentType === "アルバイト") {
-        partTimeFareArea.style.display = "block";
-        return;
-      }
-
+      if (employmentType === "正社員") return commuterPassArea.style.display = "block";
+      if (employmentType === "アルバイト") return partTimeFareArea.style.display = "block";
       transportEmptyArea.style.display = "block";
     }
 
     function addFareRow() {
       const list = document.getElementById("partTimeFareList");
-
       const row = document.createElement("div");
       row.className = "fare-row";
-
       row.innerHTML = `
-        <label>
-          勤務可能店舗 <span class="required">必須</span>
-          <select name="part_time_store[]">
-            ${storeOptionsHtml}
-          </select>
-        </label>
-
-        <label>
-          出発駅 <span class="required">必須</span>
-          <input type="text" name="part_time_from_station[]" placeholder="例：三軒茶屋駅" />
-        </label>
-
-        <label>
-          到着駅 <span class="required">必須</span>
-          <input type="text" name="part_time_to_station[]" placeholder="例：渋谷駅" />
-        </label>
-
-        <label>
-          片道金額 <span class="required">必須</span>
-          <input type="number" name="part_time_fare[]" placeholder="例：180" min="0" />
-        </label>
-
-        <button type="button" class="remove-fare-btn" onclick="removeFareRow(this)">削除</button>
-      `;
-
+        <label>勤務可能店舗 <span class="required">必須</span><select name="part_time_store[]">${storeOptionsHtml}</select></label>
+        <label>出発駅 <span class="required">必須</span><input type="text" name="part_time_from_station[]" placeholder="例：三軒茶屋駅" /></label>
+        <label>到着駅 <span class="required">必須</span><input type="text" name="part_time_to_station[]" placeholder="例：渋谷駅" /></label>
+        <label>片道金額 <span class="required">必須</span><input type="number" name="part_time_fare[]" placeholder="例：180" min="0" /></label>
+        <button type="button" class="remove-fare-btn" onclick="removeFareRow(this)">削除</button>`;
       list.appendChild(row);
     }
 
     function removeFareRow(button) {
       const list = document.getElementById("partTimeFareList");
       const rows = list.querySelectorAll(".fare-row");
+      if (rows.length <= 1) return alert("勤務可能店舗は1件以上入力してください。");
+      button.closest(".fare-row").remove();
+    }
 
-      if (rows.length <= 1) {
-        alert("勤務可能店舗は1件以上入力してください。");
-        return;
+    function buildTransportationRows(employeeId, data) {
+      if (data.employment_type === "正社員") {
+        return [{
+          employee_id: employeeId,
+          transportation_type: "1ヶ月定期",
+          store: data.store || null,
+          from_station: data.commuter_from_station,
+          to_station: data.commuter_to_station,
+          amount: Number(data.commuter_pass_1month),
+          apply_start_date: data.earliest_start_date,
+          confirmed: false
+        }];
       }
 
-      button.closest(".fare-row").remove();
+      if (data.employment_type === "アルバイト") {
+        return (data.part_time_transportation || []).map(item => ({
+          employee_id: employeeId,
+          transportation_type: "片道",
+          store: item.store,
+          from_station: item.from_station,
+          to_station: item.to_station,
+          amount: Number(item.one_way_fare),
+          apply_start_date: data.earliest_start_date,
+          confirmed: false
+        }));
+      }
+
+      return [];
+    }
+
+    async function ensureCandidateNotSubmitted(token) {
+      if (!token) return null;
+      const { data, error } = await supabaseClient
+        .from("onboarding_candidates")
+        .select("id, form_status")
+        .eq("form_token", token)
+        .maybeSingle();
+      if (error) throw new Error("入社予定者情報の確認に失敗しました。" + error.message);
+      if (data && data.form_status !== "未回答") throw new Error("この入社フォームはすでに回答済みです。再入力はできません。");
+      return data;
     }
 
     employmentTypeSelect.addEventListener("change", updateTransportArea);
@@ -839,7 +541,6 @@
 
     form.addEventListener("submit", async function(event) {
       event.preventDefault();
-
       submitButton.disabled = true;
       submitButton.textContent = "送信中...";
 
@@ -853,18 +554,12 @@
 
       data.full_name = `${data.last_name}${data.first_name}`;
       data.full_name_kana = `${data.last_name_kana}${data.first_name_kana}`;
-
-      data.part_time_transportation = partTimeStores.map((store, index) => {
-        return {
-          store: store,
-          from_station: partTimeFromStations[index],
-          to_station: partTimeToStations[index],
-          one_way_fare: partTimeFares[index]
-        };
-      }).filter(item => {
-        return item.store || item.from_station || item.to_station || item.one_way_fare;
-      });
-
+      data.part_time_transportation = partTimeStores.map((store, index) => ({
+        store,
+        from_station: partTimeFromStations[index],
+        to_station: partTimeToStations[index],
+        one_way_fare: partTimeFares[index]
+      })).filter(item => item.store || item.from_station || item.to_station || item.one_way_fare);
       data.token = getTokenFromUrl();
       data.submitted_at = new Date().toISOString();
 
@@ -872,107 +567,99 @@
       const postalCodeRegex = /^[0-9]{7}$/;
       const hasSpaceRegex = /\s/;
 
-      if (data.email !== data.email_confirm) {
-        alert("メールアドレスと確認用メールアドレスが一致しません。");
+      function resetSubmit() {
         submitButton.disabled = false;
         submitButton.textContent = "送信する";
-        return;
       }
 
-      if (!phoneRegex.test(data.phone)) {
-        alert("電話番号はハイフンなしの10〜11桁で入力してください。");
-        submitButton.disabled = false;
-        submitButton.textContent = "送信する";
-        return;
-      }
+      if (data.email !== data.email_confirm) { alert("メールアドレスと確認用メールアドレスが一致しません。"); resetSubmit(); return; }
+      if (!phoneRegex.test(data.phone)) { alert("電話番号はハイフンなしの10〜11桁で入力してください。"); resetSubmit(); return; }
+      if (!postalCodeRegex.test(data.postal_code)) { alert("郵便番号はハイフンなしの7桁で入力してください。"); resetSubmit(); return; }
+      if (hasSpaceRegex.test(data.last_name) || hasSpaceRegex.test(data.first_name)) { alert("姓・名にはスペースを入れずに入力してください。"); resetSubmit(); return; }
+      if (hasSpaceRegex.test(data.last_name_kana) || hasSpaceRegex.test(data.first_name_kana)) { alert("セイ・メイにはスペースを入れずに入力してください。"); resetSubmit(); return; }
+      if (hasSpaceRegex.test(data.emergency_name)) { alert("緊急連絡先の氏名はスペースなしで入力してください。"); resetSubmit(); return; }
+      if (!phoneRegex.test(data.emergency_phone)) { alert("緊急連絡先の電話番号はハイフンなしの10〜11桁で入力してください。"); resetSubmit(); return; }
 
-      if (!postalCodeRegex.test(data.postal_code)) {
-        alert("郵便番号はハイフンなしの7桁で入力してください。");
-        submitButton.disabled = false;
-        submitButton.textContent = "送信する";
-        return;
-      }
-
-      if (hasSpaceRegex.test(data.last_name) || hasSpaceRegex.test(data.first_name)) {
-        alert("姓・名にはスペースを入れずに入力してください。");
-        submitButton.disabled = false;
-        submitButton.textContent = "送信する";
-        return;
-      }
-
-      if (hasSpaceRegex.test(data.last_name_kana) || hasSpaceRegex.test(data.first_name_kana)) {
-        alert("セイ・メイにはスペースを入れずに入力してください。");
-        submitButton.disabled = false;
-        submitButton.textContent = "送信する";
-        return;
-      }
-
-      if (hasSpaceRegex.test(data.emergency_name)) {
-        alert("緊急連絡先の氏名はスペースなしで入力してください。");
-        submitButton.disabled = false;
-        submitButton.textContent = "送信する";
-        return;
-      }
-
-      if (!phoneRegex.test(data.emergency_phone)) {
-        alert("緊急連絡先の電話番号はハイフンなしの10〜11桁で入力してください。");
-        submitButton.disabled = false;
-        submitButton.textContent = "送信する";
-        return;
-      }
-
-      if (data.employment_type === "正社員") {
-        if (!data.commuter_from_station || !data.commuter_to_station || !data.commuter_pass_1month) {
-          alert("正社員の方は、定期区間の出発駅・到着駅・1ヶ月定期代を入力してください。");
-          submitButton.disabled = false;
-          submitButton.textContent = "送信する";
-          return;
-        }
+      if (data.employment_type === "正社員" && (!data.commuter_from_station || !data.commuter_to_station || !data.commuter_pass_1month)) {
+        alert("正社員の方は、定期区間の出発駅・到着駅・1ヶ月定期代を入力してください。"); resetSubmit(); return;
       }
 
       if (data.employment_type === "アルバイト") {
-        const partTimeTransport = data.part_time_transportation || [];
-
-        if (partTimeTransport.length === 0) {
-          alert("アルバイトの方は、勤務可能店舗・出発駅・到着駅・片道金額を1件以上入力してください。");
-          submitButton.disabled = false;
-          submitButton.textContent = "送信する";
-          return;
-        }
-
-        const hasIncompleteRow = partTimeTransport.some(item => {
-          return !item.store || !item.from_station || !item.to_station || !item.one_way_fare;
-        });
-
-        if (hasIncompleteRow) {
-          alert("勤務可能店舗・出発駅・到着駅・片道金額はすべて入力してください。");
-          submitButton.disabled = false;
-          submitButton.textContent = "送信する";
-          return;
-        }
+        if (data.part_time_transportation.length === 0) { alert("アルバイトの方は、勤務可能店舗・出発駅・到着駅・片道金額を1件以上入力してください。"); resetSubmit(); return; }
+        const hasIncompleteRow = data.part_time_transportation.some(item => !item.store || !item.from_station || !item.to_station || !item.one_way_fare);
+        if (hasIncompleteRow) { alert("勤務可能店舗・出発駅・到着駅・片道金額はすべて入力してください。"); resetSubmit(); return; }
       }
 
-      console.log("入社フォーム送信データ", data);
+      try {
+        const candidate = await ensureCandidateNotSubmitted(data.token);
+        const attendanceEmployeeId = generateRandomEmployeeId(16);
+        const initialPassword = formatBirthdayToPassword(data.birthday);
 
-      /*
-        次のステップで、ここにSupabase Edge Functionへの送信処理を追加します。
+        const employeePayload = {
+          employee_id: attendanceEmployeeId,
+          employee_name: data.full_name,
+          last_name: data.last_name,
+          first_name: data.first_name,
+          last_name_kana: data.last_name_kana,
+          first_name_kana: data.first_name_kana,
+          birthday: data.birthday,
+          phone: data.phone,
+          email: data.email,
+          postal_code: data.postal_code,
+          address: data.address,
+          store: data.store,
+          job_type: data.job_type,
+          employment_type: data.employment_type,
+          earliest_start_date: data.earliest_start_date,
+          emergency_name: data.emergency_name,
+          emergency_relation: data.emergency_relation,
+          emergency_phone: data.emergency_phone,
+          bank_name: data.bank_name,
+          bank_branch: data.bank_branch,
+          account_type: data.account_type,
+          account_number: data.account_number,
+          account_name_kana: data.account_name_kana,
+          tshirt_size: data.tshirt_size,
+          tshirt_quantity: Number(data.tshirt_quantity || 1),
+          harmos_id: attendanceEmployeeId,
+          employment_status: "入社予定",
+          is_active: true
+        };
 
-        処理イメージ：
-        1. 入社フォーム内容をSupabaseに保存
-        2. ハーモスID・初期PWを発行
-        3. 打刻用QRコードURLを生成
-        4. 各種マニュアルURLを差し込み
-        5. 本人メールアドレスに送信
-        6. 管理画面側で「回答済み」「ID案内送信済み」に変更
-      */
+        const { error: employeeError } = await supabaseClient.from("employees").insert(employeePayload);
+        if (employeeError) throw new Error("社員情報の保存に失敗しました。" + employeeError.message);
 
-      setTimeout(() => {
+        const transportationRows = buildTransportationRows(attendanceEmployeeId, data);
+        if (transportationRows.length > 0) {
+          const { error: transportError } = await supabaseClient.from("transportation_records").insert(transportationRows);
+          if (transportError) throw new Error("交通費情報の保存に失敗しました。" + transportError.message);
+        }
+
+        if (data.token) {
+          const { error: candidateError } = await supabaseClient
+            .from("onboarding_candidates")
+            .update({
+              form_status: "回答済み",
+              submitted_at: new Date().toISOString(),
+              reflected_employee_id: attendanceEmployeeId,
+              updated_at: new Date().toISOString()
+            })
+            .eq("form_token", data.token);
+          if (candidateError) throw new Error("入社予定者ステータスの更新に失敗しました。" + candidateError.message);
+        }
+
+        console.log("発行された勤怠employee_id", attendanceEmployeeId);
+        console.log("ハーモス初期PW候補", initialPassword);
+        console.log("フォーム保存完了", { candidate });
+
         formArea.style.display = "none";
         completeArea.style.display = "block";
         window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 700);
+      } catch (error) {
+        alert(error.message || "送信に失敗しました。時間をおいて再度お試しください。");
+        resetSubmit();
+      }
     });
   </script>
-
 </body>
 </html>

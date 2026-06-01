@@ -1366,7 +1366,9 @@
     async function markTshirtSent(employeeCode) {
       if (!employeeCode) return;
 
-      const row = document.querySelector(`tr[data-employee-code="${CSS.escape(employeeCode)}"]`);
+      const row = document.querySelectorAll("tr[data-employee-code]")
+        ? Array.from(document.querySelectorAll("tr[data-employee-code]")).find(tr => tr.dataset.employeeCode === employeeCode)
+        : null;
       const qtyInput = row?.querySelector(".tshirt-qty-input");
       const quantity = Number(qtyInput?.value || 1);
 
@@ -1391,7 +1393,9 @@
     }
 
     function escapeJs(value) {
-      return String(value ?? "").replaceAll("\", "\\").replaceAll("'", "\'");
+      return String(value ?? "")
+        .replace(/\/g, "\\")
+        .replace(/'/g, "\'");
     }
 
     function formatMoney(value) {
@@ -1468,7 +1472,7 @@
 
       const { data: employeesData, error: employeesError } = await supabaseClient
         .from("employees")
-        .select("employee_code,harmos_id,employee_name,last_name,first_name,store,employment_type,employment_status,created_at")
+        .select("employee_code,harmos_id,employee_id,employee_name,last_name,first_name,store,employment_type,employment_status,created_at")
         .order("created_at", { ascending: false });
 
       if (employeesError) {

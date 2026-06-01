@@ -1145,17 +1145,17 @@
         <div class="page-title-row">
           <div>
             <h3>アカウント案内</h3>
-            <p>ハーモスID・初期PW、打刻用QRコードURL、各種マニュアルURLの送信状況を管理します。</p>
+            <p>社員ID / ハーモスID、初期PW、打刻QR、各種マニュアルURLの送信状況を管理します。打刻QR用のランダム文字列は内部IDとして扱い、スタッフには表示しません。</p>
           </div>
           <button class="primary-btn">ID案内を一括送信</button>
         </div>
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th>氏名</th><th>メール</th><th>ハーモスID</th><th>QR URL</th><th>マニュアル</th><th>送信状況</th><th>操作</th></tr></thead>
+            <thead><tr><th>氏名</th><th>メール</th><th>社員ID / ハーモスID</th><th>打刻QR</th><th>マニュアル</th><th>送信状況</th><th>操作</th></tr></thead>
             <tbody>
-              <tr><td>山田太郎</td><td>yamada@example.com</td><td>R20260001</td><td><button class="small-btn">確認</button></td><td><span class="badge gray">未送信</span></td><td><span class="badge gray">未送信</span></td><td><button class="small-btn">送信</button></td></tr>
-              <tr><td>佐藤花子</td><td>sato@example.com</td><td>R20260002</td><td><button class="small-btn">確認</button></td><td><span class="badge green">送信済み</span></td><td><span class="badge green">送信済み</span></td><td><button class="small-btn">再送</button></td></tr>
+              <tr><td>山田太郎</td><td>yamada@example.com</td><td>R20260001</td><td><button class="small-btn">QR確認</button></td><td><span class="badge gray">未送信</span></td><td><span class="badge gray">未送信</span></td><td><button class="small-btn">送信</button></td></tr>
+              <tr><td>佐藤花子</td><td>sato@example.com</td><td>R20260002</td><td><button class="small-btn">QR確認</button></td><td><span class="badge green">送信済み</span></td><td><span class="badge green">送信済み</span></td><td><button class="small-btn">再送</button></td></tr>
             </tbody>
           </table>
         </div>
@@ -1221,6 +1221,7 @@
         <div class="form-grid">
           <label>ハーモスURL<input type="url" value="https://ieyasu.co/refinas00" /></label>
           <label>打刻QRベースURL<input type="url" value="https://example.github.io/attendance-card/" /></label>
+          <label>打刻QR内部IDルール<input type="text" value="ランダム文字列を内部発行・スタッフには非表示" /></label>
           <label>勤怠マニュアルURL<input type="url" value="https://example.com/manual-attendance" /></label>
           <label>入社マニュアルURL<input type="url" value="https://example.com/manual-onboarding" /></label>
         </div>
@@ -1260,7 +1261,7 @@
       },
       accounts: {
         title: "アカウント案内を送信",
-        description: "ハーモスID、初期PW、打刻用QRコード、各種マニュアルをメール送信します。"
+        description: "社員ID / ハーモスID、初期PW、打刻QR、各種マニュアルをメール送信します。打刻QR用のランダム文字列は内部管理用で、スタッフには表示しません。"
       },
       retirement: {
         title: "退職処理を管理",

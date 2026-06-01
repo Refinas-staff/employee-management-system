@@ -994,33 +994,51 @@
         <div class="page-title-row">
           <div>
             <h3>入社手続き</h3>
-            <p>採用部から入社予定の連絡が来た人だけを一時登録します。正式な社員名簿は、本人が入力した入社フォームの回答内容を正として反映します。</p>
+            <p>採用部から入社予定の連絡が来た人だけを控えとして登録します。本人が入社フォーム回答後は、この仮データは削除し、社員名簿を正データとして扱います。</p>
           </div>
-          <button class="primary-btn">入社フォームURLを発行</button>
+          <button class="primary-btn" type="button" onclick="createOnboardingCandidate()">控えとして登録</button>
         </div>
 
         <div class="box">
           <div class="box-header"><h4>採用部連絡メモ</h4></div>
           <div class="box-body">
             <div class="form-grid">
-              <label>姓<input type="text" placeholder="山田" /></label>
-              <label>名<input type="text" placeholder="太郎" /></label>
-              <label>研修予定店舗<select><option>選択してください</option><option>渋谷本店</option><option>横浜</option><option>大阪梅田</option><option>本部</option></select></label>
-              <label>勤務開始予定日<input type="date" /></label>
-              <label>雇用形態<select><option>正社員</option><option>アルバイト</option></select></label>
-              <label class="full">採用部メモ<textarea placeholder="例：初回研修は本部、勤務開始日は調整中、連絡時の注意事項など"></textarea></label>
+              <label>姓<input id="candidateLastName" type="text" placeholder="山田" /></label>
+              <label>名<input id="candidateFirstName" type="text" placeholder="太郎" /></label>
+              <label>研修予定店舗<select id="candidateTrainingStore"><option value="">選択してください</option></select></label>
+              <label>勤務開始予定日<input id="candidateStartDate" type="date" /></label>
+              <label>雇用形態<select id="candidateEmploymentType"><option>正社員</option><option>アルバイト</option><option>業務委託</option></select></label>
+              <label class="full">採用部メモ<textarea id="candidateMemo" placeholder="例：初回研修は本部、勤務開始日は調整中、連絡時の注意事項など"></textarea></label>
             </div>
-            <button class="primary-btn">控えとして登録してフォームURLを作成</button>
+            <div class="actions" style="justify-content:flex-start; margin:18px 0 0;">
+              <button class="primary-btn" type="button" onclick="createOnboardingCandidate()">控えとして登録してURL発行</button>
+              <button class="secondary-btn" type="button" onclick="clearCandidateForm()">入力をクリア</button>
+            </div>
           </div>
         </div>
 
-        <div class="section-heading">入社フォーム回答状況（社員名簿の正データ）</div>
+        <div class="section-heading">入社フォーム未回答者</div>
+        <div class="filters">
+          <input id="candidateSearchInput" type="text" placeholder="氏名で検索" />
+          <select id="candidateTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select>
+          <button class="secondary-btn" type="button" onclick="loadOnboardingCandidates()">更新</button>
+        </div>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>採用部連絡名</th><th>本人入力名</th><th>研修予定店舗</th><th>勤務開始予定日</th><th>採用部メモ</th><th>フォームURL</th><th>回答状況</th><th>回答日</th><th>社員名簿反映</th><th>操作</th></tr></thead>
-            <tbody>
-              <tr><td>山田太郎</td><td>-</td><td>本部</td><td>2026/06/10</td><td>初回研修は本部</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge red">未回答</span></td><td>-</td><td><span class="badge gray">未反映</span></td><td><button class="small-btn">リマインド</button></td></tr>
-              <tr><td>佐藤花子</td><td>佐藤花子</td><td>横浜</td><td>2026/06/12</td><td>特になし</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge green">回答済み</span></td><td>2026/06/01</td><td><span class="badge green">反映済み</span></td><td><button class="small-btn">詳細</button></td></tr>
+            <thead>
+              <tr>
+                <th>採用部連絡名</th>
+                <th>雇用形態</th>
+                <th>研修予定店舗</th>
+                <th>勤務開始予定日</th>
+                <th>フォームURL</th>
+                <th>状態</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="onboardingCandidatesBody">
+              <tr><td colspan="7">入社予定者を読み込み中...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1227,8 +1245,8 @@
     // Supabase接続設定
     // ==============================
     // onboarding.html と同じ値に置き換えてください。
-    const SUPABASE_URL = "https://xcxrurktphdnpdumyzhn.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
+    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_PUBLIC_KEY";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const navItems = document.querySelectorAll(".nav-item");
@@ -1248,6 +1266,7 @@
     let transportEmployees = [];
     let transportRecords = [];
     let selectedTransportEmployee = null;
+    let onboardingCandidates = [];
 
     const pageInfo = {
       dashboard: {
@@ -1356,6 +1375,7 @@
       if (page === "employees") loadEmployees();
       if (page === "tshirt") loadTshirtTargets();
       if (page === "transport") loadTransportManagement();
+      if (page === "onboarding") loadOnboardingCandidates();
     }
 
     navItems.forEach(item => item.addEventListener("click", () => switchPage(item.dataset.page)));
@@ -1464,6 +1484,161 @@
       if (transportEditStore) {
         transportEditStore.innerHTML = '<option value="">選択してください</option>' + optionsHtml;
       }
+
+      const candidateTrainingStore = document.getElementById("candidateTrainingStore");
+      if (candidateTrainingStore) {
+        candidateTrainingStore.innerHTML = '<option value="">選択してください</option>' + optionsHtml;
+      }
+    }
+
+    function generateToken(length = 32) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const values = new Uint32Array(length);
+      window.crypto.getRandomValues(values);
+      let result = "";
+      for (let i = 0; i < length; i++) result += chars[values[i] % chars.length];
+      return result;
+    }
+
+    function getOnboardingBaseUrl() {
+      const current = new URL(window.location.href);
+      return `${current.origin}${current.pathname.replace(/index\.html$/, "").replace(/\/$/, "")}/onboarding.html`;
+    }
+
+    function clearCandidateForm() {
+      const ids = ["candidateLastName", "candidateFirstName", "candidateTrainingStore", "candidateStartDate", "candidateMemo"];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      const type = document.getElementById("candidateEmploymentType");
+      if (type) type.value = "正社員";
+    }
+
+    async function createOnboardingCandidate() {
+      const lastName = document.getElementById("candidateLastName")?.value.trim();
+      const firstName = document.getElementById("candidateFirstName")?.value.trim();
+      const trainingStore = document.getElementById("candidateTrainingStore")?.value || null;
+      const plannedStartDate = document.getElementById("candidateStartDate")?.value || null;
+      const employmentType = document.getElementById("candidateEmploymentType")?.value || "正社員";
+      const memo = document.getElementById("candidateMemo")?.value.trim() || null;
+
+      if (!lastName || !firstName || !employmentType) {
+        alert("姓・名・雇用形態を入力してください。");
+        return;
+      }
+
+      const formToken = generateToken(32);
+      const formUrl = `${getOnboardingBaseUrl()}?token=${encodeURIComponent(formToken)}`;
+
+      const { error } = await supabaseClient
+        .from("onboarding_candidates")
+        .insert({
+          last_name: lastName,
+          first_name: firstName,
+          training_store: trainingStore,
+          planned_start_date: plannedStartDate,
+          employment_type: employmentType,
+          memo,
+          form_token: formToken,
+          form_url: formUrl,
+          form_status: "未回答"
+        });
+
+      if (error) {
+        alert("入社予定者の登録に失敗しました。" + error.message);
+        return;
+      }
+
+      clearCandidateForm();
+      await loadOnboardingCandidates();
+      alert("入社予定者を登録しました。フォームURLを一覧からコピーできます。");
+    }
+
+    function renderOnboardingCandidates(list) {
+      const tbody = document.getElementById("onboardingCandidatesBody");
+      if (!tbody) return;
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="7">未回答の入社予定者はいません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(candidate => `
+        <tr>
+          <td>${escapeHtml(`${candidate.last_name || ""}${candidate.first_name || ""}`)}</td>
+          <td>${escapeHtml(candidate.employment_type || "-")}</td>
+          <td>${escapeHtml(candidate.training_store || "-")}</td>
+          <td>${formatDate(candidate.planned_start_date)}</td>
+          <td><button class="small-btn js-copy-candidate-url" type="button" data-url="${escapeAttr(candidate.form_url || "")}">URLコピー</button></td>
+          <td><span class="badge red">未回答</span></td>
+          <td><button class="small-btn js-delete-candidate" type="button" data-id="${Number(candidate.id)}">削除</button></td>
+        </tr>
+      `).join("");
+
+      tbody.querySelectorAll(".js-copy-candidate-url").forEach(button => {
+        button.addEventListener("click", async () => {
+          const url = button.dataset.url || "";
+          if (!url) return alert("URLがありません。");
+          await navigator.clipboard.writeText(url);
+          alert("フォームURLをコピーしました。");
+        });
+      });
+
+      tbody.querySelectorAll(".js-delete-candidate").forEach(button => {
+        button.addEventListener("click", () => deleteOnboardingCandidate(Number(button.dataset.id)));
+      });
+    }
+
+    function applyCandidateFilters() {
+      const keyword = (document.getElementById("candidateSearchInput")?.value || "").trim().toLowerCase();
+      const type = document.getElementById("candidateTypeFilter")?.value || "";
+
+      const filtered = onboardingCandidates.filter(candidate => {
+        const name = `${candidate.last_name || ""}${candidate.first_name || ""}`.toLowerCase();
+        if (keyword && !name.includes(keyword)) return false;
+        if (type && candidate.employment_type !== type) return false;
+        return true;
+      });
+
+      renderOnboardingCandidates(filtered);
+    }
+
+    async function loadOnboardingCandidates() {
+      const tbody = document.getElementById("onboardingCandidatesBody");
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7">入社予定者を読み込み中...</td></tr>';
+
+      const { data, error } = await supabaseClient
+        .from("onboarding_candidates")
+        .select("id,last_name,first_name,training_store,planned_start_date,employment_type,memo,form_token,form_url,form_status,created_at")
+        .eq("form_status", "未回答")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7">入社予定者の取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;
+        return;
+      }
+
+      onboardingCandidates = data || [];
+      applyCandidateFilters();
+    }
+
+    async function deleteOnboardingCandidate(id) {
+      if (!id) return;
+      if (!confirm("この入社予定者の仮データを削除しますか？")) return;
+
+      const { error } = await supabaseClient
+        .from("onboarding_candidates")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        alert("削除に失敗しました。" + error.message);
+        return;
+      }
+
+      onboardingCandidates = onboardingCandidates.filter(candidate => Number(candidate.id) !== Number(id));
+      applyCandidateFilters();
     }
 
     function renderTshirtTargets(list) {
@@ -1834,8 +2009,16 @@
       element.addEventListener("change", applyTransportFilters);
     });
 
+    ["candidateSearchInput", "candidateTypeFilter"].forEach(id => {
+      const element = document.getElementById(id);
+      if (!element) return;
+      element.addEventListener("input", applyCandidateFilters);
+      element.addEventListener("change", applyCandidateFilters);
+    });
+
     loadStoresForFilters();
     loadEmployees();
+    loadOnboardingCandidates();
     loadTshirtTargets();
     loadTransportManagement();
   </script>

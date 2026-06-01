@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refinas 退職フォーム</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --brand-red: #e60012;
+      --brand-blue: #0071bc;
+      --brand-navy: #003f7f;
+      --brand-dark: #111827;
+      --brand-bg: #f4f7fb;
+      --brand-border: #d8dee8;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--brand-bg);
+      color: var(--brand-dark);
+    }
+
+    .top-bar {
+      background: #fff;
+      color: var(--brand-dark);
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--brand-border);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    }
+
+    .top-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 170px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .logo-fallback {
+      width: 54px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--brand-red) 0 48%, var(--brand-blue) 48% 100%);
+      color: #fff;
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .top-inner h1 { margin: 0; font-size: 22px; }
+    .top-inner p { margin: 4px 0 0; font-size: 13px; color: var(--text-muted); }
+
+    .hero {
+      background: linear-gradient(120deg, var(--brand-red) 0%, #c90010 38%, var(--brand-blue) 38%, var(--brand-navy) 100%);
+      color: white;
+      padding: 34px 20px 78px;
+    }
+
+    .hero-inner { max-width: 980px; margin: 0 auto; }
+    .hero h2 { margin: 0 0 10px; font-size: 30px; letter-spacing: 0.02em; }
+    .hero p { margin: 0; line-height: 1.8; color: #fff; }
+
+    .container {
+      max-width: 980px;
+      margin: -48px auto 48px;
+      padding: 0 20px;
+    }
+
+    .notice {
+      background: white;
+      border: 1px solid #c7d7ea;
+      border-radius: 10px;
+      padding: 18px 20px;
+      color: var(--brand-dark);
+      line-height: 1.8;
+      font-size: 14px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+      margin-bottom: 20px;
+    }
+
+    .notice.inner {
+      box-shadow: none;
+      margin-bottom: 16px;
+      background: #f8fbff;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      border: 1px solid var(--brand-border);
+      box-shadow: 0 4px 16px rgba(15,23,42,0.08);
+      padding: 26px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--brand-dark);
+      border-left: 4px solid var(--brand-red);
+      padding-left: 10px;
+      margin: 0 0 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      font-weight: 800;
+      font-size: 14px;
+      color: #334155;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      padding: 10px 11px;
+      font-size: 15px;
+      font-family: inherit;
+      background: white;
+      color: #1f2937;
+      line-height: 1.4;
+    }
+
+    textarea {
+      height: auto;
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input[type="date"] {
+      height: 43px;
+      min-height: 43px;
+      line-height: 43px;
+      padding: 10px 11px;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="date"]::-webkit-date-and-time-value {
+      text-align: left;
+      height: 23px;
+      line-height: 23px;
+      padding: 0;
+      margin: 0;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      margin: 0;
+      padding: 0;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid rgba(0, 113, 188, 0.24);
+      border-color: var(--brand-blue);
+    }
+
+    .full { grid-column: 1 / -1; }
+    .required { color: #dc2626; font-size: 12px; margin-left: 4px; }
+    .helper { font-size: 12px; color: var(--text-muted); font-weight: 500; line-height: 1.5; }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #334155;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .check-row input {
+      width: auto;
+      height: auto;
+      min-height: auto;
+      margin-top: 4px;
+    }
+
+    .staff-box {
+      background: #f8fbff;
+      border: 1px solid #c7d7ea;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+    }
+
+    .staff-name {
+      font-size: 22px;
+      font-weight: 900;
+      margin: 0 0 6px;
+      color: var(--brand-dark);
+    }
+
+    .staff-sub {
+      margin: 0;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 28px 0;
+    }
+
+    .submit-btn {
+      background: var(--brand-blue);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 14px 34px;
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 0 var(--brand-navy);
+    }
+
+    .submit-btn:hover { background: var(--brand-navy); }
+    .submit-btn:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+
+    .complete, .invalid {
+      display: none;
+      background: white;
+      border-radius: 10px;
+      border: 1px solid var(--brand-border);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+      padding: 34px;
+      text-align: center;
+    }
+
+    .complete-icon {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #d1fae5;
+      color: #047857;
+      display: grid;
+      place-items: center;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .invalid-icon {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #b91c1c;
+      display: grid;
+      place-items: center;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .complete h2, .invalid h2 {
+      margin: 0 0 10px;
+      color: var(--brand-dark);
+      font-size: 24px;
+    }
+
+    .complete p, .invalid p {
+      color: #475569;
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      margin: 30px 0;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .card { padding: 20px; }
+      .hero h2 { font-size: 25px; }
+      .top-inner { align-items: flex-start; flex-direction: column; }
+      .top-inner h1 { font-size: 18px; }
+      .logo { width: 140px; height: 46px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top-bar">
+    <div class="top-inner">
+      <div class="logo">
+        <img src="refinas-logo.png" alt="Refinas ロゴ" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;logo-fallback&quot;>R</div>'" />
+      </div>
+      <div>
+        <h1>Refinas 退職フォーム</h1>
+        <p>Retirement Form</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h2>退職手続きに必要な情報をご入力ください</h2>
+      <p>ご入力いただいた内容は、退職手続き、社会保険喪失手続き、書類送付、返却物確認、最終給与・交通費確認に使用します。</p>
+    </div>
+  </section>
+
+  <main class="container">
+    <div id="formArea">
+      <div class="notice">
+        本フォームは、管理本部から送られた専用URLからのみ回答できます。<br>
+        入力完了後、社員管理システム上で退職フォーム入力済みとして反映されます。
+      </div>
+
+      <div id="staffBox" class="staff-box" style="display:none;">
+        <p id="staffName" class="staff-name">読み込み中...</p>
+        <p id="staffSub" class="staff-sub">社員情報を確認しています。</p>
+      </div>
+
+      <form id="retirementForm">
+        <section class="card">
+          <h2 class="section-title">基本情報</h2>
+          <div class="form-grid">
+            <label>姓（漢字） <span class="required">必須</span><input type="text" name="last_name" required placeholder="山田" /></label>
+            <label>名（漢字） <span class="required">必須</span><input type="text" name="first_name" required placeholder="太郎" /></label>
+            <label>生年月日 <span class="required">必須</span><input type="date" name="birthday" required /></label>
+            <label>雇用形態 <span class="required">必須</span>
+              <select name="employment_type" required>
+                <option value="">選択してください</option>
+                <option>正社員</option>
+                <option>アルバイト</option>
+                <option>業務委託</option>
+              </select>
+            </label>
+            <label>メイン店舗 <span class="required">必須</span><input type="text" name="main_store" required placeholder="例：渋谷本店" /></label>
+            <label>入社日 <span class="required">必須</span><input type="date" name="joined_date" required /></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 class="section-title">退職情報</h2>
+          <div class="notice inner">
+            退職予定日は、最終出社日ではありません。<br>
+            社会保険喪失手続き等に使用するため、有給消化後の日付を考慮して入力してください。
+          </div>
+
+          <div class="form-grid">
+            <label>
+              退職予定日 <span class="required">必須</span>
+              <input type="date" name="requested_retirement_date" required />
+              <span class="helper">最終出社日ではなく、退職日として扱う日付を入力してください。</span>
+            </label>
+
+            <label>
+              最終勤務予定日
+              <input type="date" name="last_work_date" />
+              <span class="helper">分かる場合のみ入力してください。</span>
+            </label>
+
+            <label class="full">
+              退職理由
+              <textarea name="reason_detail" placeholder="差し支えない範囲で、退職理由や共有事項を入力してください。"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 class="section-title">退職後連絡先・書類送付先</h2>
+          <div class="form-grid">
+            <label>
+              離職票等書類送付 郵便番号 <span class="required">必須</span>
+              <input type="text" name="document_postal_code" required placeholder="1500001" inputmode="numeric" pattern="[0-9]{7}" />
+              <span class="helper">ハイフンなし7桁で入力してください。</span>
+            </label>
+
+            <label>
+              退職後連絡先電話番号 <span class="required">必須</span>
+              <input type="tel" name="post_retirement_phone" required placeholder="09012345678" inputmode="numeric" pattern="[0-9]{10,11}" />
+              <span class="helper">ハイフンなし10〜11桁で入力してください。</span>
+            </label>
+
+            <label class="full">
+              離職票等書類送付 住所 <span class="required">必須</span>
+              <input type="text" name="document_address" required placeholder="東京都〇〇区〇〇 1-2-3" />
+            </label>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 class="section-title">Tシャツ・返却物について</h2>
+          <div class="notice inner">
+            勤務時に着用のリフィナスTシャツは、クリーニングした上で、退職月の翌20日までに大阪オフィスへ返却してください。<br>
+            返却されない場合、1枚あたり3,000円を次月給与から差し引き、または請求される場合があります。
+          </div>
+
+          <div class="form-grid">
+            <label class="full">
+              返却物・Tシャツに関するメモ
+              <textarea name="return_items_note" placeholder="例：Tシャツは最終勤務日に返却予定、鍵は店長へ返却済み、貸与物なし など"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 class="section-title">確認事項</h2>
+
+          <div class="check-row">
+            <input type="checkbox" name="tshirt_return_confirmed" required />
+            <span>勤務時に着用のリフィナスTシャツをクリーニングした上で、退職月の翌20日までに大阪オフィスへ返却することを確認しました。</span>
+          </div>
+
+          <div class="check-row">
+            <input type="checkbox" name="tshirt_deduction_confirmed" required />
+            <span>返却されない場合、1枚あたり3,000円を次月給与から差し引き、または請求されることを確認しました。</span>
+          </div>
+
+          <div class="check-row">
+            <input type="checkbox" name="handover_confirmed" required />
+            <span>退職日までに必要な引継ぎを確実に実施することを確認しました。</span>
+          </div>
+
+          <div class="check-row">
+            <input type="checkbox" name="confirm_input" required />
+            <span>入力内容に間違いがないことを確認しました。</span>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button id="submitButton" type="submit" class="submit-btn">送信する</button>
+        </div>
+      </form>
+    </div>
+
+    <section id="completeArea" class="complete">
+      <div class="complete-icon">✓</div>
+      <h2>送信が完了しました</h2>
+      <p>
+        退職フォームの入力ありがとうございます。<br>
+        入力内容は管理本部に共有されました。<br>
+        Tシャツ・貸与物がある場合は、期日までに返却をお願いいたします。
+      </p>
+    </section>
+
+    <section id="invalidArea" class="invalid">
+      <div class="invalid-icon">!</div>
+      <h2>フォームURLが無効です</h2>
+      <p id="invalidMessage">
+        このURLは無効、またはすでに回答済みです。<br>
+        管理本部から送られた最新のURLをご確認ください。
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">© Refinas fitness studio</footer>
+
+  <script>
+    const SUPABASE_URL = "https://xcxrurktphdnpdumyzhn.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById("retirementForm");
+    const submitButton = document.getElementById("submitButton");
+    const formArea = document.getElementById("formArea");
+    const completeArea = document.getElementById("completeArea");
+    const invalidArea = document.getElementById("invalidArea");
+    const invalidMessage = document.getElementById("invalidMessage");
+    const staffBox = document.getElementById("staffBox");
+    const staffName = document.getElementById("staffName");
+    const staffSub = document.getElementById("staffSub");
+
+    let currentToken = "";
+    let tokenData = null;
+    let employeeData = null;
+
+    function getTokenFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("token") || "";
+    }
+
+    function showInvalid(message) {
+      formArea.style.display = "none";
+      completeArea.style.display = "none";
+      invalidArea.style.display = "block";
+
+      if (message) {
+        invalidMessage.innerHTML = message;
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function setValue(name, value) {
+      const element = form.elements[name];
+      if (element && value) element.value = value;
+    }
+
+    async function loadEmployeeData(employeeCode) {
+      if (!employeeCode) return null;
+
+      const { data, error } = await supabaseClient
+        .from("employees")
+        .select("employee_code,employee_id,employee_name,last_name,first_name,birthday,email,store,employment_type,earliest_start_date")
+        .eq("employee_code", employeeCode)
+        .maybeSingle();
+
+      if (error) {
+        console.warn("社員情報の取得に失敗しました", error);
+        return null;
+      }
+
+      return data;
+    }
+
+    async function loadTokenData() {
+      currentToken = getTokenFromUrl();
+
+      if (!currentToken) {
+        showInvalid("この退職フォームURLは無効です。<br>管理本部から送られたURLから開いてください。");
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from("retirement_form_tokens")
+        .select("id, employee_code, employee_id, employee_name, email, form_token, status, created_at")
+        .eq("form_token", currentToken)
+        .maybeSingle();
+
+      if (error) {
+        showInvalid("退職フォーム情報の確認に失敗しました。<br>" + escapeHtml(error.message));
+        return;
+      }
+
+      if (!data) {
+        showInvalid("この退職フォームURLは無効、またはすでに回答済みです。<br>管理本部から送られた最新のURLをご確認ください。");
+        return;
+      }
+
+      if (data.status !== "未回答") {
+        showInvalid("この退職フォームはすでに回答済みです。<br>再入力はできません。");
+        return;
+      }
+
+      tokenData = data;
+      employeeData = await loadEmployeeData(data.employee_code);
+
+      const displayName = employeeData?.employee_name || data.employee_name || "対象スタッフ";
+      const displayEmail = employeeData?.email || data.email || "-";
+      const displayStore = employeeData?.store || "-";
+      const displayType = employeeData?.employment_type || "-";
+
+      staffName.textContent = displayName;
+      staffSub.textContent = `${data.employee_code || "-"} / ${displayStore} / ${displayType} / ${displayEmail}`;
+      staffBox.style.display = "block";
+
+      if (employeeData) {
+        setValue("last_name", employeeData.last_name);
+        setValue("first_name", employeeData.first_name);
+        setValue("birthday", employeeData.birthday);
+        setValue("employment_type", employeeData.employment_type);
+        setValue("main_store", employeeData.store);
+        setValue("joined_date", employeeData.earliest_start_date);
+      }
+    }
+
+    async function insertRetirementRecord(formData) {
+      const recordPayload = {
+        employee_code: tokenData.employee_code,
+        employee_id: tokenData.employee_id || employeeData?.employee_id || null,
+        employee_name: employeeData?.employee_name || tokenData.employee_name || `${formData.last_name}${formData.first_name}`,
+        email: employeeData?.email || tokenData.email || null,
+        store: formData.main_store,
+        employment_type: formData.employment_type,
+        last_name: formData.last_name,
+        first_name: formData.first_name,
+        birthday: formData.birthday,
+        joined_date: formData.joined_date,
+        main_store: formData.main_store,
+        requested_retirement_date: formData.requested_retirement_date,
+        last_work_date: formData.last_work_date || null,
+        reason_category: "退職依頼フォーム",
+        reason_detail: formData.reason_detail || null,
+        document_postal_code: formData.document_postal_code,
+        document_address: formData.document_address,
+        post_retirement_phone: formData.post_retirement_phone,
+        return_items_note: formData.return_items_note || null,
+        tshirt_return_confirmed: true,
+        handover_confirmed: true,
+        submitted_at: new Date().toISOString()
+      };
+
+      const { error } = await supabaseClient
+        .from("retirement_records")
+        .insert(recordPayload);
+
+      if (error) {
+        throw new Error("退職フォーム回答の保存に失敗しました。" + error.message);
+      }
+    }
+
+    async function updateEmployeeRetirementStatus(formData) {
+      const employeePayload = {
+        employment_status: "退職予定",
+        retirement_form_submitted_at: new Date().toISOString(),
+        retirement_requested_date: formData.requested_retirement_date,
+        retirement_last_work_date: formData.last_work_date || null,
+        retirement_reason: "退職依頼フォーム",
+        retirement_note: formData.reason_detail || null,
+        tshirt_return_status: "未返却"
+      };
+
+      const { error } = await supabaseClient
+        .from("employees")
+        .update(employeePayload)
+        .eq("employee_code", tokenData.employee_code);
+
+      if (error) {
+        throw new Error("社員情報の退職ステータス更新に失敗しました。" + error.message);
+      }
+    }
+
+    async function deleteRetirementToken() {
+      const { error } = await supabaseClient
+        .from("retirement_form_tokens")
+        .delete()
+        .eq("form_token", currentToken);
+
+      if (error) {
+        throw new Error("退職フォーム一時データの削除に失敗しました。" + error.message);
+      }
+    }
+
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      if (!tokenData) {
+        showInvalid("退職フォームURLが無効です。<br>管理本部から送られたURLをご確認ください。");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "送信中...";
+
+      const rawFormData = new FormData(form);
+      const data = Object.fromEntries(rawFormData.entries());
+
+      const postalCodeRegex = /^[0-9]{7}$/;
+      const phoneRegex = /^[0-9]{10,11}$/;
+
+      function resetSubmit() {
+        submitButton.disabled = false;
+        submitButton.textContent = "送信する";
+      }
+
+      if (!data.last_name || !data.first_name || !data.birthday || !data.employment_type || !data.main_store || !data.joined_date) {
+        alert("基本情報の必須項目を入力してください。");
+        resetSubmit();
+        return;
+      }
+
+      if (!data.requested_retirement_date) {
+        alert("退職予定日を入力してください。");
+        resetSubmit();
+        return;
+      }
+
+      if (!postalCodeRegex.test(data.document_postal_code)) {
+        alert("離職票等書類送付 郵便番号はハイフンなし7桁で入力してください。");
+        resetSubmit();
+        return;
+      }
+
+      if (!data.document_address) {
+        alert("離職票等書類送付 住所を入力してください。");
+        resetSubmit();
+        return;
+      }
+
+      if (!phoneRegex.test(data.post_retirement_phone)) {
+        alert("退職後連絡先電話番号はハイフンなし10〜11桁で入力してください。");
+        resetSubmit();
+        return;
+      }
+
+      if (data.last_work_date && data.last_work_date > data.requested_retirement_date) {
+        const confirmed = confirm("最終勤務予定日が退職予定日より後になっています。このまま送信してよろしいですか？");
+        if (!confirmed) {
+          resetSubmit();
+          return;
+        }
+      }
+
+      try {
+        await insertRetirementRecord(data);
+        await updateEmployeeRetirementStatus(data);
+        await deleteRetirementToken();
+
+        formArea.style.display = "none";
+        completeArea.style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (error) {
+        alert(error.message || "送信に失敗しました。時間をおいて再度お試しください。");
+        resetSubmit();
+      }
+    });
+
+    loadTokenData();
+  </script>
+</body>
+</html>

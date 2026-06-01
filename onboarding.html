@@ -759,8 +759,8 @@
         const transportationRows = buildTransportationRows(employeeCode, attendanceEmployeeId, data);
         await insertTransportationRows(transportationRows);
 
-        await updateCandidateStatus(data.token, attendanceEmployeeId, employeeCode);
-
+　　　　 await updateCandidateStatus(data.token);
+        
         console.log("社員ID / ハーモスID", employeeCode);
         console.log("勤怠QR用内部employee_id", attendanceEmployeeId);
         console.log("ハーモス初期PW候補", initialPassword);

@@ -1032,16 +1032,14 @@
             <h3>Tシャツ送付管理</h3>
             <p>入社フォーム回答後、Tシャツのサイズ・枚数・送付状況を管理します。枚数は手入力できます。</p>
           </div>
-          <button class="primary-btn">未送付のみ表示</button>
+          <button class="primary-btn" type="button" onclick="loadTshirtTargets()">未送付を更新</button>
         </div>
 
         <div class="table-wrap">
           <table>
             <thead><tr><th>氏名</th><th>店舗</th><th>雇用形態</th><th>サイズ</th><th>枚数</th><th>送付状況</th><th>送付日</th><th>操作</th></tr></thead>
-            <tbody>
-              <tr><td>佐藤花子</td><td>横浜</td><td>アルバイト</td><td>M</td><td><input type="number" value="1" min="0" style="width:80px;" /></td><td><span class="badge red">未送付</span></td><td>-</td><td><button class="small-btn">送付済みにする</button></td></tr>
-              <tr><td>鈴木一郎</td><td>大阪梅田</td><td>正社員</td><td>L</td><td><input type="number" value="1" min="0" style="width:80px;" /></td><td><span class="badge red">未送付</span></td><td>-</td><td><button class="small-btn">送付済みにする</button></td></tr>
-              <tr><td>田中美咲</td><td>名古屋</td><td>アルバイト</td><td>S</td><td><input type="number" value="1" min="0" style="width:80px;" /></td><td><span class="badge green">送付済み</span></td><td>2026/05/20</td><td><button class="small-btn">保存</button></td></tr>
+            <tbody id="tshirtTableBody">
+              <tr><td colspan="8">Tシャツ未送付データを読み込み中...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1246,6 +1244,7 @@
     const employeeTypeFilter = document.getElementById("employeeTypeFilter");
 
     let allEmployees = [];
+    let tshirtTargets = [];
 
     const pageInfo = {
       dashboard: {
@@ -1315,6 +1314,77 @@
       return employee.harmos_sent_at
         ? '<span class="badge green">送信済み</span>'
         : '<span class="badge gray">未送信</span>';
+    }
+
+    function renderTshirtTargets(list) {
+      const tbody = document.getElementById("tshirtTableBody");
+      if (!tbody) return;
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="8">Tシャツ未送付のスタッフはいません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(employee => `
+        <tr data-employee-code="${escapeHtml(employee.employee_code || "")}">
+          <td>${escapeHtml(employee.employee_name || "-")}</td>
+          <td>${escapeHtml(employee.store || "-")}</td>
+          <td>${escapeHtml(employee.employment_type || "-")}</td>
+          <td>${escapeHtml(employee.tshirt_size || "-")}</td>
+          <td><input class="tshirt-qty-input" type="number" value="${Number(employee.tshirt_quantity || 1)}" min="0" style="width:80px;" /></td>
+          <td><span class="badge red">未送付</span></td>
+          <td>-</td>
+          <td><button class="small-btn" type="button" onclick="markTshirtSent('${escapeHtml(employee.employee_code || "")}')">送付済みにする</button></td>
+        </tr>
+      `).join("");
+    }
+
+    async function loadTshirtTargets() {
+      const tbody = document.getElementById("tshirtTableBody");
+      if (!tbody) return;
+
+      tbody.innerHTML = '<tr><td colspan="8">Tシャツ未送付データを読み込み中...</td></tr>';
+
+      const { data, error } = await supabaseClient
+        .from("employees")
+        .select("employee_code,employee_name,store,employment_type,tshirt_size,tshirt_quantity,tshirt_sent,tshirt_sent_at")
+        .eq("tshirt_sent", false)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="8">Tシャツデータの取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;
+        return;
+      }
+
+      tshirtTargets = data || [];
+      renderTshirtTargets(tshirtTargets);
+    }
+
+    async function markTshirtSent(employeeCode) {
+      if (!employeeCode) return;
+
+      const row = document.querySelector(`tr[data-employee-code="${CSS.escape(employeeCode)}"]`);
+      const qtyInput = row?.querySelector(".tshirt-qty-input");
+      const quantity = Number(qtyInput?.value || 1);
+
+      const { error } = await supabaseClient
+        .from("employees")
+        .update({
+          tshirt_quantity: quantity,
+          tshirt_sent: true,
+          tshirt_sent_at: new Date().toISOString()
+        })
+        .eq("employee_code", employeeCode);
+
+      if (error) {
+        alert("Tシャツ送付状況の更新に失敗しました。" + error.message);
+        return;
+      }
+
+      // 更新後は未送付一覧から消す
+      tshirtTargets = tshirtTargets.filter(employee => employee.employee_code !== employeeCode);
+      renderTshirtTargets(tshirtTargets);
+      loadEmployees();
     }
 
     function renderEmployees(list) {
@@ -1419,6 +1489,10 @@
       if (page === "employees" && allEmployees.length === 0) {
         loadEmployees();
       }
+
+      if (page === "tshirt") {
+        loadTshirtTargets();
+      }
     }
 
     navItems.forEach(item => {
@@ -1436,6 +1510,7 @@
 
     loadStoresForFilters();
     loadEmployees();
+    loadTshirtTargets();
   </script>
 </body>
 </html>

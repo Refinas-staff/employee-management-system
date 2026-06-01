@@ -1084,12 +1084,11 @@
             <div class="info-list">
               <div class="info-item"><div class="info-label">現在の登録</div><div id="transportRecordCount">-</div></div>
               <div class="info-item"><div class="info-label">最終更新</div><div id="transportLastUpdated">-</div></div>
-              <div class="info-item"><div class="info-label">社員ID</div><div id="transportEmployeeCode">-</div></div>
-            </div>
+                          </div>
           </div>
 
           <div class="box">
-            <div class="box-header"><h4>登録中の交通費</h4></div>
+            <div class="box-header"><h4>登録中の交通費</h4><button class="secondary-btn" type="button" onclick="prepareNewTransportationRecord()">交通費を追加</button></div>
             <div class="table-wrap">
               <table>
                 <thead><tr><th>店舗</th><th>種別</th><th>経路</th><th>金額</th><th>適用開始日</th><th>操作</th></tr></thead>
@@ -1101,8 +1100,9 @@
           </div>
         </div>
 
-        <div class="section-heading">交通費修正フォーム</div>
-        <div class="box">
+        <div id="transportFormSection" style="display:none;">
+          <div class="section-heading">交通費修正フォーム</div>
+          <div class="box">
           <div class="box-header"><h4 id="transportFormTitle">交通費を追加・修正</h4></div>
           <div class="box-body">
             <input type="hidden" id="transportRecordId" />
@@ -1116,8 +1116,9 @@
               <label class="full">修正理由<textarea id="transportEditReason" placeholder="例：引っ越し、研修店舗変更、運賃改定、勤務可能店舗の追加など"></textarea></label>
             </div>
             <button class="primary-btn" type="button" onclick="saveTransportationRecord()">修正内容を保存</button>
-            <button class="secondary-btn" type="button" onclick="prepareNewTransportationRecord()">勤務可能店舗を追加</button>
+            <button class="secondary-btn" type="button" onclick="hideTransportationForm()">キャンセル</button>
           </div>
+        </div>
         </div>
 
         <div class="section-heading">このスタッフの変更履歴</div>
@@ -1226,8 +1227,8 @@
     // Supabase接続設定
     // ==============================
     // onboarding.html と同じ値に置き換えてください。
-    const SUPABASE_URL = "https://xcxrurktphdnpdumyzhn.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
+    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_PUBLIC_KEY";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const navItems = document.querySelectorAll(".nav-item");
@@ -1639,16 +1640,14 @@
       const subEl = document.getElementById("transportSelectedSub");
       const countEl = document.getElementById("transportRecordCount");
       const lastEl = document.getElementById("transportLastUpdated");
-      const codeEl = document.getElementById("transportEmployeeCode");
-
+      
       if (nameEl) nameEl.textContent = selectedTransportEmployee ? getEmployeeName(selectedTransportEmployee) : "未選択";
       if (subEl) subEl.textContent = selectedTransportEmployee ? `${selectedTransportEmployee.employee_code || "-"} / ${selectedTransportEmployee.store || "-"} / ${selectedTransportEmployee.employment_type || "-"}` : "検索結果からスタッフを選択してください。";
       if (countEl) countEl.textContent = `${records.length}件`;
       if (lastEl) lastEl.textContent = getTransportLastUpdated(records);
-      if (codeEl) codeEl.textContent = selectedTransportEmployee?.employee_code || "-";
 
       renderTransportRecords(records);
-      prepareNewTransportationRecord();
+      hideTransportationForm();
       loadTransportHistory(employeeCode);
     }
 
@@ -1680,6 +1679,7 @@
     function editTransportationRecord(recordId) {
       const record = transportRecords.find(item => Number(item.id) === Number(recordId));
       if (!record) return;
+      showTransportationForm();
       document.getElementById("transportFormTitle").textContent = "交通費を修正";
       document.getElementById("transportRecordId").value = record.id;
       document.getElementById("transportEditStore").value = record.store || "";
@@ -1691,8 +1691,26 @@
       document.getElementById("transportEditReason").value = "";
     }
 
+    function showTransportationForm() {
+      const section = document.getElementById("transportFormSection");
+      if (section) {
+        section.style.display = "block";
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function hideTransportationForm() {
+      const section = document.getElementById("transportFormSection");
+      if (section) section.style.display = "none";
+    }
+
     function prepareNewTransportationRecord() {
+      if (!selectedTransportEmployee?.employee_code) {
+        alert("先にスタッフを選択してください。");
+        return;
+      }
       if (!document.getElementById("transportRecordId")) return;
+      showTransportationForm();
       document.getElementById("transportFormTitle").textContent = "交通費を追加";
       document.getElementById("transportRecordId").value = "";
       document.getElementById("transportEditStore").value = selectedTransportEmployee?.store || "";

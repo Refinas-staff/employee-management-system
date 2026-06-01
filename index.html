@@ -701,6 +701,23 @@
       margin-top: 14px;
     }
 
+    .employee-detail-panel {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .employee-detail-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .readonly-input {
+      background: #f8fafc;
+      color: #64748b;
+    }
+
     .info-item {
       display: grid;
       grid-template-columns: 126px 1fr;
@@ -966,6 +983,118 @@
               <tr><td colspan="10">社員データを読み込み中...</td></tr>
             </tbody>
           </table>
+        </div>
+
+        <div id="employeeDetailPanel" class="employee-detail-panel">
+          <div class="box">
+            <div class="box-header">
+              <h4 id="employeeDetailTitle">社員詳細</h4>
+              <button class="small-btn" type="button" onclick="closeEmployeeDetail()">一覧に戻る</button>
+            </div>
+            <div class="box-body">
+              <div class="notice" style="box-shadow:none; margin-bottom:16px;">
+                社員番号・勤怠QR用内部IDは編集不可です。住所、電話番号、緊急連絡先、給与振込先などを確認・編集できます。
+              </div>
+
+              <div class="section-heading">基本情報</div>
+              <div class="form-grid">
+                <label>社員ID / ハーモスID<input id="empDetailEmployeeCode" class="readonly-input" type="text" readonly /></label>
+                <label>勤怠QR用内部ID<input id="empDetailEmployeeId" class="readonly-input" type="text" readonly /></label>
+                <label>姓<input id="empDetailLastName" data-editable="true" type="text" /></label>
+                <label>名<input id="empDetailFirstName" data-editable="true" type="text" /></label>
+                <label>セイ<input id="empDetailLastNameKana" data-editable="true" type="text" /></label>
+                <label>メイ<input id="empDetailFirstNameKana" data-editable="true" type="text" /></label>
+                <label>生年月日<input id="empDetailBirthday" data-editable="true" type="date" /></label>
+                <label>メールアドレス<input id="empDetailEmail" data-editable="true" type="email" /></label>
+                <label>電話番号<input id="empDetailPhone" data-editable="true" type="tel" /></label>
+                <label>郵便番号<input id="empDetailPostalCode" data-editable="true" type="text" /></label>
+                <label class="full">住所<input id="empDetailAddress" data-editable="true" type="text" /></label>
+              </div>
+
+              <div class="section-heading">所属・雇用情報</div>
+              <div class="form-grid">
+                <label>所属店舗<input id="empDetailStore" data-editable="true" type="text" /></label>
+                <label>職種
+                  <select id="empDetailJobType" data-editable="true">
+                    <option value="">選択してください</option>
+                    <option>トレーナー</option>
+                    <option>一般事務</option>
+                  </select>
+                </label>
+                <label>雇用形態
+                  <select id="empDetailEmploymentType" data-editable="true">
+                    <option value="">選択してください</option>
+                    <option>正社員</option>
+                    <option>アルバイト</option>
+                    <option>業務委託</option>
+                  </select>
+                </label>
+                <label>雇用ステータス
+                  <select id="empDetailEmploymentStatus" data-editable="true">
+                    <option>入社予定</option>
+                    <option>在籍中</option>
+                    <option>退職予定</option>
+                    <option>退職済み</option>
+                  </select>
+                </label>
+                <label>最短勤務開始日<input id="empDetailEarliestStartDate" data-editable="true" type="date" /></label>
+                <label>Tシャツサイズ
+                  <select id="empDetailTshirtSize" data-editable="true">
+                    <option value="">選択してください</option>
+                    <option>S</option>
+                    <option>M</option>
+                    <option>L</option>
+                    <option>XL</option>
+                    <option>XXL</option>
+                  </select>
+                </label>
+                <label>Tシャツ枚数<input id="empDetailTshirtQuantity" data-editable="true" type="number" min="0" /></label>
+              </div>
+
+              <div class="section-heading">緊急連絡先</div>
+              <div class="form-grid">
+                <label>氏名<input id="empDetailEmergencyName" data-editable="true" type="text" /></label>
+                <label>続柄<input id="empDetailEmergencyRelation" data-editable="true" type="text" /></label>
+                <label>電話番号<input id="empDetailEmergencyPhone" data-editable="true" type="tel" /></label>
+              </div>
+
+              <div class="section-heading">給与振込先</div>
+              <div class="form-grid">
+                <label>銀行名<input id="empDetailBankName" data-editable="true" type="text" /></label>
+                <label>支店名<input id="empDetailBankBranch" data-editable="true" type="text" /></label>
+                <label>口座種別
+                  <select id="empDetailAccountType" data-editable="true">
+                    <option value="">選択してください</option>
+                    <option>普通</option>
+                    <option>当座</option>
+                  </select>
+                </label>
+                <label>口座番号<input id="empDetailAccountNumber" data-editable="true" type="text" /></label>
+                <label class="full">口座名義 カナ<input id="empDetailAccountNameKana" data-editable="true" type="text" /></label>
+              </div>
+
+              <div class="section-heading">退職情報</div>
+              <div class="form-grid">
+                <label>退職予定日<input id="empDetailRetirementRequestedDate" data-editable="true" type="date" /></label>
+                <label>最終勤務予定日<input id="empDetailRetirementLastWorkDate" data-editable="true" type="date" /></label>
+                <label>退職日<input id="empDetailRetirementActualDate" data-editable="true" type="date" /></label>
+                <label>Tシャツ返却状況
+                  <select id="empDetailTshirtReturnStatus" data-editable="true">
+                    <option value="">未設定</option>
+                    <option>対象外</option>
+                    <option>未返却</option>
+                    <option>回収済み</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="employee-detail-actions">
+                <button id="employeeEditButton" class="primary-btn" type="button" onclick="enableEmployeeEdit()">編集する</button>
+                <button id="employeeSaveButton" class="primary-btn" type="button" onclick="saveEmployeeDetail()" style="display:none;">保存する</button>
+                <button id="employeeCancelButton" class="secondary-btn" type="button" onclick="cancelEmployeeEdit()">キャンセル</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1334,6 +1463,8 @@
     const employeeTypeFilter = document.getElementById("employeeTypeFilter");
 
     let allEmployees = [];
+    let selectedEmployeeDetail = null;
+    let selectedEmployeeDetailOriginal = null;
     let tshirtTargets = [];
     let tshirtReturnTargets = [];
     let transportEmployees = [];
@@ -1682,9 +1813,188 @@
           <td>${formatDate(employee.earliest_start_date)}</td>
           <td>${getTshirtBadge(employee)}</td>
           <td>${getHarmosBadge(employee)}</td>
-          <td><button class="small-btn" type="button">詳細</button></td>
+          <td><button class="small-btn" type="button" onclick="showEmployeeDetail('${escapeAttr(employee.employee_code || "")}')">詳細</button></td>
         </tr>
       `).join("");
+    }
+
+    const employeeDetailFields = {
+      employee_code: "empDetailEmployeeCode",
+      employee_id: "empDetailEmployeeId",
+      last_name: "empDetailLastName",
+      first_name: "empDetailFirstName",
+      last_name_kana: "empDetailLastNameKana",
+      first_name_kana: "empDetailFirstNameKana",
+      birthday: "empDetailBirthday",
+      email: "empDetailEmail",
+      phone: "empDetailPhone",
+      postal_code: "empDetailPostalCode",
+      address: "empDetailAddress",
+      store: "empDetailStore",
+      job_type: "empDetailJobType",
+      employment_type: "empDetailEmploymentType",
+      employment_status: "empDetailEmploymentStatus",
+      earliest_start_date: "empDetailEarliestStartDate",
+      tshirt_size: "empDetailTshirtSize",
+      tshirt_quantity: "empDetailTshirtQuantity",
+      emergency_name: "empDetailEmergencyName",
+      emergency_relation: "empDetailEmergencyRelation",
+      emergency_phone: "empDetailEmergencyPhone",
+      bank_name: "empDetailBankName",
+      bank_branch: "empDetailBankBranch",
+      account_type: "empDetailAccountType",
+      account_number: "empDetailAccountNumber",
+      account_name_kana: "empDetailAccountNameKana",
+      retirement_requested_date: "empDetailRetirementRequestedDate",
+      retirement_last_work_date: "empDetailRetirementLastWorkDate",
+      retirement_actual_date: "empDetailRetirementActualDate",
+      tshirt_return_status: "empDetailTshirtReturnStatus"
+    };
+
+    function setEmployeeDetailEditable(isEditable) {
+      document.querySelectorAll("#employeeDetailPanel [data-editable='true']").forEach(element => {
+        element.disabled = !isEditable;
+        element.classList.toggle("readonly-input", !isEditable);
+      });
+
+      const editButton = document.getElementById("employeeEditButton");
+      const saveButton = document.getElementById("employeeSaveButton");
+
+      if (editButton) editButton.style.display = isEditable ? "none" : "inline-block";
+      if (saveButton) saveButton.style.display = isEditable ? "inline-block" : "none";
+    }
+
+    function setEmployeeDetailValues(employee) {
+      Object.entries(employeeDetailFields).forEach(([key, id]) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        let value = employee?.[key] ?? "";
+
+        if (element.type === "date" && value) {
+          value = String(value).slice(0, 10);
+        }
+
+        element.value = value;
+      });
+
+      const title = document.getElementById("employeeDetailTitle");
+      if (title) title.textContent = `社員詳細：${getEmployeeName(employee)}`;
+    }
+
+    function getEmployeeDetailPayload() {
+      const payload = {};
+
+      Object.entries(employeeDetailFields).forEach(([key, id]) => {
+        if (key === "employee_code" || key === "employee_id") return;
+
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        let value = element.value;
+        if (value === "") value = null;
+
+        payload[key] = value;
+      });
+
+      payload.tshirt_quantity = payload.tshirt_quantity === null ? null : Number(payload.tshirt_quantity);
+      payload.employee_name = `${payload.last_name || ""}${payload.first_name || ""}`;
+      payload.updated_at = new Date().toISOString();
+
+      return payload;
+    }
+
+    function showEmployeeDetail(employeeCode) {
+      const employee = allEmployees.find(item => item.employee_code === employeeCode);
+      if (!employee) {
+        alert("社員データが見つかりません。");
+        return;
+      }
+
+      selectedEmployeeDetail = employee;
+      selectedEmployeeDetailOriginal = JSON.parse(JSON.stringify(employee));
+
+      setEmployeeDetailValues(employee);
+      setEmployeeDetailEditable(false);
+
+      const panel = document.getElementById("employeeDetailPanel");
+      if (panel) {
+        panel.style.display = "block";
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function enableEmployeeEdit() {
+      if (!selectedEmployeeDetail) {
+        alert("先に社員を選択してください。");
+        return;
+      }
+
+      setEmployeeDetailEditable(true);
+    }
+
+    function cancelEmployeeEdit() {
+      const panel = document.getElementById("employeeDetailPanel");
+
+      if (document.getElementById("employeeSaveButton")?.style.display !== "none" && selectedEmployeeDetailOriginal) {
+        setEmployeeDetailValues(selectedEmployeeDetailOriginal);
+        setEmployeeDetailEditable(false);
+        return;
+      }
+
+      closeEmployeeDetail();
+    }
+
+    function closeEmployeeDetail() {
+      const panel = document.getElementById("employeeDetailPanel");
+      if (panel) panel.style.display = "none";
+
+      selectedEmployeeDetail = null;
+      selectedEmployeeDetailOriginal = null;
+
+      document.getElementById("employees")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function saveEmployeeDetail() {
+      if (!selectedEmployeeDetail?.employee_code) {
+        alert("保存対象の社員が選択されていません。");
+        return;
+      }
+
+      const payload = getEmployeeDetailPayload();
+
+      if (!payload.last_name || !payload.first_name) {
+        alert("姓・名は必須です。");
+        return;
+      }
+
+      const confirmed = confirm(`${payload.employee_name}さんの社員情報を更新してよろしいですか？`);
+      if (!confirmed) return;
+
+      const { error } = await supabaseClient
+        .from("employees")
+        .update(payload)
+        .eq("employee_code", selectedEmployeeDetail.employee_code);
+
+      if (error) {
+        alert("社員情報の更新に失敗しました。" + error.message);
+        return;
+      }
+
+      alert("社員情報を更新しました。");
+
+      await loadEmployees();
+
+      const updatedEmployee = allEmployees.find(item => item.employee_code === selectedEmployeeDetail.employee_code);
+      if (updatedEmployee) {
+        selectedEmployeeDetail = updatedEmployee;
+        selectedEmployeeDetailOriginal = JSON.parse(JSON.stringify(updatedEmployee));
+        setEmployeeDetailValues(updatedEmployee);
+      }
+
+      setEmployeeDetailEditable(false);
+      loadDashboard();
+      loadTshirtTargets();
     }
 
     function applyEmployeeFilters() {
@@ -1719,7 +2029,7 @@
 
       const { data, error } = await supabaseClient
         .from("employees")
-        .select("employee_code,harmos_id,employee_name,last_name,first_name,email,store,job_type,employment_type,employment_status,earliest_start_date,tshirt_sent,harmos_sent_at,created_at")
+        .select("employee_code,harmos_id,employee_id,employee_name,last_name,first_name,last_name_kana,first_name_kana,birthday,phone,email,postal_code,address,store,job_type,employment_type,employment_status,earliest_start_date,emergency_name,emergency_relation,emergency_phone,bank_name,bank_branch,account_type,account_number,account_name_kana,tshirt_size,tshirt_quantity,tshirt_sent,harmos_sent_at,retirement_requested_date,retirement_last_work_date,retirement_actual_date,tshirt_return_status,created_at")
         .order("created_at", { ascending: false });
 
       if (error) {

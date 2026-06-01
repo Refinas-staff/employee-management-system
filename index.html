@@ -23,11 +23,18 @@
       box-sizing: border-box;
     }
 
+    html,
+    body {
+      min-height: 100%;
+    }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--brand-bg);
       color: var(--brand-dark);
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     button,
@@ -253,7 +260,7 @@
       background: white;
       border-radius: 10px;
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
-      overflow: hidden;
+      overflow: visible;
       margin-bottom: 24px;
     }
 
@@ -261,7 +268,14 @@
       display: grid;
       grid-template-columns: repeat(8, 1fr);
       background: #f8fafc;
+      border: 1px solid var(--brand-border);
       border-bottom: 1px solid var(--brand-border);
+      border-radius: 10px 10px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
     }
 
     .operation-tab {
@@ -289,10 +303,29 @@
     .page {
       display: none;
       padding: 24px;
+      overflow: visible;
+      border: 1px solid var(--brand-border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      background: #fff;
     }
 
     .page.active-page {
       display: block;
+    }
+
+    .table-wrap::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    .table-wrap::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+
+    .table-wrap::-webkit-scrollbar-track {
+      background: #f8fafc;
     }
 
     .page-title-row {
@@ -493,7 +526,14 @@
     }
 
     .table-wrap {
-      overflow-x: auto;
+      overflow: auto;
+      max-height: 360px;
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+    }
+
+    .table-wrap table {
+      min-width: 900px;
     }
 
     table {
@@ -509,6 +549,9 @@
       padding: 12px;
       border-bottom: 1px solid var(--brand-border);
       white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 5;
     }
 
     td {
@@ -678,12 +721,7 @@
     }
 
     .footer {
-      max-width: 1220px;
-      margin: 0 auto 32px;
-      padding: 0 20px;
-      color: var(--text-muted);
-      font-size: 12px;
-      text-align: center;
+      display: none;
     }
 
     @media (max-width: 1080px) {
@@ -706,6 +744,10 @@
     }
 
     @media (max-width: 760px) {
+      .container {
+        margin-bottom: 24px;
+      }
+
       .global-header-inner,
       .hero-inner {
         grid-template-columns: 1fr;
@@ -970,10 +1012,10 @@
             <div class="form-grid">
               <label>姓<input type="text" placeholder="山田" /></label>
               <label>名<input type="text" placeholder="太郎" /></label>
-              <label>メールアドレス<input type="email" placeholder="example@example.com" /></label>
-              <label>所属予定店舗<select><option>選択してください</option><option>渋谷本店</option><option>横浜</option><option>大阪梅田</option></select></label>
-              <label>職種<select><option>選択してください</option><option>トレーナー</option><option>受付</option><option>一般事務</option></select></label>
+              <label>研修予定店舗<select><option>選択してください</option><option>渋谷本店</option><option>横浜</option><option>大阪梅田</option><option>本部</option></select></label>
+              <label>勤務開始予定日<input type="date" /></label>
               <label>雇用形態<select><option>正社員</option><option>アルバイト</option></select></label>
+              <label class="full">採用部メモ<textarea placeholder="例：初回研修は本部、勤務開始日は調整中、連絡時の注意事項など"></textarea></label>
             </div>
             <button class="primary-btn">控えとして登録してフォームURLを作成</button>
           </div>
@@ -982,10 +1024,10 @@
         <div class="section-heading">入社フォーム回答状況（社員名簿の正データ）</div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>採用部連絡名</th><th>本人入力名</th><th>店舗</th><th>フォームURL</th><th>回答状況</th><th>回答日</th><th>社員名簿反映</th><th>操作</th></tr></thead>
+            <thead><tr><th>採用部連絡名</th><th>本人入力名</th><th>研修予定店舗</th><th>勤務開始予定日</th><th>採用部メモ</th><th>フォームURL</th><th>回答状況</th><th>回答日</th><th>社員名簿反映</th><th>操作</th></tr></thead>
             <tbody>
-              <tr><td>山田太郎</td><td>-</td><td>渋谷本店</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge red">未回答</span></td><td>-</td><td><span class="badge gray">未反映</span></td><td><button class="small-btn">リマインド</button></td></tr>
-              <tr><td>佐藤花子</td><td>佐藤花子</td><td>横浜</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge green">回答済み</span></td><td>2026/06/01</td><td><span class="badge green">反映済み</span></td><td><button class="small-btn">詳細</button></td></tr>
+              <tr><td>山田太郎</td><td>-</td><td>本部</td><td>2026/06/10</td><td>初回研修は本部</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge red">未回答</span></td><td>-</td><td><span class="badge gray">未反映</span></td><td><button class="small-btn">リマインド</button></td></tr>
+              <tr><td>佐藤花子</td><td>佐藤花子</td><td>横浜</td><td>2026/06/12</td><td>特になし</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge green">回答済み</span></td><td>2026/06/01</td><td><span class="badge green">反映済み</span></td><td><button class="small-btn">詳細</button></td></tr>
             </tbody>
           </table>
         </div>
@@ -995,18 +1037,18 @@
         <div class="page-title-row">
           <div>
             <h3>Tシャツ送付管理</h3>
-            <p>入社フォーム回答後、Tシャツ送付状況を管理します。</p>
+            <p>入社フォーム回答後、Tシャツのサイズ・枚数・送付状況を管理します。枚数は手入力できます。</p>
           </div>
           <button class="primary-btn">未送付のみ表示</button>
         </div>
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th>氏名</th><th>店舗</th><th>雇用形態</th><th>サイズ</th><th>送付状況</th><th>送付日</th><th>操作</th></tr></thead>
+            <thead><tr><th>氏名</th><th>店舗</th><th>雇用形態</th><th>サイズ</th><th>枚数</th><th>送付状況</th><th>送付日</th><th>操作</th></tr></thead>
             <tbody>
-              <tr><td>佐藤花子</td><td>横浜</td><td>アルバイト</td><td>M</td><td><span class="badge red">未送付</span></td><td>-</td><td><button class="small-btn">送付済みにする</button></td></tr>
-              <tr><td>鈴木一郎</td><td>大阪梅田</td><td>正社員</td><td>L</td><td><span class="badge red">未送付</span></td><td>-</td><td><button class="small-btn">送付済みにする</button></td></tr>
-              <tr><td>田中美咲</td><td>名古屋</td><td>アルバイト</td><td>S</td><td><span class="badge green">送付済み</span></td><td>2026/05/20</td><td><button class="small-btn">詳細</button></td></tr>
+              <tr><td>佐藤花子</td><td>横浜</td><td>アルバイト</td><td>M</td><td><input type="number" value="1" min="0" style="width:80px;" /></td><td><span class="badge red">未送付</span></td><td>-</td><td><button class="small-btn">送付済みにする</button></td></tr>
+              <tr><td>鈴木一郎</td><td>大阪梅田</td><td>正社員</td><td>L</td><td><input type="number" value="1" min="0" style="width:80px;" /></td><td><span class="badge red">未送付</span></td><td>-</td><td><button class="small-btn">送付済みにする</button></td></tr>
+              <tr><td>田中美咲</td><td>名古屋</td><td>アルバイト</td><td>S</td><td><input type="number" value="1" min="0" style="width:80px;" /></td><td><span class="badge green">送付済み</span></td><td>2026/05/20</td><td><button class="small-btn">保存</button></td></tr>
             </tbody>
           </table>
         </div>
@@ -1016,18 +1058,84 @@
         <div class="page-title-row">
           <div>
             <h3>交通費管理</h3>
-            <p>正社員は定期代、アルバイトは店舗ごとの片道交通費を確認します。</p>
+            <p>全社員を一覧で並べるのではなく、検索して対象スタッフの交通費だけを確認・修正します。通常は「未確認」「変更申請あり」だけを表示します。</p>
           </div>
           <button class="secondary-btn">交通費CSV出力</button>
         </div>
 
+        <div class="box">
+          <div class="box-header"><h4>スタッフ検索</h4></div>
+          <div class="box-body">
+            <div class="filters" style="margin-bottom:0;">
+              <input type="text" placeholder="氏名・社員IDで検索" />
+              <select><option>全店舗</option><option>渋谷本店</option><option>横浜</option><option>大阪梅田</option><option>名古屋</option></select>
+              <select><option>全雇用形態</option><option>正社員</option><option>アルバイト</option></select>
+              <select><option>すべて表示</option><option>未確認</option><option>変更申請あり</option><option>確認済み</option></select>
+              <button class="primary-btn">検索</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">検索結果</div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>氏名</th><th>雇用形態</th><th>店舗</th><th>交通費種別</th><th>経路</th><th>金額</th><th>確認</th></tr></thead>
+            <thead><tr><th>氏名</th><th>雇用形態</th><th>主な店舗</th><th>現在の交通費</th><th>最終更新</th><th>操作</th></tr></thead>
             <tbody>
-              <tr><td>山田太郎</td><td>正社員</td><td>渋谷本店</td><td>1ヶ月定期</td><td>三軒茶屋駅 → 渋谷駅</td><td>12,000円</td><td><span class="badge yellow">未確認</span></td></tr>
-              <tr><td>佐藤花子</td><td>アルバイト</td><td>横浜</td><td>片道</td><td>川崎駅 → 横浜駅</td><td>230円</td><td><span class="badge green">確認済み</span></td></tr>
-              <tr><td>佐藤花子</td><td>アルバイト</td><td>川崎</td><td>片道</td><td>川崎駅 → 川崎駅</td><td>0円</td><td><span class="badge green">確認済み</span></td></tr>
+              <tr><td>山田太郎</td><td>正社員</td><td>渋谷本店</td><td>三軒茶屋駅 → 渋谷駅 / 12,000円</td><td>2026/06/01</td><td><button class="small-btn">詳細・修正</button></td></tr>
+              <tr><td>佐藤花子</td><td>アルバイト</td><td>横浜</td><td>2店舗登録 / 片道0〜230円</td><td>2026/06/01</td><td><button class="small-btn">詳細・修正</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-heading">選択中スタッフの交通費詳細</div>
+        <div class="detail-layout">
+          <div class="profile-card">
+            <p class="profile-name">佐藤花子</p>
+            <p class="profile-sub">R20260002 / 横浜 / アルバイト</p>
+            <div class="info-list">
+              <div class="info-item"><div class="info-label">現在の登録</div><div>2件</div></div>
+              <div class="info-item"><div class="info-label">最終更新</div><div>2026/06/01</div></div>
+                          </div>
+          </div>
+
+          <div class="box">
+            <div class="box-header"><h4>登録中の交通費</h4></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>店舗</th><th>種別</th><th>経路</th><th>金額</th><th>適用開始日</th><th>操作</th></tr></thead>
+                <tbody>
+                  <tr><td>横浜</td><td>片道</td><td>川崎駅 → 横浜駅</td><td>230円</td><td>2026/06/01</td><td><button class="small-btn">修正</button></td></tr>
+                  <tr><td>川崎</td><td>片道</td><td>川崎駅 → 川崎駅</td><td>0円</td><td>2026/06/01</td><td><button class="small-btn">修正</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">交通費修正フォーム</div>
+        <div class="box">
+          <div class="box-header"><h4>選択したスタッフの交通費を修正</h4></div>
+          <div class="box-body">
+            <div class="form-grid">
+              <label>対象店舗<select><option>横浜</option><option>川崎</option><option>渋谷本店</option><option>大阪梅田</option></select></label>
+              <label>交通費種別<select><option>片道</option><option>1ヶ月定期</option></select></label>
+              <label>出発駅<input type="text" value="川崎駅" /></label>
+              <label>到着駅<input type="text" value="横浜駅" /></label>
+              <label>金額<input type="number" value="230" /></label>
+              <label>適用開始日<input type="date" value="2026-06-01" /></label>
+              <label class="full">修正理由<textarea placeholder="例：引っ越し、研修店舗変更、運賃改定、勤務可能店舗の追加など"></textarea></label>
+            </div>
+            <button class="primary-btn">修正内容を保存</button>
+            <button class="secondary-btn">勤務可能店舗を追加</button>
+          </div>
+        </div>
+
+        <div class="section-heading">このスタッフの変更履歴</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>変更日</th><th>変更前</th><th>変更後</th><th>適用開始日</th><th>修正理由</th><th>更新者</th></tr></thead>
+            <tbody>
+              <tr><td>2026/06/01</td><td>川崎駅 → 横浜駅 / 220円</td><td>川崎駅 → 横浜駅 / 230円</td><td>2026/06/01</td><td>運賃変更</td><td>管理本部</td></tr>
             </tbody>
           </table>
         </div>
@@ -1173,7 +1281,7 @@
 
       heroTitle.textContent = pageInfo[page].title;
       heroDescription.textContent = pageInfo[page].description;
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      document.querySelector('.operation-panel').scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     navItems.forEach(item => {

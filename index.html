@@ -959,13 +959,13 @@
         <div class="page-title-row">
           <div>
             <h3>入社手続き</h3>
-            <p>採用管理はここに集約します。採用予定者を登録し、入社フォームURLを発行・送信します。</p>
+            <p>採用部から入社予定の連絡が来た人だけを一時登録します。正式な社員名簿は、本人が入力した入社フォームの回答内容を正として反映します。</p>
           </div>
           <button class="primary-btn">入社フォームURLを発行</button>
         </div>
 
         <div class="box">
-          <div class="box-header"><h4>入社予定者登録</h4></div>
+          <div class="box-header"><h4>採用部連絡メモ</h4></div>
           <div class="box-body">
             <div class="form-grid">
               <label>姓<input type="text" placeholder="山田" /></label>
@@ -975,17 +975,17 @@
               <label>職種<select><option>選択してください</option><option>トレーナー</option><option>受付</option><option>一般事務</option></select></label>
               <label>雇用形態<select><option>正社員</option><option>アルバイト</option></select></label>
             </div>
-            <button class="primary-btn">登録してフォームURLを作成</button>
+            <button class="primary-btn">控えとして登録してフォームURLを作成</button>
           </div>
         </div>
 
-        <div class="section-heading">入社フォーム状況</div>
+        <div class="section-heading">入社フォーム回答状況（社員名簿の正データ）</div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>氏名</th><th>店舗</th><th>フォームURL</th><th>回答状況</th><th>回答日</th><th>重複入力</th><th>操作</th></tr></thead>
+            <thead><tr><th>採用部連絡名</th><th>本人入力名</th><th>店舗</th><th>フォームURL</th><th>回答状況</th><th>回答日</th><th>社員名簿反映</th><th>操作</th></tr></thead>
             <tbody>
-              <tr><td>山田太郎</td><td>渋谷本店</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge red">未回答</span></td><td>-</td><td><span class="badge gray">未</span></td><td><button class="small-btn">リマインド</button></td></tr>
-              <tr><td>佐藤花子</td><td>横浜</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge green">回答済み</span></td><td>2026/06/01</td><td><span class="badge green">防止中</span></td><td><button class="small-btn">詳細</button></td></tr>
+              <tr><td>山田太郎</td><td>-</td><td>渋谷本店</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge red">未回答</span></td><td>-</td><td><span class="badge gray">未反映</span></td><td><button class="small-btn">リマインド</button></td></tr>
+              <tr><td>佐藤花子</td><td>佐藤花子</td><td>横浜</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge green">回答済み</span></td><td>2026/06/01</td><td><span class="badge green">反映済み</span></td><td><button class="small-btn">詳細</button></td></tr>
             </tbody>
           </table>
         </div>
@@ -1140,7 +1140,7 @@
       },
       onboarding: {
         title: "入社手続きを管理",
-        description: "採用予定者を登録し、入社フォームURLを発行します。回答後は社員情報として管理します。"
+        description: "採用部から入社予定と連絡が来た人だけを控えとして登録します。正式な社員名簿は、本人が入力した入社フォーム回答を正として反映します。"
       },
       tshirt: {
         title: "Tシャツ送付状況を管理",

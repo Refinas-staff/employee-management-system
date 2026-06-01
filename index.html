@@ -1174,40 +1174,105 @@
         <div class="page-title-row">
           <div>
             <h3>退職管理</h3>
-            <p>退職予定・退職済みの管理、QR無効化、社内ツール停止チェックを行います。</p>
+            <p>スタッフ検索を基本に、退職フォームURLの発行・コピー・メール作成、入力状況、Tシャツ返却、退職済み処理を管理します。</p>
           </div>
-          <button class="danger-btn">退職処理を開始</button>
+          <button class="secondary-btn" type="button" onclick="loadRetirementManagement(true)">退職管理を更新</button>
         </div>
 
+        <div class="box">
+          <div class="box-header"><h4>スタッフ検索</h4></div>
+          <div class="box-body">
+            <div class="filters" style="margin-bottom:0;">
+              <input id="retirementSearchInput" type="text" placeholder="氏名・社員ID・メールで検索" />
+              <select id="retirementStatusFilter">
+                <option value="">全ステータス</option>
+                <option>在籍中</option>
+                <option>入社予定</option>
+                <option>退職予定</option>
+                <option>退職済み</option>
+              </select>
+              <select id="retirementReturnFilter">
+                <option value="">Tシャツ返却 全て</option>
+                <option>未返却</option>
+                <option>回収済み</option>
+                <option>対象外</option>
+              </select>
+              <label style="display:flex; align-items:center; gap:8px; font-weight:900; color:#334155;">
+                退職月
+                <input id="retirementMonthFilter" type="month" style="width:150px;" />
+              </label>
+              <button class="primary-btn" type="button" onclick="loadRetirementManagement(true)">検索</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">検索結果</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>社員ID</th>
+                <th>氏名</th>
+                <th>メール</th>
+                <th>店舗</th>
+                <th>雇用形態</th>
+                <th>状態</th>
+                <th>フォーム状況</th>
+                <th>Tシャツ返却</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="retirementSearchBody">
+              <tr><td colspan="9">検索条件を入力して「検索」を押してください。</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-heading">選択中スタッフ</div>
         <div class="detail-layout">
           <div class="profile-card">
-            <p class="profile-name">田中美咲</p>
-            <p class="profile-sub">R20250088 / 名古屋 / アルバイト</p>
-            <span class="badge yellow">退職予定</span>
+            <p id="retirementSelectedName" class="profile-name">未選択</p>
+            <p id="retirementSelectedSub" class="profile-sub">検索結果からスタッフを選択してください。</p>
+            <div id="retirementSelectedStatus"><span class="badge gray">未選択</span></div>
             <div class="info-list">
-              <div class="info-item"><div class="info-label">退職申出日</div><div>2026/05/30</div></div>
-              <div class="info-item"><div class="info-label">最終勤務日</div><div>2026/06/20</div></div>
-              <div class="info-item"><div class="info-label">退職理由</div><div>本人都合</div></div>
-              <div class="info-item"><div class="info-label">QR状態</div><div>最終勤務日まで有効</div></div>
+              <div class="info-item"><div class="info-label">フォーム状況</div><div id="retirementFormStatus">-</div></div>
+              <div class="info-item"><div class="info-label">退職予定日</div><div id="retirementRequestedDate">-</div></div>
+              <div class="info-item"><div class="info-label">最終勤務予定日</div><div id="retirementLastWorkDate">-</div></div>
+              <div class="info-item"><div class="info-label">Tシャツ返却</div><div id="retirementTshirtStatus">-</div></div>
             </div>
           </div>
 
           <div class="box">
-            <div class="box-header"><h4>退職チェックリスト</h4></div>
+            <div class="box-header"><h4>退職フォーム案内</h4></div>
             <div class="box-body">
-              <div class="checklist">
-                <div class="check-item"><span>ハーモス停止</span><button class="small-btn">未完了</button></div>
-                <div class="check-item"><span>打刻QR無効化</span><button class="small-btn">未完了</button></div>
-                <div class="check-item"><span>LINE WORKS停止</span><button class="small-btn">未完了</button></div>
-                <div class="check-item"><span>Tシャツ・備品返却確認</span><button class="small-btn">未完了</button></div>
-                <div class="check-item"><span>最終給与・交通費確認</span><button class="small-btn">未完了</button></div>
+              <p style="margin-top:0; color:var(--text-muted); line-height:1.7;">
+                対象スタッフを選択後、退職フォームURLを発行します。URLはコピー、またはメール作成に使用できます。
+              </p>
+              <div class="form-grid">
+                <label class="full">退職フォームURL<input id="retirementFormUrl" type="text" readonly placeholder="スタッフを選択してURLを発行してください" /></label>
               </div>
-              <br />
-              <button class="danger-btn">退職済みにする</button>
+              <div class="actions" style="justify-content:flex-start; margin:12px 0 0; flex-wrap:wrap;">
+                <button class="primary-btn" type="button" onclick="issueRetirementFormUrl()">退職フォームURLを発行</button>
+                <button class="secondary-btn" type="button" onclick="copyRetirementFormUrl()">URLコピー</button>
+                <button class="secondary-btn" type="button" onclick="openRetirementMail()">メール作成</button>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+
+        <div class="section-heading">退職後の管理</div>
+        <div class="box">
+          <div class="box-header"><h4>Tシャツ返却・退職完了</h4></div>
+          <div class="box-body">
+            <div class="checklist">
+              <div class="check-item"><span>退職フォーム入力</span><span id="retirementSubmittedBadge" class="badge gray">未選択</span></div>
+              <div class="check-item"><span>Tシャツ返却</span><button id="tshirtReturnButton" class="small-btn" type="button" onclick="markRetirementTshirtReturned()">回収した</button></div>
+              <div class="check-item"><span>退職ステータス</span><button class="danger-btn" type="button" onclick="markEmployeeRetired()">退職済みにする</button></div>
+            </div>
+          </div>
+        </div>
+
+            </section>
 
       <section id="settings" class="page">
         <div class="page-title-row">
@@ -1267,6 +1332,11 @@
     let transportRecords = [];
     let selectedTransportEmployee = null;
     let onboardingCandidates = [];
+    let retirementEmployees = [];
+    let retirementTokens = [];
+    let retirementRecords = [];
+    let selectedRetirementEmployee = null;
+    let retirementHasSearched = false;
 
     const pageInfo = {
       dashboard: {
@@ -1376,6 +1446,7 @@
       if (page === "tshirt") loadTshirtTargets();
       if (page === "transport") loadTransportManagement();
       if (page === "onboarding") loadOnboardingCandidates();
+      if (page === "retirement") resetRetirementSearchState();
     }
 
     navItems.forEach(item => item.addEventListener("click", () => switchPage(item.dataset.page)));
@@ -2002,6 +2073,339 @@
       }).join("");
     }
 
+
+    function resetRetirementSearchState() {
+      retirementHasSearched = false;
+      retirementEmployees = [];
+      retirementTokens = [];
+      retirementRecords = [];
+      selectedRetirementEmployee = null;
+
+      const tbody = document.getElementById("retirementSearchBody");
+      if (tbody) tbody.innerHTML = '<tr><td colspan="9">検索条件を入力して「検索」を押してください。</td></tr>';
+
+      const selectedName = document.getElementById("retirementSelectedName");
+      const selectedSub = document.getElementById("retirementSelectedSub");
+      const selectedStatus = document.getElementById("retirementSelectedStatus");
+      const formStatus = document.getElementById("retirementFormStatus");
+      const requestedDate = document.getElementById("retirementRequestedDate");
+      const lastWorkDate = document.getElementById("retirementLastWorkDate");
+      const tshirtStatus = document.getElementById("retirementTshirtStatus");
+      const formUrl = document.getElementById("retirementFormUrl");
+      const submittedBadge = document.getElementById("retirementSubmittedBadge");
+      const returnButton = document.getElementById("tshirtReturnButton");
+
+      if (selectedName) selectedName.textContent = "未選択";
+      if (selectedSub) selectedSub.textContent = "検索結果からスタッフを選択してください。";
+      if (selectedStatus) selectedStatus.innerHTML = '<span class="badge gray">未選択</span>';
+      if (formStatus) formStatus.textContent = "-";
+      if (requestedDate) requestedDate.textContent = "-";
+      if (lastWorkDate) lastWorkDate.textContent = "-";
+      if (tshirtStatus) tshirtStatus.textContent = "-";
+      if (formUrl) formUrl.value = "";
+      if (submittedBadge) {
+        submittedBadge.className = "badge gray";
+        submittedBadge.textContent = "未選択";
+      }
+      if (returnButton) {
+        returnButton.disabled = true;
+        returnButton.textContent = "回収した";
+      }
+    }
+
+    function getRetirementBaseUrl() {
+      const current = new URL(window.location.href);
+      return `${current.origin}${current.pathname.replace(/index\.html$/, "").replace(/\/$/, "")}/retirement.html`;
+    }
+
+    function getRetirementTokenForEmployee(employeeCode) {
+      return retirementTokens.find(token => token.employee_code === employeeCode) || null;
+    }
+
+    function getRetirementRecordForEmployee(employeeCode) {
+      return retirementRecords.find(record => record.employee_code === employeeCode) || null;
+    }
+
+    function getRetirementFormStatus(employee) {
+      if (!employee) return '<span class="badge gray">未選択</span>';
+      if (employee.retirement_form_submitted_at) return '<span class="badge green">入力済み</span>';
+      const token = getRetirementTokenForEmployee(employee.employee_code);
+      if (token) return '<span class="badge yellow">送付済み / 未回答</span>';
+      return '<span class="badge gray">未発行</span>';
+    }
+
+    function getRetirementTshirtBadge(employee) {
+      const value = employee?.tshirt_return_status || "対象外";
+      if (value === "未返却") return '<span class="badge red">未返却</span>';
+      if (value === "回収済み") return '<span class="badge green">回収済み</span>';
+      return '<span class="badge gray">対象外</span>';
+    }
+
+    function getRetirementMonthValue(employee) {
+      const record = getRetirementRecordForEmployee(employee.employee_code);
+      const dateValue = employee.retirement_requested_date || record?.requested_retirement_date || employee.retirement_actual_date || "";
+      return dateValue ? String(dateValue).slice(0, 7) : "";
+    }
+
+    function applyRetirementFilters() {
+      const tbody = document.getElementById("retirementSearchBody");
+      if (!tbody) return;
+
+      if (!retirementHasSearched) {
+        tbody.innerHTML = '<tr><td colspan="9">検索条件を入力して「検索」を押してください。</td></tr>';
+        return;
+      }
+
+      const keyword = (document.getElementById("retirementSearchInput")?.value || "").trim().toLowerCase();
+      const status = document.getElementById("retirementStatusFilter")?.value || "";
+      const returnStatus = document.getElementById("retirementReturnFilter")?.value || "";
+      const retirementMonth = document.getElementById("retirementMonthFilter")?.value || "";
+
+      const filtered = retirementEmployees.filter(employee => {
+        const target = [
+          employee.employee_code,
+          employee.harmos_id,
+          employee.employee_name,
+          employee.last_name,
+          employee.first_name,
+          employee.email
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        if (keyword && !target.includes(keyword)) return false;
+        if (status && employee.employment_status !== status) return false;
+        if (returnStatus && (employee.tshirt_return_status || "対象外") !== returnStatus) return false;
+        if (retirementMonth && getRetirementMonthValue(employee) !== retirementMonth) return false;
+        return true;
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="9">該当するスタッフがいません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(employee => `
+        <tr>
+          <td>${escapeHtml(employee.employee_code || employee.harmos_id || "-")}</td>
+          <td>${escapeHtml(getEmployeeName(employee))}</td>
+          <td>${escapeHtml(employee.email || "-")}</td>
+          <td>${escapeHtml(employee.store || "-")}</td>
+          <td>${escapeHtml(employee.employment_type || "-")}</td>
+          <td>${getStatusBadge(employee.employment_status)}</td>
+          <td>${getRetirementFormStatus(employee)}</td>
+          <td>${getRetirementTshirtBadge(employee)}</td>
+          <td><button class="small-btn js-retirement-select" type="button" data-employee-code="${escapeAttr(employee.employee_code || "")}">詳細・修正</button></td>
+        </tr>
+      `).join("");
+
+      tbody.querySelectorAll(".js-retirement-select").forEach(button => {
+        button.addEventListener("click", () => selectRetirementEmployee(button.dataset.employeeCode));
+      });
+    }
+
+    async function loadRetirementManagement(isSearch = false) {
+      const tbody = document.getElementById("retirementSearchBody");
+      retirementHasSearched = Boolean(isSearch);
+      if (!retirementHasSearched) {
+        resetRetirementSearchState();
+        return;
+      }
+      if (tbody) tbody.innerHTML = '<tr><td colspan="9">退職管理データを読み込み中...</td></tr>';
+
+      const employeesResult = await supabaseClient
+        .from("employees")
+        .select("employee_code,harmos_id,employee_id,employee_name,last_name,first_name,email,store,employment_type,employment_status,retirement_form_sent_at,retirement_form_submitted_at,retirement_requested_date,retirement_last_work_date,retirement_actual_date,tshirt_return_status,tshirt_returned_at,created_at")
+        .order("created_at", { ascending: false });
+
+      if (employeesResult.error) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="9">スタッフ取得に失敗しました。${escapeHtml(employeesResult.error.message)}</td></tr>`;
+        return;
+      }
+
+      const tokensResult = await supabaseClient
+        .from("retirement_form_tokens")
+        .select("id,employee_code,employee_id,employee_name,email,form_token,form_url,status,sent_at,created_at")
+        .order("created_at", { ascending: false });
+
+      if (tokensResult.error) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="9">退職フォームURL情報の取得に失敗しました。${escapeHtml(tokensResult.error.message)}</td></tr>`;
+        return;
+      }
+
+      const recordsResult = await supabaseClient
+        .from("retirement_records")
+        .select("employee_code,employee_id,employee_name,email,requested_retirement_date,last_work_date,post_retirement_phone,return_items_note,reason_detail,submitted_at,created_at")
+        .order("submitted_at", { ascending: false });
+
+      if (recordsResult.error) {
+        console.warn("退職回答履歴の取得に失敗しました", recordsResult.error);
+      }
+
+      retirementEmployees = employeesResult.data || [];
+      retirementTokens = tokensResult.data || [];
+      retirementRecords = recordsResult.data || [];
+      applyRetirementFilters();
+
+      if (selectedRetirementEmployee?.employee_code) {
+        const stillExists = retirementEmployees.find(employee => employee.employee_code === selectedRetirementEmployee.employee_code);
+        if (stillExists) selectRetirementEmployee(stillExists.employee_code);
+      }
+    }
+
+    function selectRetirementEmployee(employeeCode) {
+      selectedRetirementEmployee = retirementEmployees.find(employee => employee.employee_code === employeeCode) || null;
+      const token = getRetirementTokenForEmployee(employeeCode);
+      const record = getRetirementRecordForEmployee(employeeCode);
+
+      document.getElementById("retirementSelectedName").textContent = selectedRetirementEmployee ? getEmployeeName(selectedRetirementEmployee) : "未選択";
+      document.getElementById("retirementSelectedSub").textContent = selectedRetirementEmployee
+        ? `${selectedRetirementEmployee.employee_code || "-"} / ${selectedRetirementEmployee.store || "-"} / ${selectedRetirementEmployee.employment_type || "-"} / ${selectedRetirementEmployee.email || "-"}`
+        : "検索結果からスタッフを選択してください。";
+      document.getElementById("retirementSelectedStatus").innerHTML = selectedRetirementEmployee ? getStatusBadge(selectedRetirementEmployee.employment_status) : '<span class="badge gray">未選択</span>';
+      document.getElementById("retirementFormStatus").innerHTML = getRetirementFormStatus(selectedRetirementEmployee);
+      document.getElementById("retirementRequestedDate").textContent = formatDate(selectedRetirementEmployee?.retirement_requested_date || record?.requested_retirement_date);
+      document.getElementById("retirementLastWorkDate").textContent = formatDate(selectedRetirementEmployee?.retirement_last_work_date || record?.last_work_date);
+      document.getElementById("retirementTshirtStatus").innerHTML = getRetirementTshirtBadge(selectedRetirementEmployee);
+      document.getElementById("retirementFormUrl").value = token?.form_url || "";
+      document.getElementById("retirementSubmittedBadge").className = selectedRetirementEmployee?.retirement_form_submitted_at ? "badge green" : "badge gray";
+      document.getElementById("retirementSubmittedBadge").textContent = selectedRetirementEmployee?.retirement_form_submitted_at ? "入力済み" : "未入力";
+
+      const returnButton = document.getElementById("tshirtReturnButton");
+      if (returnButton) {
+        returnButton.disabled = !selectedRetirementEmployee || selectedRetirementEmployee.tshirt_return_status === "回収済み";
+        returnButton.textContent = selectedRetirementEmployee?.tshirt_return_status === "回収済み" ? "回収済み" : "回収した";
+      }
+
+    }
+
+    async function issueRetirementFormUrl() {
+      if (!selectedRetirementEmployee?.employee_code) {
+        alert("先にスタッフを選択してください。");
+        return;
+      }
+
+      const confirmed = confirm(`${getEmployeeName(selectedRetirementEmployee)}さんの退職フォームURLを発行しますか？\n\n既存の未回答URLがある場合は、新しいURLに差し替えます。`);
+      if (!confirmed) return;
+
+      await supabaseClient
+        .from("retirement_form_tokens")
+        .delete()
+        .eq("employee_code", selectedRetirementEmployee.employee_code);
+
+      const formToken = generateToken(32);
+      const formUrl = `${getRetirementBaseUrl()}?token=${encodeURIComponent(formToken)}`;
+      const now = new Date().toISOString();
+
+      const { error } = await supabaseClient
+        .from("retirement_form_tokens")
+        .insert({
+          employee_code: selectedRetirementEmployee.employee_code,
+          employee_id: selectedRetirementEmployee.employee_id || null,
+          employee_name: getEmployeeName(selectedRetirementEmployee),
+          email: selectedRetirementEmployee.email || null,
+          form_token: formToken,
+          form_url: formUrl,
+          status: "未回答",
+          sent_at: now
+        });
+
+      if (error) {
+        alert("退職フォームURLの発行に失敗しました。" + error.message);
+        return;
+      }
+
+      await supabaseClient
+        .from("employees")
+        .update({ retirement_form_sent_at: now })
+        .eq("employee_code", selectedRetirementEmployee.employee_code);
+
+      document.getElementById("retirementFormUrl").value = formUrl;
+      await loadRetirementManagement(true);
+      alert("退職フォームURLを発行しました。URLコピーまたはメール作成を使用してください。");
+    }
+
+    async function copyRetirementFormUrl() {
+      const url = document.getElementById("retirementFormUrl")?.value || "";
+      if (!url) {
+        alert("先に退職フォームURLを発行してください。");
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      alert("退職フォームURLをコピーしました。");
+    }
+
+    function openRetirementMail() {
+      if (!selectedRetirementEmployee?.email) {
+        alert("スタッフのメールアドレスがありません。");
+        return;
+      }
+
+      const url = document.getElementById("retirementFormUrl")?.value || "";
+      if (!url) {
+        alert("先に退職フォームURLを発行してください。");
+        return;
+      }
+
+      const subject = "【リフィナス】退職フォーム入力のお願い";
+      const body = `${getEmployeeName(selectedRetirementEmployee)}さん\n\nお疲れ様です。\nリフィナス 管理本部です。\n\n退職手続きに必要な情報を下記フォームよりご入力ください。\n${url}\n\nTシャツ・貸与物がある場合は、フォーム内の確認事項に沿ってご返却をお願いいたします。\n\nよろしくお願いいたします。`;
+      const mailto = `mailto:${encodeURIComponent(selectedRetirementEmployee.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+    }
+
+    async function markRetirementTshirtReturned() {
+      if (!selectedRetirementEmployee?.employee_code) {
+        alert("先にスタッフを選択してください。");
+        return;
+      }
+
+      const confirmed = confirm(`${getEmployeeName(selectedRetirementEmployee)}さんのTシャツを「回収済み」にしますか？`);
+      if (!confirmed) return;
+
+      const { error } = await supabaseClient
+        .from("employees")
+        .update({
+          tshirt_return_status: "回収済み",
+          tshirt_returned_at: new Date().toISOString(),
+          tshirt_returned_by: "管理本部"
+        })
+        .eq("employee_code", selectedRetirementEmployee.employee_code);
+
+      if (error) {
+        alert("Tシャツ返却ステータスの更新に失敗しました。" + error.message);
+        return;
+      }
+
+      await loadRetirementManagement(true);
+      alert("Tシャツを回収済みにしました。");
+    }
+
+    async function markEmployeeRetired() {
+      if (!selectedRetirementEmployee?.employee_code) {
+        alert("先にスタッフを選択してください。");
+        return;
+      }
+
+      const confirmed = confirm(`${getEmployeeName(selectedRetirementEmployee)}さんを「退職済み」にしますか？\n\nこの操作により、employment_status が退職済みになり、is_active が false になります。`);
+      if (!confirmed) return;
+
+      const { error } = await supabaseClient
+        .from("employees")
+        .update({
+          employment_status: "退職済み",
+          is_active: false,
+          retirement_actual_date: new Date().toISOString().slice(0, 10)
+        })
+        .eq("employee_code", selectedRetirementEmployee.employee_code);
+
+      if (error) {
+        alert("退職済みへの更新に失敗しました。" + error.message);
+        return;
+      }
+
+      await loadEmployees();
+      await loadRetirementManagement(true);
+      alert("退職済みに更新しました。");
+    }
+
     ["transportSearchInput", "transportStoreFilter", "transportTypeFilter"].forEach(id => {
       const element = document.getElementById(id);
       if (!element) return;
@@ -2016,11 +2420,19 @@
       element.addEventListener("change", applyCandidateFilters);
     });
 
+    ["retirementSearchInput", "retirementStatusFilter", "retirementReturnFilter", "retirementMonthFilter"].forEach(id => {
+      const element = document.getElementById(id);
+      if (!element) return;
+      element.addEventListener("input", applyRetirementFilters);
+      element.addEventListener("change", applyRetirementFilters);
+    });
+
     loadStoresForFilters();
     loadEmployees();
     loadOnboardingCandidates();
     loadTshirtTargets();
     loadTransportManagement();
+    loadRetirementManagement();
   </script>
 </body>
 </html>

@@ -642,16 +642,22 @@
       return data;
     }
 
-    async function updateCandidateStatus(token) {
+    async function updateCandidateStatus(token, attendanceEmployeeId, employeeCode) {
       if (!token) return;
 
       const { error } = await supabaseClient
         .from("onboarding_candidates")
-        .delete()
+        .update({
+          form_status: "回答済み",
+          submitted_at: new Date().toISOString(),
+          reflected_employee_id: attendanceEmployeeId,
+          reflected_employee_code: employeeCode,
+          updated_at: new Date().toISOString()
+        })
         .eq("form_token", token);
 
       if (error) {
-        throw new Error("入社予定者の仮データ削除に失敗しました。" + error.message);
+        throw new Error("入社予定者ステータスの更新に失敗しました。" + error.message);
       }
     }
 
@@ -759,7 +765,7 @@
         const transportationRows = buildTransportationRows(employeeCode, attendanceEmployeeId, data);
         await insertTransportationRows(transportationRows);
 
-        await updateCandidateStatus(data.token);
+        await updateCandidateStatus(data.token, attendanceEmployeeId, employeeCode);
 
         console.log("社員ID / ハーモスID", employeeCode);
         console.log("勤怠QR用内部employee_id", attendanceEmployeeId);

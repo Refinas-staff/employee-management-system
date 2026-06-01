@@ -442,6 +442,17 @@
       gap: 18px;
     }
 
+    .tshirt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .tshirt-grid .table-wrap {
+      max-height: 420px;
+    }
+
     .box {
       border: 1px solid var(--brand-border);
       border-radius: 8px;
@@ -734,7 +745,8 @@
       }
 
       .content-grid,
-      .detail-layout {
+      .detail-layout,
+      .tshirt-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1015,18 +1027,59 @@
         <div class="page-title-row">
           <div>
             <h3>Tシャツ送付管理</h3>
-            <p>入社フォーム回答後、Tシャツのサイズ・枚数・送付状況を管理します。枚数は手入力できます。</p>
+            <p>入社時の未送付と、退職時の未回収を並べて管理します。枚数は手入力できます。</p>
           </div>
-          <button class="primary-btn" type="button" onclick="loadTshirtTargets()">未送付を更新</button>
+          <button class="primary-btn" type="button" onclick="loadTshirtTargets()">Tシャツ管理を更新</button>
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>氏名</th><th>店舗</th><th>雇用形態</th><th>サイズ</th><th>枚数</th><th>送付状況</th><th>送付日</th><th>操作</th></tr></thead>
-            <tbody id="tshirtTableBody">
-              <tr><td colspan="8">Tシャツ未送付データを読み込み中...</td></tr>
-            </tbody>
-          </table>
+        <div class="tshirt-grid">
+          <div class="box">
+            <div class="box-header">
+              <h4>未送付</h4>
+              <span id="tshirtUnsentCountBadge" class="badge red">-件</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>氏名</th>
+                    <th>店舗</th>
+                    <th>雇用形態</th>
+                    <th>サイズ</th>
+                    <th>枚数</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="tshirtTableBody">
+                  <tr><td colspan="6">Tシャツ未送付データを読み込み中...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-header">
+              <h4>未回収</h4>
+              <span id="tshirtUnreturnedCountBadge" class="badge yellow">-件</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>氏名</th>
+                    <th>店舗</th>
+                    <th>雇用形態</th>
+                    <th>退職予定日</th>
+                    <th>返却状況</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="tshirtReturnTableBody">
+                  <tr><td colspan="6">Tシャツ未回収データを読み込み中...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1205,7 +1258,6 @@
               <div class="info-item"><div class="info-label">フォーム状況</div><div id="retirementFormStatus">-</div></div>
               <div class="info-item"><div class="info-label">退職予定日</div><div id="retirementRequestedDate">-</div></div>
               <div class="info-item"><div class="info-label">最終勤務予定日</div><div id="retirementLastWorkDate">-</div></div>
-              <div class="info-item"><div class="info-label">Tシャツ返却</div><div id="retirementTshirtStatus">-</div></div>
             </div>
           </div>
 
@@ -1223,18 +1275,6 @@
                 <button class="secondary-btn" type="button" onclick="copyRetirementFormUrl()">URLコピー</button>
                 <button class="secondary-btn" type="button" onclick="openRetirementMail()">メール作成</button>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-heading">退職後の管理</div>
-        <div class="box">
-          <div class="box-header"><h4>Tシャツ返却・退職完了</h4></div>
-          <div class="box-body">
-            <div class="checklist">
-              <div class="check-item"><span>退職フォーム入力</span><span id="retirementSubmittedBadge" class="badge gray">未選択</span></div>
-              <div class="check-item"><span>Tシャツ返却</span><button id="tshirtReturnButton" class="small-btn" type="button" onclick="markRetirementTshirtReturned()">回収した</button></div>
-              <div class="check-item"><span>退職ステータス</span><button class="danger-btn" type="button" onclick="markEmployeeRetired()">退職済みにする</button></div>
             </div>
           </div>
         </div>
@@ -1295,6 +1335,7 @@
 
     let allEmployees = [];
     let tshirtTargets = [];
+    let tshirtReturnTargets = [];
     let transportEmployees = [];
     let transportRecords = [];
     let selectedTransportEmployee = null;
@@ -1884,10 +1925,12 @@
 
     function renderTshirtTargets(list) {
       const tbody = document.getElementById("tshirtTableBody");
+      const countBadge = document.getElementById("tshirtUnsentCountBadge");
+      if (countBadge) countBadge.textContent = `${list.length}件`;
       if (!tbody) return;
 
       if (!list.length) {
-        tbody.innerHTML = '<tr><td colspan="8">Tシャツ未送付のスタッフはいません。</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6">Tシャツ未送付のスタッフはいません。</td></tr>';
         return;
       }
 
@@ -1898,8 +1941,6 @@
           <td>${escapeHtml(employee.employment_type || "-")}</td>
           <td>${escapeHtml(employee.tshirt_size || "-")}</td>
           <td><input class="tshirt-qty-input" type="number" value="${Number(employee.tshirt_quantity || 1)}" min="0" style="width:80px;" /></td>
-          <td><span class="badge red">未送付</span></td>
-          <td>-</td>
           <td><button class="small-btn js-tshirt-sent" type="button" data-employee-code="${escapeAttr(employee.employee_code || "")}">送付済みにする</button></td>
         </tr>
       `).join("");
@@ -1909,32 +1950,78 @@
       });
     }
 
-    async function loadTshirtTargets() {
-      const tbody = document.getElementById("tshirtTableBody");
+    function renderTshirtReturnTargets(list) {
+      const tbody = document.getElementById("tshirtReturnTableBody");
+      const countBadge = document.getElementById("tshirtUnreturnedCountBadge");
+      if (countBadge) countBadge.textContent = `${list.length}件`;
       if (!tbody) return;
-      tbody.innerHTML = '<tr><td colspan="8">Tシャツ未送付データを読み込み中...</td></tr>';
 
-      const { data, error } = await supabaseClient
-        .from("employees")
-        .select("employee_code,employee_name,last_name,first_name,store,employment_type,tshirt_size,tshirt_quantity,tshirt_sent,tshirt_sent_at")
-        .eq("tshirt_sent", false)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        tbody.innerHTML = `<tr><td colspan="8">Tシャツデータの取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="6">Tシャツ未回収のスタッフはいません。</td></tr>';
         return;
       }
 
-      tshirtTargets = data || [];
-      renderTshirtTargets(tshirtTargets);
+      tbody.innerHTML = list.map(employee => `
+        <tr data-return-employee-code="${escapeAttr(employee.employee_code || "")}">
+          <td>${escapeHtml(getEmployeeName(employee))}</td>
+          <td>${escapeHtml(employee.store || "-")}</td>
+          <td>${escapeHtml(employee.employment_type || "-")}</td>
+          <td>${formatDate(employee.retirement_requested_date || employee.retirement_actual_date)}</td>
+          <td><span class="badge red">未回収</span></td>
+          <td><button class="small-btn js-tshirt-returned" type="button" data-employee-code="${escapeAttr(employee.employee_code || "")}">回収した</button></td>
+        </tr>
+      `).join("");
+
+      tbody.querySelectorAll(".js-tshirt-returned").forEach(button => {
+        button.addEventListener("click", () => markTshirtReturnedFromTshirtPage(button.dataset.employeeCode));
+      });
+    }
+
+    async function loadTshirtTargets() {
+      const tbody = document.getElementById("tshirtTableBody");
+      const returnTbody = document.getElementById("tshirtReturnTableBody");
+
+      if (tbody) tbody.innerHTML = '<tr><td colspan="6">Tシャツ未送付データを読み込み中...</td></tr>';
+      if (returnTbody) returnTbody.innerHTML = '<tr><td colspan="6">Tシャツ未回収データを読み込み中...</td></tr>';
+
+      const unsentResult = await supabaseClient
+        .from("employees")
+        .select("employee_code,employee_name,last_name,first_name,store,employment_type,tshirt_size,tshirt_quantity,tshirt_sent,tshirt_sent_at,employment_status,created_at")
+        .eq("tshirt_sent", false)
+        .neq("employment_status", "退職済み")
+        .order("created_at", { ascending: false });
+
+      if (unsentResult.error) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6">Tシャツ未送付データの取得に失敗しました。${escapeHtml(unsentResult.error.message)}</td></tr>`;
+      } else {
+        tshirtTargets = unsentResult.data || [];
+        renderTshirtTargets(tshirtTargets);
+      }
+
+      const unreturnedResult = await supabaseClient
+        .from("employees")
+        .select("employee_code,employee_name,last_name,first_name,store,employment_type,employment_status,retirement_requested_date,retirement_actual_date,tshirt_return_status,tshirt_returned_at,created_at")
+        .eq("tshirt_return_status", "未返却")
+        .order("retirement_requested_date", { ascending: true });
+
+      if (unreturnedResult.error) {
+        if (returnTbody) returnTbody.innerHTML = `<tr><td colspan="6">Tシャツ未回収データの取得に失敗しました。${escapeHtml(unreturnedResult.error.message)}</td></tr>`;
+      } else {
+        tshirtReturnTargets = unreturnedResult.data || [];
+        renderTshirtReturnTargets(tshirtReturnTargets);
+      }
     }
 
     async function markTshirtSent(employeeCode) {
       if (!employeeCode) return;
 
       const row = Array.from(document.querySelectorAll("tr[data-employee-code]")).find(tr => tr.dataset.employeeCode === employeeCode);
+      const name = row?.children?.[0]?.textContent || "このスタッフ";
       const qtyInput = row?.querySelector(".tshirt-qty-input");
       const quantity = Number(qtyInput?.value || 1);
+
+      const confirmed = confirm(`${name}さんのTシャツを「送付済み」にしてよろしいですか？\n\n枚数：${quantity}枚\n\nこの操作をすると、未送付一覧から消えます。`);
+      if (!confirmed) return;
 
       const { error } = await supabaseClient
         .from("employees")
@@ -1953,6 +2040,37 @@
       tshirtTargets = tshirtTargets.filter(employee => employee.employee_code !== employeeCode);
       renderTshirtTargets(tshirtTargets);
       loadEmployees();
+      loadDashboard();
+      alert(`${name}さんを送付済みにしました。`);
+    }
+
+    async function markTshirtReturnedFromTshirtPage(employeeCode) {
+      if (!employeeCode) return;
+
+      const target = tshirtReturnTargets.find(employee => employee.employee_code === employeeCode);
+      const name = target ? getEmployeeName(target) : "このスタッフ";
+
+      const confirmed = confirm(`${name}さんのTシャツを「回収済み」にしてよろしいですか？\n\nこの操作をすると、未回収一覧から消えます。`);
+      if (!confirmed) return;
+
+      const { error } = await supabaseClient
+        .from("employees")
+        .update({
+          tshirt_return_status: "回収済み",
+          tshirt_returned_at: new Date().toISOString(),
+          tshirt_returned_by: "管理本部"
+        })
+        .eq("employee_code", employeeCode);
+
+      if (error) {
+        alert("Tシャツ返却ステータスの更新に失敗しました。" + error.message);
+        return;
+      }
+
+      tshirtReturnTargets = tshirtReturnTargets.filter(employee => employee.employee_code !== employeeCode);
+      renderTshirtReturnTargets(tshirtReturnTargets);
+      loadDashboard();
+      alert(`${name}さんを回収済みにしました。`);
     }
 
     function summarizeTransportRecords(records) {

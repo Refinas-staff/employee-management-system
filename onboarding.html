@@ -171,7 +171,11 @@
       margin: 0;
     }
 
-    input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; margin: 0; padding: 0; }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      margin: 0;
+      padding: 0;
+    }
 
     input:focus, select:focus, textarea:focus {
       outline: 2px solid rgba(0, 113, 188, 0.24);
@@ -441,12 +445,8 @@
   <footer class="footer">© Refinas fitness studio</footer>
 
   <script>
-    // ==============================
-    // Supabase接続設定
-    // ==============================
-    // URLは /rest/v1/ を付けず、https://xxxx.supabase.co までにしてください。
     const SUPABASE_URL = "https://xcxrurktphdnpdumyzhn.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDEwODE1MiwiZXhwIjoyMDk1Njg0MTUyfQ.MHkKKPwjHkRwGbO3by70kPMlJdI9ySS5HTOut6JDAzA";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const form = document.getElementById("onboardingForm");
@@ -601,7 +601,6 @@
 
       if (!error) return;
 
-      // employee_code列をまだ追加していない環境でもテストできるようにする互換処理
       if (String(error.message || "").includes("employee_code")) {
         const fallbackRows = rows.map(({ employee_code, ...rest }) => rest);
         const { error: fallbackError } = await supabaseClient
@@ -618,47 +617,42 @@
     }
 
     async function ensureCandidateNotSubmitted(token) {
-      if (!token) return null;
+      if (!token) {
+        throw new Error("この入社フォームURLは無効です。管理本部から送られたURLから開いてください。");
+      }
+
       const { data, error } = await supabaseClient
         .from("onboarding_candidates")
         .select("id, form_status")
         .eq("form_token", token)
         .maybeSingle();
 
-      if (error) throw new Error("入社予定者情報の確認に失敗しました。" + error.message);
-      if (data && data.form_status !== "未回答") throw new Error("この入社フォームはすでに回答済みです。再入力はできません。");
+      if (error) {
+        throw new Error("入社予定者情報の確認に失敗しました。" + error.message);
+      }
+
+      if (!data) {
+        throw new Error("この入社フォームURLは無効、またはすでに回答済みです。再入力はできません。");
+      }
+
+      if (data.form_status !== "未回答") {
+        throw new Error("この入社フォームはすでに回答済みです。再入力はできません。");
+      }
+
       return data;
     }
 
-    async function updateCandidateStatus(token, attendanceEmployeeId, employeeCode) {
+    async function updateCandidateStatus(token) {
       if (!token) return;
 
-      const updatePayload = {
-        form_status: "回答済み",
-        submitted_at: new Date().toISOString(),
-        reflected_employee_id: attendanceEmployeeId,
-        reflected_employee_code: employeeCode,
-        updated_at: new Date().toISOString()
-      };
-
-      let { error } = await supabaseClient
+      const { error } = await supabaseClient
         .from("onboarding_candidates")
-        .update(updatePayload)
+        .delete()
         .eq("form_token", token);
 
-      if (!error) return;
-
-      // reflected_employee_code列がない環境向けの互換処理
-      if (String(error.message || "").includes("reflected_employee_code")) {
-        const { reflected_employee_code, ...fallbackPayload } = updatePayload;
-        const result = await supabaseClient
-          .from("onboarding_candidates")
-          .update(fallbackPayload)
-          .eq("form_token", token);
-        error = result.error;
+      if (error) {
+        throw new Error("入社予定者の仮データ削除に失敗しました。" + error.message);
       }
-
-      if (error) throw new Error("入社予定者ステータスの更新に失敗しました。" + error.message);
     }
 
     employmentTypeSelect.addEventListener("change", updateTransportArea);
@@ -687,7 +681,6 @@
         one_way_fare: partTimeFares[index]
       })).filter(item => item.store || item.from_station || item.to_station || item.one_way_fare);
       data.token = getTokenFromUrl();
-      data.submitted_at = new Date().toISOString();
 
       const phoneRegex = /^[0-9]{10,11}$/;
       const postalCodeRegex = /^[0-9]{7}$/;
@@ -719,8 +712,8 @@
       try {
         await ensureCandidateNotSubmitted(data.token);
 
-        const attendanceEmployeeId = generateRandomEmployeeId(32); // 内部用・スタッフには非公開
-        const employeeCode = await getNextEmployeeCode(data.employment_type); // 社員ID / ハーモスID
+        const attendanceEmployeeId = generateRandomEmployeeId(32);
+        const employeeCode = await getNextEmployeeCode(data.employment_type);
         const initialPassword = formatBirthdayToPassword(data.birthday);
 
         const employeePayload = {
@@ -759,11 +752,14 @@
           .from("employees")
           .insert(employeePayload);
 
-        if (employeeError) throw new Error("社員情報の保存に失敗しました。" + employeeError.message);
+        if (employeeError) {
+          throw new Error("社員情報の保存に失敗しました。" + employeeError.message);
+        }
 
         const transportationRows = buildTransportationRows(employeeCode, attendanceEmployeeId, data);
         await insertTransportationRows(transportationRows);
-        await updateCandidateStatus(data.token, attendanceEmployeeId, employeeCode);
+
+        await updateCandidateStatus(data.token);
 
         console.log("社員ID / ハーモスID", employeeCode);
         console.log("勤怠QR用内部employee_id", attendanceEmployeeId);

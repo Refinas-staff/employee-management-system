@@ -783,6 +783,7 @@
       }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -959,10 +960,10 @@
         </div>
 
         <div class="filters">
-          <input type="text" placeholder="氏名・メール・社員IDで検索" />
-          <select><option>全ステータス</option><option>在籍中</option><option>入社予定</option><option>退職予定</option><option>退職済み</option></select>
-          <select><option>全店舗</option><option>渋谷本店</option><option>横浜</option><option>大阪梅田</option><option>名古屋</option></select>
-          <select><option>全雇用形態</option><option>正社員</option><option>アルバイト</option></select>
+          <input id="employeeSearchInput" type="text" placeholder="氏名・メール・社員IDで検索" />
+          <select id="employeeStatusFilter"><option value="">全ステータス</option><option>在籍中</option><option>入社予定</option><option>退職予定</option><option>退職済み</option></select>
+          <select id="employeeStoreFilter"><option value="">全店舗</option></select>
+          <select id="employeeTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select>
           <label style="display:flex; align-items:center; gap:6px; font-weight:800;"><input type="checkbox" style="height:auto;" /> 退職済みも表示</label>
         </div>
 
@@ -982,16 +983,8 @@
                 <th>操作</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>R20260001</td><td>山田太郎</td><td>渋谷本店</td><td>トレーナー</td><td>正社員</td><td><span class="badge yellow">入社予定</span></td><td>2026/06/10</td><td><span class="badge gray">未送付</span></td><td><span class="badge gray">未送信</span></td><td><button class="small-btn">詳細</button></td>
-              </tr>
-              <tr>
-                <td>R20260002</td><td>佐藤花子</td><td>横浜</td><td>受付</td><td>アルバイト</td><td><span class="badge blue">回答済み</span></td><td>2026/06/12</td><td><span class="badge red">未送付</span></td><td><span class="badge yellow">送信待ち</span></td><td><button class="small-btn">詳細</button></td>
-              </tr>
-              <tr>
-                <td>R20250088</td><td>田中美咲</td><td>名古屋</td><td>トレーナー</td><td>アルバイト</td><td><span class="badge yellow">退職予定</span></td><td>-</td><td><span class="badge green">送付済み</span></td><td><span class="badge green">送信済み</span></td><td><button class="small-btn">詳細</button></td>
-              </tr>
+            <tbody id="employeesTableBody">
+              <tr><td colspan="10">社員データを読み込み中...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1232,11 +1225,27 @@
   <footer class="footer">© Refinas fitness studio</footer>
 
   <script>
+    // ==============================
+    // Supabase接続設定
+    // ==============================
+    // onboarding.html と同じ値に置き換えてください。
+    const SUPABASE_URL = "https://xcxrurktphdnpdumyzhn.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const navItems = document.querySelectorAll(".nav-item");
     const operationTabs = document.querySelectorAll(".operation-tab");
     const pages = document.querySelectorAll(".page");
     const heroTitle = document.getElementById("heroTitle");
     const heroDescription = document.getElementById("heroDescription");
+
+    const employeesTableBody = document.getElementById("employeesTableBody");
+    const employeeSearchInput = document.getElementById("employeeSearchInput");
+    const employeeStatusFilter = document.getElementById("employeeStatusFilter");
+    const employeeStoreFilter = document.getElementById("employeeStoreFilter");
+    const employeeTypeFilter = document.getElementById("employeeTypeFilter");
+
+    let allEmployees = [];
 
     const pageInfo = {
       dashboard: {
@@ -1273,6 +1282,129 @@
       }
     };
 
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      return String(value).slice(0, 10).replaceAll("-", "/");
+    }
+
+    function getStatusBadge(status) {
+      const value = status || "入社予定";
+      if (value === "在籍中") return `<span class="badge green">${value}</span>`;
+      if (value === "入社予定") return `<span class="badge yellow">${value}</span>`;
+      if (value === "退職予定") return `<span class="badge yellow">${value}</span>`;
+      if (value === "退職済み") return `<span class="badge gray">${value}</span>`;
+      return `<span class="badge gray">${escapeHtml(value)}</span>`;
+    }
+
+    function getTshirtBadge(employee) {
+      return employee.tshirt_sent
+        ? '<span class="badge green">送付済み</span>'
+        : '<span class="badge red">未送付</span>';
+    }
+
+    function getHarmosBadge(employee) {
+      return employee.harmos_sent_at
+        ? '<span class="badge green">送信済み</span>'
+        : '<span class="badge gray">未送信</span>';
+    }
+
+    function renderEmployees(list) {
+      if (!employeesTableBody) return;
+
+      if (!list.length) {
+        employeesTableBody.innerHTML = '<tr><td colspan="10">該当する社員データがありません。</td></tr>';
+        return;
+      }
+
+      employeesTableBody.innerHTML = list.map(employee => `
+        <tr>
+          <td>${escapeHtml(employee.employee_code || employee.harmos_id || "-")}</td>
+          <td>${escapeHtml(employee.employee_name || `${employee.last_name || ""}${employee.first_name || ""}` || "-")}</td>
+          <td>${escapeHtml(employee.store || "-")}</td>
+          <td>${escapeHtml(employee.job_type || "-")}</td>
+          <td>${escapeHtml(employee.employment_type || "-")}</td>
+          <td>${getStatusBadge(employee.employment_status)}</td>
+          <td>${formatDate(employee.earliest_start_date)}</td>
+          <td>${getTshirtBadge(employee)}</td>
+          <td>${getHarmosBadge(employee)}</td>
+          <td><button class="small-btn" type="button">詳細</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function applyEmployeeFilters() {
+      const keyword = (employeeSearchInput?.value || "").trim().toLowerCase();
+      const status = employeeStatusFilter?.value || "";
+      const store = employeeStoreFilter?.value || "";
+      const type = employeeTypeFilter?.value || "";
+
+      const filtered = allEmployees.filter(employee => {
+        const searchTarget = [
+          employee.employee_code,
+          employee.harmos_id,
+          employee.employee_name,
+          employee.last_name,
+          employee.first_name,
+          employee.email
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        if (keyword && !searchTarget.includes(keyword)) return false;
+        if (status && employee.employment_status !== status) return false;
+        if (store && employee.store !== store) return false;
+        if (type && employee.employment_type !== type) return false;
+        return true;
+      });
+
+      renderEmployees(filtered);
+    }
+
+    async function loadStoresForFilters() {
+      if (!employeeStoreFilter) return;
+
+      const { data, error } = await supabaseClient
+        .from("stores")
+        .select("store_name, is_active")
+        .eq("is_active", true)
+        .order("store_name", { ascending: true });
+
+      if (error) {
+        console.error("店舗一覧の取得に失敗しました", error);
+        return;
+      }
+
+      employeeStoreFilter.innerHTML = '<option value="">全店舗</option>' + (data || [])
+        .map(store => `<option value="${escapeHtml(store.store_name)}">${escapeHtml(store.store_name)}</option>`)
+        .join("");
+    }
+
+    async function loadEmployees() {
+      if (!employeesTableBody) return;
+
+      employeesTableBody.innerHTML = '<tr><td colspan="10">社員データを読み込み中...</td></tr>';
+
+      const { data, error } = await supabaseClient
+        .from("employees")
+        .select("employee_code,harmos_id,employee_name,last_name,first_name,email,store,job_type,employment_type,employment_status,earliest_start_date,tshirt_sent,harmos_sent_at,created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        employeesTableBody.innerHTML = `<tr><td colspan="10">社員データの取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;
+        return;
+      }
+
+      allEmployees = data || [];
+      applyEmployeeFilters();
+    }
+
     function switchPage(page) {
       pages.forEach(section => section.classList.remove("active-page"));
       document.getElementById(page).classList.add("active-page");
@@ -1283,6 +1415,10 @@
       heroTitle.textContent = pageInfo[page].title;
       heroDescription.textContent = pageInfo[page].description;
       document.querySelector('.operation-panel').scrollIntoView({ behavior: "smooth", block: "start" });
+
+      if (page === "employees" && allEmployees.length === 0) {
+        loadEmployees();
+      }
     }
 
     navItems.forEach(item => {
@@ -1292,6 +1428,14 @@
     operationTabs.forEach(item => {
       item.addEventListener("click", () => switchPage(item.dataset.page));
     });
+
+    [employeeSearchInput, employeeStatusFilter, employeeStoreFilter, employeeTypeFilter].forEach(element => {
+      if (element) element.addEventListener("input", applyEmployeeFilters);
+      if (element) element.addEventListener("change", applyEmployeeFilters);
+    });
+
+    loadStoresForFilters();
+    loadEmployees();
   </script>
 </body>
 </html>

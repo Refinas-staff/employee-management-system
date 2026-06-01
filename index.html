@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refinas 社員管理システム</title>
+
+  <style>
+    :root {
+      --brand-red: #e60012;
+      --brand-blue: #0071bc;
+      --brand-navy: #003f7f;
+      --brand-dark: #111827;
+      --brand-bg: #f4f7fb;
+      --brand-border: #d8dee8;
+      --text-muted: #64748b;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--brand-bg);
+      color: var(--brand-dark);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+    }
+
+    .top-alert {
+      background: #fff;
+      border-bottom: 1px solid var(--brand-border);
+      color: var(--brand-dark);
+      font-size: 13px;
+    }
+
+    .top-alert-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 9px 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .top-alert strong {
+      color: var(--brand-red);
+    }
+
+    .global-header {
+      background: #ffffff;
+      color: var(--brand-dark);
+      border-bottom: 1px solid var(--brand-border);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    }
+
+    .global-header-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 168px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .brand-logo-fallback {
+      width: 54px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--brand-red) 0 48%, var(--brand-blue) 48% 100%);
+      color: #fff;
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 21px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 21px;
+      letter-spacing: 0.02em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header-btn {
+      border: 1px solid var(--brand-border);
+      background: #fff;
+      color: var(--brand-dark);
+      border-radius: 5px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .header-btn.primary {
+      background: var(--brand-blue);
+      color: #fff;
+      border-color: var(--brand-blue);
+    }
+
+    .nav-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--brand-border);
+    }
+
+    .nav-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      overflow-x: auto;
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      color: #334155;
+      padding: 16px 18px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      border-bottom: 4px solid transparent;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover {
+      background: #f8fafc;
+    }
+
+    .nav-item.active {
+      color: var(--brand-blue);
+      border-bottom-color: var(--brand-red);
+    }
+
+    .hero {
+      background: linear-gradient(120deg, var(--brand-red) 0%, #c90010 36%, var(--brand-blue) 36%, var(--brand-navy) 100%);
+      color: white;
+    }
+
+    .hero-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 34px 20px 80px;
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero h2 {
+      font-size: 34px;
+      margin: 0 0 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #ffffff;
+      line-height: 1.8;
+    }
+
+    .hero-card {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      padding: 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-card-title {
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .hero-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .hero-mini {
+      background: rgba(255, 255, 255, 0.18);
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .hero-mini span {
+      display: block;
+      font-size: 12px;
+      color: #fff;
+      opacity: 0.9;
+    }
+
+    .hero-mini strong {
+      display: block;
+      font-size: 23px;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 1220px;
+      margin: -48px auto 48px;
+      padding: 0 20px;
+    }
+
+    .operation-panel {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .operation-tabs {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      background: #f8fafc;
+      border-bottom: 1px solid var(--brand-border);
+    }
+
+    .operation-tab {
+      border: none;
+      background: transparent;
+      padding: 15px 8px;
+      font-weight: 900;
+      cursor: pointer;
+      color: #334155;
+      border-right: 1px solid var(--brand-border);
+      white-space: nowrap;
+    }
+
+    .operation-tab:last-child {
+      border-right: none;
+    }
+
+    .operation-tab.active {
+      background: white;
+      color: var(--brand-blue);
+      border-top: 4px solid var(--brand-red);
+      padding-top: 11px;
+    }
+
+    .page {
+      display: none;
+      padding: 24px;
+    }
+
+    .page.active-page {
+      display: block;
+    }
+
+    .page-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .page-title-row h3 {
+      margin: 0;
+      font-size: 23px;
+      color: var(--brand-dark);
+    }
+
+    .page-title-row p {
+      margin: 6px 0 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn,
+    .small-btn {
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .primary-btn {
+      background: var(--brand-blue);
+      color: white;
+      border: none;
+      padding: 11px 18px;
+      box-shadow: 0 2px 0 var(--brand-navy);
+    }
+
+    .primary-btn:hover {
+      background: var(--brand-navy);
+    }
+
+    .secondary-btn {
+      background: white;
+      color: var(--brand-blue);
+      border: 1px solid var(--brand-blue);
+      padding: 10px 16px;
+    }
+
+    .danger-btn {
+      background: #fff;
+      color: var(--danger);
+      border: 1px solid #fca5a5;
+      padding: 10px 16px;
+    }
+
+    .small-btn {
+      border: 1px solid #cbd5e1;
+      background: white;
+      color: #1e3a5f;
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      padding: 16px;
+      background: #ffffff;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .card h4 {
+      margin: 8px 0 0;
+      font-size: 29px;
+      color: var(--brand-dark);
+    }
+
+    .card.warning h4 {
+      color: var(--warning);
+    }
+
+    .card.success h4 {
+      color: var(--success);
+    }
+
+    .card.danger h4 {
+      color: var(--danger);
+    }
+
+    .card.blue h4 {
+      color: var(--brand-blue);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.72fr;
+      gap: 18px;
+    }
+
+    .box {
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      background: white;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .box-header {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--brand-border);
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .box-header h4 {
+      margin: 0;
+      color: var(--brand-dark);
+      font-size: 16px;
+    }
+
+    .box-body {
+      padding: 16px;
+    }
+
+    .notice-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .notice {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 10px;
+      font-size: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .notice:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .notice-date {
+      color: var(--brand-red);
+      font-weight: 900;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    input,
+    select,
+    textarea {
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      padding: 10px 11px;
+      height: 42px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 110px;
+      height: auto;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid rgba(0, 113, 188, 0.24);
+      border-color: var(--brand-blue);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--brand-border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .badge.red {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .badge.blue {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+    }
+
+    .badge.green {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #86efac;
+    }
+
+    .badge.yellow {
+      background: #fff7d6;
+      color: #9a6700;
+      border: 1px solid #f3d16b;
+    }
+
+    .badge.gray {
+      background: #e5e7eb;
+      color: #374151;
+      border: 1px solid #cbd5e1;
+    }
+
+    .badge.dark {
+      background: #111827;
+      color: #fff;
+      border: 1px solid #111827;
+    }
+
+    .section-heading {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--brand-dark);
+      border-left: 4px solid var(--brand-red);
+      padding-left: 10px;
+      margin: 22px 0 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .form-grid label {
+      display: grid;
+      gap: 6px;
+      font-weight: 900;
+      font-size: 13px;
+      color: #334155;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .template-card {
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      padding: 16px;
+      background: white;
+    }
+
+    .template-card h4 {
+      margin: 0 0 8px;
+      color: var(--brand-dark);
+    }
+
+    .template-card p {
+      margin: 0 0 14px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 18px;
+    }
+
+    .profile-card {
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      background: white;
+      padding: 18px;
+    }
+
+    .profile-name {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--brand-dark);
+      margin: 0 0 4px;
+    }
+
+    .profile-sub {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin: 0 0 14px;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .info-item {
+      display: grid;
+      grid-template-columns: 126px 1fr;
+      gap: 10px;
+      font-size: 14px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+
+    .info-label {
+      color: var(--text-muted);
+      font-weight: 800;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+    }
+
+    .check-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .footer {
+      max-width: 1220px;
+      margin: 0 auto 32px;
+      padding: 0 20px;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 1080px) {
+      .operation-tabs {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .cards {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .content-grid,
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .template-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .global-header-inner,
+      .hero-inner {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .brand-logo {
+        width: 140px;
+        height: 46px;
+      }
+
+      .hero h2 {
+        font-size: 27px;
+      }
+
+      .operation-tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .cards,
+      .form-grid,
+      .template-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        padding: 16px;
+      }
+
+      .page-title-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-alert">
+    <div class="top-alert-inner">
+      <div><strong>要確認</strong>　入社フォーム未回答 3名 / Tシャツ未送付 2名 / 退職予定 1名</div>
+      <div>最終更新：2026/06/01 10:30</div>
+    </div>
+  </div>
+
+  <header class="global-header">
+    <div class="global-header-inner">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="refinas-logo.png" alt="Refinas logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;brand-logo-fallback&quot;>R</div>'" />
+        </div>
+        <div>
+          <h1>Refinas 社員管理システム</h1>
+          <p>Employee Management & Onboarding</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="header-btn">マニュアル</button>
+        <button class="header-btn">CSV出力</button>
+        <button class="header-btn primary">管理者ログイン中</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <button class="nav-item active" data-page="dashboard">ダッシュボード</button>
+      <button class="nav-item" data-page="employees">社員一覧</button>
+      <button class="nav-item" data-page="onboarding">入社手続き</button>
+      <button class="nav-item" data-page="tshirt">Tシャツ送付</button>
+      <button class="nav-item" data-page="transport">交通費管理</button>
+      <button class="nav-item" data-page="accounts">アカウント案内</button>
+      <button class="nav-item" data-page="retirement">退職管理</button>
+      <button class="nav-item" data-page="settings">設定</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <h2 id="heroTitle">社員情報を一元管理</h2>
+        <p id="heroDescription">
+          入社フォーム、社員一覧、交通費、Tシャツ送付、ハーモス案内、退職処理まで管理できます。採用管理は必要最低限に絞っています。
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <div class="hero-card-title">本日の確認事項</div>
+        <div class="hero-mini-grid">
+          <div class="hero-mini"><span>入社予定</span><strong>6</strong></div>
+          <div class="hero-mini"><span>未回答</span><strong>3</strong></div>
+          <div class="hero-mini"><span>Tシャツ未送付</span><strong>2</strong></div>
+          <div class="hero-mini"><span>退職予定</span><strong>1</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="operation-panel">
+      <div class="operation-tabs">
+        <button class="operation-tab active" data-page="dashboard">状況確認</button>
+        <button class="operation-tab" data-page="employees">社員一覧</button>
+        <button class="operation-tab" data-page="onboarding">入社手続き</button>
+        <button class="operation-tab" data-page="tshirt">Tシャツ</button>
+        <button class="operation-tab" data-page="transport">交通費</button>
+        <button class="operation-tab" data-page="accounts">ID案内</button>
+        <button class="operation-tab" data-page="retirement">退職</button>
+        <button class="operation-tab" data-page="settings">設定</button>
+      </div>
+
+      <section id="dashboard" class="page active-page">
+        <div class="page-title-row">
+          <div>
+            <h3>ダッシュボード</h3>
+            <p>社員管理の対応状況を確認します。</p>
+          </div>
+          <button class="primary-btn" data-page="onboarding" onclick="switchPage('onboarding')">入社予定者を登録</button>
+        </div>
+
+        <div class="cards">
+          <div class="card blue"><p>在籍中</p><h4>218</h4></div>
+          <div class="card warning"><p>入社予定</p><h4>6</h4></div>
+          <div class="card danger"><p>フォーム未回答</p><h4>3</h4></div>
+          <div class="card danger"><p>Tシャツ未送付</p><h4>2</h4></div>
+          <div class="card warning"><p>ID案内待ち</p><h4>4</h4></div>
+          <div class="card"><p>退職予定</p><h4>1</h4></div>
+        </div>
+
+        <div class="content-grid">
+          <div class="box">
+            <div class="box-header">
+              <h4>対応が必要なスタッフ</h4>
+              <button class="small-btn">すべて見る</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>氏名</th>
+                    <th>店舗</th>
+                    <th>雇用形態</th>
+                    <th>状態</th>
+                    <th>対応</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>山田太郎</td>
+                    <td>渋谷本店</td>
+                    <td>正社員</td>
+                    <td><span class="badge yellow">入社予定</span></td>
+                    <td><span class="badge red">フォーム未回答</span></td>
+                    <td><button class="small-btn">詳細</button></td>
+                  </tr>
+                  <tr>
+                    <td>佐藤花子</td>
+                    <td>横浜</td>
+                    <td>アルバイト</td>
+                    <td><span class="badge blue">回答済み</span></td>
+                    <td><span class="badge red">Tシャツ未送付</span></td>
+                    <td><button class="small-btn">送付済みにする</button></td>
+                  </tr>
+                  <tr>
+                    <td>鈴木一郎</td>
+                    <td>大阪梅田</td>
+                    <td>正社員</td>
+                    <td><span class="badge blue">回答済み</span></td>
+                    <td><span class="badge yellow">ID案内待ち</span></td>
+                    <td><button class="small-btn">ID案内送信</button></td>
+                  </tr>
+                  <tr>
+                    <td>田中美咲</td>
+                    <td>名古屋</td>
+                    <td>アルバイト</td>
+                    <td><span class="badge yellow">退職予定</span></td>
+                    <td><span class="badge gray">最終勤務日待ち</span></td>
+                    <td><button class="small-btn">退職詳細</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-header"><h4>お知らせ</h4></div>
+            <div class="box-body">
+              <div class="notice-list">
+                <div class="notice"><div class="notice-date">6/01</div><div>入社フォームURLを2名に送信しました。</div></div>
+                <div class="notice"><div class="notice-date">6/01</div><div>佐藤花子さんの入社フォーム回答を受信しました。</div></div>
+                <div class="notice"><div class="notice-date">5/31</div><div>Tシャツ送付待ちが2件あります。</div></div>
+                <div class="notice"><div class="notice-date">5/30</div><div>田中美咲さんが退職予定に変更されました。</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="employees" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>社員一覧</h3>
+            <p>在籍中・入社予定・退職予定・退職済みを管理します。通常は在籍中を中心に表示します。</p>
+          </div>
+          <button class="primary-btn">社員を追加</button>
+        </div>
+
+        <div class="filters">
+          <input type="text" placeholder="氏名・メール・社員IDで検索" />
+          <select><option>全ステータス</option><option>在籍中</option><option>入社予定</option><option>退職予定</option><option>退職済み</option></select>
+          <select><option>全店舗</option><option>渋谷本店</option><option>横浜</option><option>大阪梅田</option><option>名古屋</option></select>
+          <select><option>全雇用形態</option><option>正社員</option><option>アルバイト</option></select>
+          <label style="display:flex; align-items:center; gap:6px; font-weight:800;"><input type="checkbox" style="height:auto;" /> 退職済みも表示</label>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>社員ID</th>
+                <th>氏名</th>
+                <th>店舗</th>
+                <th>職種</th>
+                <th>雇用形態</th>
+                <th>状態</th>
+                <th>最短勤務開始日</th>
+                <th>Tシャツ</th>
+                <th>ID案内</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>R20260001</td><td>山田太郎</td><td>渋谷本店</td><td>トレーナー</td><td>正社員</td><td><span class="badge yellow">入社予定</span></td><td>2026/06/10</td><td><span class="badge gray">未送付</span></td><td><span class="badge gray">未送信</span></td><td><button class="small-btn">詳細</button></td>
+              </tr>
+              <tr>
+                <td>R20260002</td><td>佐藤花子</td><td>横浜</td><td>受付</td><td>アルバイト</td><td><span class="badge blue">回答済み</span></td><td>2026/06/12</td><td><span class="badge red">未送付</span></td><td><span class="badge yellow">送信待ち</span></td><td><button class="small-btn">詳細</button></td>
+              </tr>
+              <tr>
+                <td>R20250088</td><td>田中美咲</td><td>名古屋</td><td>トレーナー</td><td>アルバイト</td><td><span class="badge yellow">退職予定</span></td><td>-</td><td><span class="badge green">送付済み</span></td><td><span class="badge green">送信済み</span></td><td><button class="small-btn">詳細</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="onboarding" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>入社手続き</h3>
+            <p>採用管理はここに集約します。採用予定者を登録し、入社フォームURLを発行・送信します。</p>
+          </div>
+          <button class="primary-btn">入社フォームURLを発行</button>
+        </div>
+
+        <div class="box">
+          <div class="box-header"><h4>入社予定者登録</h4></div>
+          <div class="box-body">
+            <div class="form-grid">
+              <label>姓<input type="text" placeholder="山田" /></label>
+              <label>名<input type="text" placeholder="太郎" /></label>
+              <label>メールアドレス<input type="email" placeholder="example@example.com" /></label>
+              <label>所属予定店舗<select><option>選択してください</option><option>渋谷本店</option><option>横浜</option><option>大阪梅田</option></select></label>
+              <label>職種<select><option>選択してください</option><option>トレーナー</option><option>受付</option><option>一般事務</option></select></label>
+              <label>雇用形態<select><option>正社員</option><option>アルバイト</option></select></label>
+            </div>
+            <button class="primary-btn">登録してフォームURLを作成</button>
+          </div>
+        </div>
+
+        <div class="section-heading">入社フォーム状況</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>氏名</th><th>店舗</th><th>フォームURL</th><th>回答状況</th><th>回答日</th><th>重複入力</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>山田太郎</td><td>渋谷本店</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge red">未回答</span></td><td>-</td><td><span class="badge gray">未</span></td><td><button class="small-btn">リマインド</button></td></tr>
+              <tr><td>佐藤花子</td><td>横浜</td><td><button class="small-btn">URLコピー</button></td><td><span class="badge green">回答済み</span></td><td>2026/06/01</td><td><span class="badge green">防止中</span></td><td><button class="small-btn">詳細</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tshirt" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>Tシャツ送付管理</h3>
+            <p>入社フォーム回答後、Tシャツ送付状況を管理します。</p>
+          </div>
+          <button class="primary-btn">未送付のみ表示</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>氏名</th><th>店舗</th><th>雇用形態</th><th>サイズ</th><th>送付状況</th><th>送付日</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>佐藤花子</td><td>横浜</td><td>アルバイト</td><td>M</td><td><span class="badge red">未送付</span></td><td>-</td><td><button class="small-btn">送付済みにする</button></td></tr>
+              <tr><td>鈴木一郎</td><td>大阪梅田</td><td>正社員</td><td>L</td><td><span class="badge red">未送付</span></td><td>-</td><td><button class="small-btn">送付済みにする</button></td></tr>
+              <tr><td>田中美咲</td><td>名古屋</td><td>アルバイト</td><td>S</td><td><span class="badge green">送付済み</span></td><td>2026/05/20</td><td><button class="small-btn">詳細</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="transport" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>交通費管理</h3>
+            <p>正社員は定期代、アルバイトは店舗ごとの片道交通費を確認します。</p>
+          </div>
+          <button class="secondary-btn">交通費CSV出力</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>氏名</th><th>雇用形態</th><th>店舗</th><th>交通費種別</th><th>経路</th><th>金額</th><th>確認</th></tr></thead>
+            <tbody>
+              <tr><td>山田太郎</td><td>正社員</td><td>渋谷本店</td><td>1ヶ月定期</td><td>三軒茶屋駅 → 渋谷駅</td><td>12,000円</td><td><span class="badge yellow">未確認</span></td></tr>
+              <tr><td>佐藤花子</td><td>アルバイト</td><td>横浜</td><td>片道</td><td>川崎駅 → 横浜駅</td><td>230円</td><td><span class="badge green">確認済み</span></td></tr>
+              <tr><td>佐藤花子</td><td>アルバイト</td><td>川崎</td><td>片道</td><td>川崎駅 → 川崎駅</td><td>0円</td><td><span class="badge green">確認済み</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="accounts" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>アカウント案内</h3>
+            <p>ハーモスID・初期PW、打刻用QRコードURL、各種マニュアルURLの送信状況を管理します。</p>
+          </div>
+          <button class="primary-btn">ID案内を一括送信</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>氏名</th><th>メール</th><th>ハーモスID</th><th>QR URL</th><th>マニュアル</th><th>送信状況</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>山田太郎</td><td>yamada@example.com</td><td>R20260001</td><td><button class="small-btn">確認</button></td><td><span class="badge gray">未送信</span></td><td><span class="badge gray">未送信</span></td><td><button class="small-btn">送信</button></td></tr>
+              <tr><td>佐藤花子</td><td>sato@example.com</td><td>R20260002</td><td><button class="small-btn">確認</button></td><td><span class="badge green">送信済み</span></td><td><span class="badge green">送信済み</span></td><td><button class="small-btn">再送</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="retirement" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>退職管理</h3>
+            <p>退職予定・退職済みの管理、QR無効化、社内ツール停止チェックを行います。</p>
+          </div>
+          <button class="danger-btn">退職処理を開始</button>
+        </div>
+
+        <div class="detail-layout">
+          <div class="profile-card">
+            <p class="profile-name">田中美咲</p>
+            <p class="profile-sub">R20250088 / 名古屋 / アルバイト</p>
+            <span class="badge yellow">退職予定</span>
+            <div class="info-list">
+              <div class="info-item"><div class="info-label">退職申出日</div><div>2026/05/30</div></div>
+              <div class="info-item"><div class="info-label">最終勤務日</div><div>2026/06/20</div></div>
+              <div class="info-item"><div class="info-label">退職理由</div><div>本人都合</div></div>
+              <div class="info-item"><div class="info-label">QR状態</div><div>最終勤務日まで有効</div></div>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-header"><h4>退職チェックリスト</h4></div>
+            <div class="box-body">
+              <div class="checklist">
+                <div class="check-item"><span>ハーモス停止</span><button class="small-btn">未完了</button></div>
+                <div class="check-item"><span>打刻QR無効化</span><button class="small-btn">未完了</button></div>
+                <div class="check-item"><span>LINE WORKS停止</span><button class="small-btn">未完了</button></div>
+                <div class="check-item"><span>Tシャツ・備品返却確認</span><button class="small-btn">未完了</button></div>
+                <div class="check-item"><span>最終給与・交通費確認</span><button class="small-btn">未完了</button></div>
+              </div>
+              <br />
+              <button class="danger-btn">退職済みにする</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>設定</h3>
+            <p>社員IDルール、フォームURL、マニュアルURL、メール設定を管理します。</p>
+          </div>
+          <button class="primary-btn">保存する</button>
+        </div>
+
+        <div class="section-heading">基本設定</div>
+        <div class="form-grid">
+          <label>会社名<input type="text" value="Refinas" /></label>
+          <label>送信元メールアドレス<input type="email" value="hr@example.com" /></label>
+          <label>社員ID接頭辞<input type="text" value="R" /></label>
+          <label>入社フォームURL<input type="url" value="https://example.github.io/recruit-admin/onboarding.html" /></label>
+        </div>
+
+        <div class="section-heading">社内ツールURL</div>
+        <div class="form-grid">
+          <label>ハーモスURL<input type="url" value="https://ieyasu.co/refinas00" /></label>
+          <label>打刻QRベースURL<input type="url" value="https://example.github.io/attendance-card/" /></label>
+          <label>勤怠マニュアルURL<input type="url" value="https://example.com/manual-attendance" /></label>
+          <label>入社マニュアルURL<input type="url" value="https://example.com/manual-onboarding" /></label>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">© Refinas fitness studio</footer>
+
+  <script>
+    const navItems = document.querySelectorAll(".nav-item");
+    const operationTabs = document.querySelectorAll(".operation-tab");
+    const pages = document.querySelectorAll(".page");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroDescription = document.getElementById("heroDescription");
+
+    const pageInfo = {
+      dashboard: {
+        title: "社員情報を一元管理",
+        description: "入社フォーム、社員一覧、交通費、Tシャツ送付、ハーモス案内、退職処理まで管理できます。採用管理は必要最低限に絞っています。"
+      },
+      employees: {
+        title: "社員一覧を管理",
+        description: "在籍中、入社予定、退職予定、退職済みのスタッフを確認できます。"
+      },
+      onboarding: {
+        title: "入社手続きを管理",
+        description: "採用予定者を登録し、入社フォームURLを発行します。回答後は社員情報として管理します。"
+      },
+      tshirt: {
+        title: "Tシャツ送付状況を管理",
+        description: "入社フォーム回答者ごとに、Tシャツの送付済み・未送付を確認できます。"
+      },
+      transport: {
+        title: "交通費情報を確認",
+        description: "正社員の定期代、アルバイトの勤務可能店舗ごとの片道交通費を管理します。"
+      },
+      accounts: {
+        title: "アカウント案内を送信",
+        description: "ハーモスID、初期PW、打刻用QRコード、各種マニュアルをメール送信します。"
+      },
+      retirement: {
+        title: "退職処理を管理",
+        description: "退職予定から退職済みまで、QR無効化や社内ツール停止チェックを管理します。"
+      },
+      settings: {
+        title: "システム設定",
+        description: "社員IDルール、フォームURL、社内ツールURL、メール設定を管理します。"
+      }
+    };
+
+    function switchPage(page) {
+      pages.forEach(section => section.classList.remove("active-page"));
+      document.getElementById(page).classList.add("active-page");
+
+      navItems.forEach(item => item.classList.toggle("active", item.dataset.page === page));
+      operationTabs.forEach(item => item.classList.toggle("active", item.dataset.page === page));
+
+      heroTitle.textContent = pageInfo[page].title;
+      heroDescription.textContent = pageInfo[page].description;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener("click", () => switchPage(item.dataset.page));
+    });
+
+    operationTabs.forEach(item => {
+      item.addEventListener("click", () => switchPage(item.dataset.page));
+    });
+  </script>
+</body>
+</html>

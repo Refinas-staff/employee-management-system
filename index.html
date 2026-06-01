@@ -4,34 +4,2023 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Refinas 社員管理システム</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    :root{--red:#e60012;--blue:#0071bc;--navy:#003f7f;--bg:#f4f7fb;--border:#d8dee8;--dark:#111827;--muted:#64748b}*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--dark)}.topbar{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(15,23,42,.06)}.topbar-inner{max-width:1220px;margin:0 auto;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{display:flex;align-items:center;gap:12px;font-weight:900}.brand img{width:150px;max-height:48px;object-fit:contain}.brand-fallback{width:46px;height:34px;border-radius:4px;background:linear-gradient(135deg,var(--red) 0 48%,var(--blue) 48%);color:#fff;display:grid;place-items:center;font-weight:900}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav-item,.operation-tab{border:none;cursor:pointer;font-weight:900}.nav-item{background:#f8fafc;padding:9px 12px;border-radius:6px;color:#334155}.nav-item.active{background:var(--blue);color:#fff}.hero{background:linear-gradient(120deg,var(--red) 0,#c90010 38%,var(--blue) 38%,var(--navy));color:#fff;padding:30px 20px 78px}.hero-inner{max-width:1220px;margin:auto}.hero h1{margin:0 0 8px;font-size:30px}.hero p{margin:0;line-height:1.8}.container{max-width:1220px;margin:-48px auto 48px;padding:0 20px}.operation-panel{background:#fff;border-radius:10px;box-shadow:0 8px 24px rgba(15,23,42,.14);overflow:visible}.operation-tabs{display:grid;grid-template-columns:repeat(8,1fr);background:#f8fafc;border:1px solid var(--border);border-radius:10px 10px 0 0;position:sticky;top:0;z-index:50;overflow:hidden}.operation-tab{border-right:1px solid var(--border);background:transparent;padding:14px 8px;color:#334155}.operation-tab.active{background:var(--blue);color:white}.page{display:none;padding:24px;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:#fff}.page.active-page{display:block}.page-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}.page-title-row h3{margin:0 0 5px;font-size:22px}.page-title-row p{margin:0;color:var(--muted);line-height:1.7}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.card,.box{border:1px solid var(--border);border-radius:10px;background:#fff}.card{padding:18px}.card p{margin:0 0 8px;color:var(--muted);font-weight:800}.card h4{margin:0;font-size:28px}.box{margin-bottom:18px;overflow:hidden}.box-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;background:#f8fafc;border-bottom:1px solid var(--border)}.box-header h4{margin:0}.box-body{padding:16px}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}label{display:grid;gap:6px;font-weight:800;font-size:14px;color:#334155}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:6px;padding:10px 11px;font-size:14px;font-family:inherit}textarea{min-height:90px;resize:vertical}.full{grid-column:1/-1}.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.filters input,.filters select{max-width:240px}.table-wrap{overflow:auto;max-height:420px;border:1px solid var(--border);border-radius:8px;margin-bottom:18px}table{width:100%;border-collapse:collapse;min-width:900px}th{position:sticky;top:0;z-index:2;background:#f1f5f9;text-align:left;padding:12px;border-bottom:1px solid var(--border);color:#475569;white-space:nowrap}td{padding:12px;border-bottom:1px solid #edf2f7;white-space:nowrap}.section-heading{font-size:17px;font-weight:900;margin:22px 0 12px;padding-left:10px;border-left:4px solid var(--red)}.primary-btn,.secondary-btn,.small-btn{border-radius:6px;cursor:pointer;font-weight:900}.primary-btn{background:var(--blue);color:#fff;border:0;padding:11px 16px}.secondary-btn{background:#fff;color:var(--blue);border:1px solid var(--blue);padding:10px 14px}.small-btn{background:#eff6ff;color:var(--blue);border:1px solid #bfdbfe;padding:8px 10px}.badge{display:inline-flex;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:900}.green{background:#dcfce7;color:#15803d}.red{background:#fee2e2;color:#b91c1c}.yellow{background:#fef3c7;color:#a16207}.gray{background:#e2e8f0;color:#475569}.blue{background:#dbeafe;color:#1d4ed8}.detail-layout{display:grid;grid-template-columns:280px 1fr;gap:16px}.profile-card{border:1px solid var(--border);border-radius:10px;padding:18px;background:#f8fafc}.profile-name{margin:0 0 6px;font-weight:900;font-size:20px}.profile-sub{margin:0 0 14px;color:var(--muted)}.info-list{display:grid;gap:10px}.info-item{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--border);padding-top:10px}.info-label{color:var(--muted);font-weight:800}@media(max-width:900px){.operation-tabs{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.detail-layout{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
+    :root {
+      --brand-red: #e60012;
+      --brand-blue: #0071bc;
+      --brand-navy: #003f7f;
+      --brand-dark: #111827;
+      --brand-bg: #f4f7fb;
+      --brand-border: #d8dee8;
+      --text-muted: #64748b;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--brand-bg);
+      color: var(--brand-dark);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+    }
+
+    .top-alert {
+      background: #fff;
+      border-bottom: 1px solid var(--brand-border);
+      color: var(--brand-dark);
+      font-size: 13px;
+    }
+
+    .top-alert-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 9px 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .top-alert strong {
+      color: var(--brand-red);
+    }
+
+    .global-header {
+      background: #ffffff;
+      color: var(--brand-dark);
+      border-bottom: 1px solid var(--brand-border);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    }
+
+    .global-header-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 168px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .brand-logo-fallback {
+      width: 54px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--brand-red) 0 48%, var(--brand-blue) 48% 100%);
+      color: #fff;
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 21px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 21px;
+      letter-spacing: 0.02em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header-btn {
+      border: 1px solid var(--brand-border);
+      background: #fff;
+      color: var(--brand-dark);
+      border-radius: 5px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .header-btn.primary {
+      background: var(--brand-blue);
+      color: #fff;
+      border-color: var(--brand-blue);
+    }
+
+    .nav-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--brand-border);
+    }
+
+    .nav-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      overflow-x: auto;
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      color: #334155;
+      padding: 16px 18px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      border-bottom: 4px solid transparent;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover {
+      background: #f8fafc;
+    }
+
+    .nav-item.active {
+      color: var(--brand-blue);
+      border-bottom-color: var(--brand-red);
+    }
+
+    .hero {
+      background: linear-gradient(120deg, var(--brand-red) 0%, #c90010 36%, var(--brand-blue) 36%, var(--brand-navy) 100%);
+      color: white;
+    }
+
+    .hero-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 34px 20px 80px;
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero h2 {
+      font-size: 34px;
+      margin: 0 0 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #ffffff;
+      line-height: 1.8;
+    }
+
+    .hero-card {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      padding: 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-card-title {
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .hero-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .hero-mini {
+      background: rgba(255, 255, 255, 0.18);
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .hero-mini span {
+      display: block;
+      font-size: 12px;
+      color: #fff;
+      opacity: 0.9;
+    }
+
+    .hero-mini strong {
+      display: block;
+      font-size: 23px;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 1220px;
+      margin: -48px auto 48px;
+      padding: 0 20px;
+    }
+
+    .operation-panel {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+      overflow: visible;
+      margin-bottom: 24px;
+    }
+
+    .operation-tabs {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      background: #f8fafc;
+      border: 1px solid var(--brand-border);
+      border-bottom: 1px solid var(--brand-border);
+      border-radius: 10px 10px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .operation-tab {
+      border: none;
+      background: transparent;
+      padding: 15px 8px;
+      font-weight: 900;
+      cursor: pointer;
+      color: #334155;
+      border-right: 1px solid var(--brand-border);
+      white-space: nowrap;
+    }
+
+    .operation-tab:last-child {
+      border-right: none;
+    }
+
+    .operation-tab.active {
+      background: white;
+      color: var(--brand-blue);
+      border-top: 4px solid var(--brand-red);
+      padding-top: 11px;
+    }
+
+    .page {
+      display: none;
+      padding: 24px;
+      overflow: visible;
+      border: 1px solid var(--brand-border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      background: #fff;
+    }
+
+    .page.active-page {
+      display: block;
+    }
+
+    .table-wrap::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    .table-wrap::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+
+    .table-wrap::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+
+    .page-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .page-title-row h3 {
+      margin: 0;
+      font-size: 23px;
+      color: var(--brand-dark);
+    }
+
+    .page-title-row p {
+      margin: 6px 0 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn,
+    .small-btn {
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .primary-btn {
+      background: var(--brand-blue);
+      color: white;
+      border: none;
+      padding: 11px 18px;
+      box-shadow: 0 2px 0 var(--brand-navy);
+    }
+
+    .primary-btn:hover {
+      background: var(--brand-navy);
+    }
+
+    .secondary-btn {
+      background: white;
+      color: var(--brand-blue);
+      border: 1px solid var(--brand-blue);
+      padding: 10px 16px;
+    }
+
+    .danger-btn {
+      background: #fff;
+      color: var(--danger);
+      border: 1px solid #fca5a5;
+      padding: 10px 16px;
+    }
+
+    .small-btn {
+      border: 1px solid #cbd5e1;
+      background: white;
+      color: #1e3a5f;
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      padding: 16px;
+      background: #ffffff;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .card h4 {
+      margin: 8px 0 0;
+      font-size: 29px;
+      color: var(--brand-dark);
+    }
+
+    .card.warning h4 {
+      color: var(--warning);
+    }
+
+    .card.success h4 {
+      color: var(--success);
+    }
+
+    .card.danger h4 {
+      color: var(--danger);
+    }
+
+    .card.blue h4 {
+      color: var(--brand-blue);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.72fr;
+      gap: 18px;
+    }
+
+    .box {
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      background: white;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .box-header {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--brand-border);
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .box-header h4 {
+      margin: 0;
+      color: var(--brand-dark);
+      font-size: 16px;
+    }
+
+    .box-body {
+      padding: 16px;
+    }
+
+    .notice-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .notice {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 10px;
+      font-size: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .notice:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .notice-date {
+      color: var(--brand-red);
+      font-weight: 900;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    input,
+    select,
+    textarea {
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      padding: 10px 11px;
+      height: 42px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 110px;
+      height: auto;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid rgba(0, 113, 188, 0.24);
+      border-color: var(--brand-blue);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: 360px;
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+    }
+
+    .table-wrap table {
+      min-width: 900px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--brand-border);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .badge.red {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .badge.blue {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+    }
+
+    .badge.green {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #86efac;
+    }
+
+    .badge.yellow {
+      background: #fff7d6;
+      color: #9a6700;
+      border: 1px solid #f3d16b;
+    }
+
+    .badge.gray {
+      background: #e5e7eb;
+      color: #374151;
+      border: 1px solid #cbd5e1;
+    }
+
+    .badge.dark {
+      background: #111827;
+      color: #fff;
+      border: 1px solid #111827;
+    }
+
+    .section-heading {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--brand-dark);
+      border-left: 4px solid var(--brand-red);
+      padding-left: 10px;
+      margin: 22px 0 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .form-grid label {
+      display: grid;
+      gap: 6px;
+      font-weight: 900;
+      font-size: 13px;
+      color: #334155;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .template-card {
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      padding: 16px;
+      background: white;
+    }
+
+    .template-card h4 {
+      margin: 0 0 8px;
+      color: var(--brand-dark);
+    }
+
+    .template-card p {
+      margin: 0 0 14px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 18px;
+    }
+
+    .profile-card {
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      background: white;
+      padding: 18px;
+    }
+
+    .profile-name {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--brand-dark);
+      margin: 0 0 4px;
+    }
+
+    .profile-sub {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin: 0 0 14px;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .info-item {
+      display: grid;
+      grid-template-columns: 126px 1fr;
+      gap: 10px;
+      font-size: 14px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+
+    .info-label {
+      color: var(--text-muted);
+      font-weight: 800;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+    }
+
+    .check-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--brand-border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .footer {
+      display: none;
+    }
+
+    @media (max-width: 1080px) {
+      .operation-tabs {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .cards {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .content-grid,
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .template-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .container {
+        margin-bottom: 24px;
+      }
+
+      .global-header-inner,
+      .hero-inner {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .brand-logo {
+        width: 140px;
+        height: 46px;
+      }
+
+      .hero h2 {
+        font-size: 27px;
+      }
+
+      .operation-tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .cards,
+      .form-grid,
+      .template-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        padding: 16px;
+      }
+
+      .page-title-row {
+        flex-direction: column;
+      }
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
-  <header class="topbar"><div class="topbar-inner"><div class="brand"><img src="refinas-logo.png" alt="Refinas" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('afterbegin','<div class=&quot;brand-fallback&quot;>R</div>')"><span>社員管理システム</span></div><div class="nav"><button class="nav-item active" data-page="dashboard">ダッシュボード</button><button class="nav-item" data-page="employees">社員一覧</button><button class="nav-item" data-page="onboarding">入社手続き</button><button class="nav-item" data-page="tshirt">Tシャツ</button><button class="nav-item" data-page="transport">交通費</button><button class="nav-item" data-page="accounts">アカウント</button><button class="nav-item" data-page="retirement">退職</button><button class="nav-item" data-page="settings">設定</button></div></div></header>
-  <section class="hero"><div class="hero-inner"><h1 id="heroTitle">社員情報を一元管理</h1><p id="heroDescription">入社フォーム、社員一覧、交通費、Tシャツ送付、ハーモス案内、退職処理まで管理できます。</p></div></section>
-  <main class="container"><div class="operation-panel"><div class="operation-tabs"><button class="operation-tab active" data-page="dashboard">ダッシュボード</button><button class="operation-tab" data-page="employees">社員一覧</button><button class="operation-tab" data-page="onboarding">入社手続き</button><button class="operation-tab" data-page="tshirt">Tシャツ送付</button><button class="operation-tab" data-page="transport">交通費管理</button><button class="operation-tab" data-page="accounts">アカウント案内</button><button class="operation-tab" data-page="retirement">退職管理</button><button class="operation-tab" data-page="settings">設定</button></div>
-    <section id="dashboard" class="page active-page"><div class="page-title-row"><div><h3>ダッシュボード</h3><p>社員管理の対応状況を確認します。</p></div></div><div class="cards"><div class="card"><p>社員数</p><h4 id="countEmployees">-</h4></div><div class="card"><p>入社未回答</p><h4 id="countOnboarding">-</h4></div><div class="card"><p>Tシャツ未送付</p><h4 id="countTshirt">-</h4></div><div class="card"><p>ID案内未送信</p><h4 id="countAccounts">-</h4></div></div></section>
-    <section id="employees" class="page"><div class="page-title-row"><div><h3>社員一覧</h3><p>社員名簿の正データです。</p></div><button class="secondary-btn" onclick="loadEmployees()">更新</button></div><div class="filters"><input id="employeeSearchInput" placeholder="氏名・メール・社員IDで検索"><select id="employeeStatusFilter"><option value="">全ステータス</option><option>入社予定</option><option>在籍中</option><option>退職予定</option><option>退職済み</option></select><select id="employeeStoreFilter"><option value="">全店舗</option></select><select id="employeeTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select></div><div class="table-wrap"><table><thead><tr><th>社員ID</th><th>氏名</th><th>店舗</th><th>職種</th><th>雇用形態</th><th>状態</th><th>開始日</th><th>Tシャツ</th><th>ID案内</th><th>操作</th></tr></thead><tbody id="employeesTableBody"><tr><td colspan="10">読み込み中...</td></tr></tbody></table></div></section>
-    <section id="onboarding" class="page"><div class="page-title-row"><div><h3>入社手続き</h3><p>採用部から来た入社予定者を仮登録し、入社フォームURLを発行します。回答後は回答済みで残し、不要になったら管理画面から削除します。</p></div><button class="primary-btn" onclick="createOnboardingCandidate()">控えとして登録</button></div><div class="box"><div class="box-header"><h4>採用部連絡メモ</h4></div><div class="box-body"><div class="form-grid"><label>姓<input id="candidateLastName" placeholder="山田"></label><label>名<input id="candidateFirstName" placeholder="太郎"></label><label>研修予定店舗<select id="candidateTrainingStore"><option value="">選択してください</option></select></label><label>勤務開始予定日<input id="candidateStartDate" type="date"></label><label>雇用形態<select id="candidateEmploymentType"><option>正社員</option><option>アルバイト</option><option>業務委託</option></select></label><label class="full">採用部メモ<textarea id="candidateMemo"></textarea></label></div><div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><button class="primary-btn" onclick="createOnboardingCandidate()">控えとして登録してURL発行</button><button class="secondary-btn" onclick="clearCandidateForm()">入力をクリア</button></div></div></div><div class="section-heading">入社フォーム回答状況</div><div class="filters"><input id="candidateSearchInput" placeholder="氏名で検索"><select id="candidateStatusFilter"><option value="">全ステータス</option><option>未回答</option><option>回答済み</option></select><select id="candidateTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select><button class="secondary-btn" onclick="loadOnboardingCandidates()">更新</button></div><div class="table-wrap"><table><thead><tr><th>採用部連絡名</th><th>雇用形態</th><th>研修予定店舗</th><th>勤務開始予定日</th><th>フォームURL</th><th>状態</th><th>操作</th></tr></thead><tbody id="onboardingCandidatesBody"><tr><td colspan="7">読み込み中...</td></tr></tbody></table></div></section>
-    <section id="tshirt" class="page"><div class="page-title-row"><div><h3>Tシャツ送付管理</h3><p>未送付のスタッフだけを表示します。送付済みにすると一覧から消えます。</p></div><button class="secondary-btn" onclick="loadTshirtTargets()">更新</button></div><div class="table-wrap"><table><thead><tr><th>氏名</th><th>店舗</th><th>雇用形態</th><th>サイズ</th><th>枚数</th><th>送付状況</th><th>送付日</th><th>操作</th></tr></thead><tbody id="tshirtTableBody"><tr><td colspan="8">読み込み中...</td></tr></tbody></table></div></section>
-    <section id="transport" class="page"><div class="page-title-row"><div><h3>交通費管理</h3><p>スタッフ検索後、対象者の交通費を確認・修正します。</p></div></div><div class="box"><div class="box-header"><h4>スタッフ検索</h4></div><div class="box-body"><div class="filters" style="margin-bottom:0"><input id="transportSearchInput" placeholder="氏名・社員IDで検索"><select id="transportStoreFilter"><option value="">全店舗</option></select><select id="transportTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select><button class="primary-btn" onclick="loadTransportManagement()">検索</button></div></div></div><div class="section-heading">検索結果</div><div class="table-wrap"><table><thead><tr><th>社員ID</th><th>氏名</th><th>雇用形態</th><th>主な店舗</th><th>現在の交通費</th><th>最終更新</th><th>操作</th></tr></thead><tbody id="transportSearchBody"><tr><td colspan="7">読み込み中...</td></tr></tbody></table></div><div class="section-heading">選択中スタッフの交通費詳細</div><div class="detail-layout"><div class="profile-card"><p id="transportSelectedName" class="profile-name">未選択</p><p id="transportSelectedSub" class="profile-sub">検索結果から選択してください。</p><div class="info-list"><div class="info-item"><div class="info-label">現在の登録</div><div id="transportRecordCount">-</div></div><div class="info-item"><div class="info-label">最終更新</div><div id="transportLastUpdated">-</div></div></div></div><div class="box"><div class="box-header"><h4>登録中の交通費</h4><button class="secondary-btn" onclick="prepareNewTransportationRecord()">交通費を追加</button></div><div class="table-wrap" style="margin:0;border:0;border-radius:0"><table><thead><tr><th>店舗</th><th>種別</th><th>経路</th><th>金額</th><th>適用開始日</th><th>操作</th></tr></thead><tbody id="transportRecordsBody"><tr><td colspan="6">スタッフを選択してください。</td></tr></tbody></table></div></div></div><div id="transportFormSection" style="display:none"><div class="section-heading">交通費修正フォーム</div><div class="box"><div class="box-header"><h4 id="transportFormTitle">交通費を追加・修正</h4></div><div class="box-body"><input type="hidden" id="transportRecordId"><div class="form-grid"><label>対象店舗<select id="transportEditStore"><option value="">選択してください</option></select></label><label>交通費種別<select id="transportEditType"><option>片道</option><option>1ヶ月定期</option></select></label><label>出発駅<input id="transportEditFrom"></label><label>到着駅<input id="transportEditTo"></label><label>金額<input id="transportEditAmount" type="number" min="0"></label><label>適用開始日<input id="transportEditApplyDate" type="date"></label><label class="full">修正理由<textarea id="transportEditReason"></textarea></label></div><div style="margin-top:16px;display:flex;gap:10px"><button class="primary-btn" onclick="saveTransportationRecord()">修正内容を保存</button><button class="secondary-btn" onclick="hideTransportationForm()">キャンセル</button></div></div></div></div><div class="section-heading">このスタッフの変更履歴</div><div class="table-wrap"><table><thead><tr><th>変更日</th><th>変更前</th><th>変更後</th><th>適用開始日</th><th>修正理由</th><th>更新者</th></tr></thead><tbody id="transportHistoryBody"><tr><td colspan="6">スタッフを選択してください。</td></tr></tbody></table></div></section>
-    <section id="accounts" class="page"><div class="page-title-row"><div><h3>アカウント案内</h3><p>メール送信機能は後で追加します。</p></div></div></section><section id="retirement" class="page"><div class="page-title-row"><div><h3>退職管理</h3><p>退職者管理は後で接続します。</p></div></div></section><section id="settings" class="page"><div class="page-title-row"><div><h3>設定</h3><p>各種URLやルールを管理します。</p></div></div></section>
-  </div></main>
-<script>
-const SUPABASE_URL="https://xcxrurktphdnpdumyzhn.supabase.co";
-const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const pageInfo={dashboard:["社員情報を一元管理","入社フォーム、社員一覧、交通費、Tシャツ送付、ハーモス案内、退職処理まで管理できます。"],employees:["社員一覧を管理","社員名簿の正データを確認できます。"],onboarding:["入社手続きを管理","採用部から来た入社予定者を仮登録し、フォームURLを発行します。"],tshirt:["Tシャツ送付状況を管理","未送付者だけを表示し、送付済みに更新できます。"],transport:["交通費情報を確認","スタッフごとの交通費を確認・修正します。"],accounts:["アカウント案内を送信","メール送信機能は後で追加します。"],retirement:["退職処理を管理","退職予定・退職済みを管理します。"],settings:["システム設定","各種設定を管理します。"]};
-let allEmployees=[],tshirtTargets=[],onboardingCandidates=[],transportEmployees=[],transportRecords=[],selectedTransportEmployee=null;
-function $(id){return document.getElementById(id)}function escapeHtml(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}function escapeAttr(v){return escapeHtml(v)}function formatDate(v){return v?String(v).slice(0,10).replaceAll("-","/"):"-"}function formatMoney(v){return v===null||v===undefined||v===""?"-":`${Number(v).toLocaleString()}円`}function getEmployeeName(e){return e.employee_name||`${e.last_name||""}${e.first_name||""}`||"-"}function badge(t,c){return `<span class="badge ${c}">${escapeHtml(t)}</span>`}function statusBadge(s){if(s==="在籍中")return badge(s,"green");if(s==="入社予定"||s==="退職予定")return badge(s,"yellow");if(s==="退職済み")return badge(s,"gray");return badge(s||"入社予定","gray")}function candidateBadge(s){return s==="回答済み"?badge("回答済み","green"):badge("未回答","red")}
-function switchPage(page){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active-page"));$(page)?.classList.add("active-page");document.querySelectorAll(".nav-item,.operation-tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));if(pageInfo[page]){$("heroTitle").textContent=pageInfo[page][0];$("heroDescription").textContent=pageInfo[page][1]}document.querySelector(".operation-panel")?.scrollIntoView({behavior:"smooth",block:"start"});if(page==="employees")loadEmployees();if(page==="onboarding")loadOnboardingCandidates();if(page==="tshirt")loadTshirtTargets();if(page==="transport")loadTransportManagement()}document.querySelectorAll(".nav-item,.operation-tab").forEach(b=>b.addEventListener("click",()=>switchPage(b.dataset.page)));
-async function loadStoresForFilters(){const {data,error}=await supabaseClient.from("stores").select("store_name,is_active").eq("is_active",true).order("store_name",{ascending:true});if(error){console.error(error);return}const opts=(data||[]).map(s=>`<option value="${escapeAttr(s.store_name)}">${escapeHtml(s.store_name)}</option>`).join("");["employeeStoreFilter","transportStoreFilter"].forEach(id=>{if($(id))$(id).innerHTML='<option value="">全店舗</option>'+opts});["candidateTrainingStore","transportEditStore"].forEach(id=>{if($(id))$(id).innerHTML='<option value="">選択してください</option>'+opts})}function generateToken(len=32){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",v=new Uint32Array(len);crypto.getRandomValues(v);return Array.from(v).map(x=>c[x%c.length]).join("")}function getOnboardingBaseUrl(){const u=new URL(location.href);return `${u.origin}${u.pathname.replace(/index\.html$/,"").replace(/\/$/,"")}/onboarding.html`}
-async function loadEmployees(){const tbody=$("employeesTableBody");if(tbody)tbody.innerHTML='<tr><td colspan="10">読み込み中...</td></tr>';const {data,error}=await supabaseClient.from("employees").select("employee_code,harmos_id,employee_name,last_name,first_name,email,store,job_type,employment_type,employment_status,earliest_start_date,tshirt_sent,harmos_sent_at,created_at").order("created_at",{ascending:false});if(error){tbody.innerHTML=`<tr><td colspan="10">社員データの取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;return}allEmployees=data||[];renderEmployees(allEmployees);updateCounts()}function renderEmployees(list){const tbody=$("employeesTableBody");if(!tbody)return;const kw=($("employeeSearchInput")?.value||"").toLowerCase(),st=$("employeeStatusFilter")?.value||"",store=$("employeeStoreFilter")?.value||"",type=$("employeeTypeFilter")?.value||"";list=list.filter(e=>{const t=[e.employee_code,e.harmos_id,e.employee_name,e.email].filter(Boolean).join(" ").toLowerCase();return(!kw||t.includes(kw))&&(!st||e.employment_status===st)&&(!store||e.store===store)&&(!type||e.employment_type===type)});if(!list.length){tbody.innerHTML='<tr><td colspan="10">該当する社員データがありません。</td></tr>';return}tbody.innerHTML=list.map(e=>`<tr><td>${escapeHtml(e.employee_code||e.harmos_id||"-")}</td><td>${escapeHtml(getEmployeeName(e))}</td><td>${escapeHtml(e.store||"-")}</td><td>${escapeHtml(e.job_type||"-")}</td><td>${escapeHtml(e.employment_type||"-")}</td><td>${statusBadge(e.employment_status)}</td><td>${formatDate(e.earliest_start_date)}</td><td>${e.tshirt_sent?badge("送付済み","green"):badge("未送付","red")}</td><td>${e.harmos_sent_at?badge("送信済み","green"):badge("未送信","gray")}</td><td><button class="small-btn">詳細</button></td></tr>`).join("")} ["employeeSearchInput","employeeStatusFilter","employeeStoreFilter","employeeTypeFilter"].forEach(id=>{$(id)?.addEventListener("input",()=>renderEmployees(allEmployees));$(id)?.addEventListener("change",()=>renderEmployees(allEmployees))});
-function clearCandidateForm(){["candidateLastName","candidateFirstName","candidateTrainingStore","candidateStartDate","candidateMemo"].forEach(id=>{if($(id))$(id).value=""});if($("candidateEmploymentType"))$("candidateEmploymentType").value="正社員"}async function createOnboardingCandidate(){const last_name=$("candidateLastName").value.trim(),first_name=$("candidateFirstName").value.trim();if(!last_name||!first_name)return alert("姓・名を入力してください。");const form_token=generateToken(32),form_url=`${getOnboardingBaseUrl()}?token=${encodeURIComponent(form_token)}`;const payload={last_name,first_name,training_store:$("candidateTrainingStore").value||null,planned_start_date:$("candidateStartDate").value||null,employment_type:$("candidateEmploymentType").value,memo:$("candidateMemo").value.trim()||null,form_token,form_url,form_status:"未回答"};const {error}=await supabaseClient.from("onboarding_candidates").insert(payload);if(error)return alert("入社予定者の登録に失敗しました。"+error.message);clearCandidateForm();await loadOnboardingCandidates();alert("登録しました。URLコピーからフォームURLをコピーできます。")}async function loadOnboardingCandidates(){const tbody=$("onboardingCandidatesBody");if(tbody)tbody.innerHTML='<tr><td colspan="7">読み込み中...</td></tr>';const {data,error}=await supabaseClient.from("onboarding_candidates").select("id,last_name,first_name,training_store,planned_start_date,employment_type,memo,form_token,form_url,form_status,submitted_at,created_at").order("created_at",{ascending:false});if(error){tbody.innerHTML=`<tr><td colspan="7">取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;return}onboardingCandidates=data||[];renderCandidates();updateCounts()}function renderCandidates(){const tbody=$("onboardingCandidatesBody");if(!tbody)return;const kw=($("candidateSearchInput")?.value||"").toLowerCase(),st=$("candidateStatusFilter")?.value||"",type=$("candidateTypeFilter")?.value||"";const list=onboardingCandidates.filter(c=>{const n=`${c.last_name||""}${c.first_name||""}`.toLowerCase();return(!kw||n.includes(kw))&&(!st||c.form_status===st)&&(!type||c.employment_type===type)});if(!list.length){tbody.innerHTML='<tr><td colspan="7">入社予定者の仮データはありません。</td></tr>';return}tbody.innerHTML=list.map(c=>`<tr><td>${escapeHtml(`${c.last_name||""}${c.first_name||""}`)}</td><td>${escapeHtml(c.employment_type||"-")}</td><td>${escapeHtml(c.training_store||"-")}</td><td>${formatDate(c.planned_start_date)}</td><td><button class="small-btn js-copy-url" data-url="${escapeAttr(c.form_url||"")}">URLコピー</button></td><td>${candidateBadge(c.form_status)}</td><td><button class="small-btn js-del-candidate" data-id="${c.id}">削除</button></td></tr>`).join("");tbody.querySelectorAll(".js-copy-url").forEach(b=>b.onclick=async()=>{await navigator.clipboard.writeText(b.dataset.url);alert("URLをコピーしました。")});tbody.querySelectorAll(".js-del-candidate").forEach(b=>b.onclick=()=>deleteOnboardingCandidate(b.dataset.id))}async function deleteOnboardingCandidate(id){if(!confirm("この仮データを削除しますか？"))return;const {error}=await supabaseClient.from("onboarding_candidates").delete().eq("id",id);if(error)return alert("削除に失敗しました。"+error.message);await loadOnboardingCandidates()}["candidateSearchInput","candidateStatusFilter","candidateTypeFilter"].forEach(id=>{$(id)?.addEventListener("input",renderCandidates);$(id)?.addEventListener("change",renderCandidates)});
-async function loadTshirtTargets(){const tbody=$("tshirtTableBody");if(tbody)tbody.innerHTML='<tr><td colspan="8">読み込み中...</td></tr>';const {data,error}=await supabaseClient.from("employees").select("employee_code,employee_name,last_name,first_name,store,employment_type,tshirt_size,tshirt_quantity,tshirt_sent,tshirt_sent_at").eq("tshirt_sent",false).order("created_at",{ascending:false});if(error){tbody.innerHTML=`<tr><td colspan="8">取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;return}tshirtTargets=data||[];renderTshirtTargets()}function renderTshirtTargets(){const tbody=$("tshirtTableBody");if(!tbody)return;if(!tshirtTargets.length){tbody.innerHTML='<tr><td colspan="8">Tシャツ未送付のスタッフはいません。</td></tr>';return}tbody.innerHTML=tshirtTargets.map(e=>`<tr data-employee-code="${escapeAttr(e.employee_code)}"><td>${escapeHtml(getEmployeeName(e))}</td><td>${escapeHtml(e.store||"-")}</td><td>${escapeHtml(e.employment_type||"-")}</td><td>${escapeHtml(e.tshirt_size||"-")}</td><td><input class="tshirt-qty-input" type="number" value="${Number(e.tshirt_quantity||1)}" min="0" style="width:80px"></td><td>${badge("未送付","red")}</td><td>-</td><td><button class="small-btn js-tshirt-sent" data-code="${escapeAttr(e.employee_code)}">送付済みにする</button></td></tr>`).join("");tbody.querySelectorAll(".js-tshirt-sent").forEach(b=>b.onclick=()=>markTshirtSent(b.dataset.code))}async function markTshirtSent(code){const row=[...document.querySelectorAll("tr[data-employee-code]")].find(r=>r.dataset.employeeCode===code);const q=Number(row?.querySelector(".tshirt-qty-input")?.value||1);const {error}=await supabaseClient.from("employees").update({tshirt_quantity:q,tshirt_sent:true,tshirt_sent_at:new Date().toISOString()}).eq("employee_code",code);if(error)return alert("更新に失敗しました。"+error.message);await loadTshirtTargets();await loadEmployees()}
-async function loadTransportManagement(){const tbody=$("transportSearchBody");if(tbody)tbody.innerHTML='<tr><td colspan="7">読み込み中...</td></tr>';const er=await supabaseClient.from("employees").select("employee_code,harmos_id,employee_id,employee_name,last_name,first_name,store,employment_type,employment_status,created_at").order("created_at",{ascending:false});if(er.error){tbody.innerHTML=`<tr><td colspan="7">スタッフ取得に失敗しました。${escapeHtml(er.error.message)}</td></tr>`;return}const rr=await supabaseClient.from("transportation_records").select("id,employee_code,employee_id,transportation_type,store,from_station,to_station,amount,apply_start_date,confirmed,created_at,updated_at,is_active").eq("is_active",true).order("created_at",{ascending:false});if(rr.error){tbody.innerHTML=`<tr><td colspan="7">交通費取得に失敗しました。${escapeHtml(rr.error.message)}</td></tr>`;return}transportEmployees=er.data||[];transportRecords=rr.data||[];renderTransportSearch()}function getTransportRecordsForEmployee(code){return transportRecords.filter(r=>r.employee_code===code)}function summarizeTransportRecords(rs){if(!rs.length)return"未登録";if(rs.length===1)return`${rs[0].from_station||"-"} → ${rs[0].to_station||"-"} / ${formatMoney(rs[0].amount)}`;const a=rs.map(r=>Number(r.amount||0));return `${rs.length}件登録 / ${formatMoney(Math.min(...a))}〜${formatMoney(Math.max(...a))}`}function getTransportLastUpdated(rs){if(!rs.length)return"-";return formatDate(rs.map(r=>r.updated_at||r.created_at).filter(Boolean).sort().reverse()[0])}function renderTransportSearch(){const tbody=$("transportSearchBody");if(!tbody)return;const kw=($("transportSearchInput")?.value||"").toLowerCase(),store=$("transportStoreFilter")?.value||"",type=$("transportTypeFilter")?.value||"";const list=transportEmployees.filter(e=>{const t=[e.employee_code,e.harmos_id,getEmployeeName(e)].join(" ").toLowerCase();return(!kw||t.includes(kw))&&(!store||e.store===store)&&(!type||e.employment_type===type)});if(!list.length){tbody.innerHTML='<tr><td colspan="7">該当するスタッフがいません。</td></tr>';return}tbody.innerHTML=list.map(e=>{const rs=getTransportRecordsForEmployee(e.employee_code);return`<tr><td>${escapeHtml(e.employee_code||"-")}</td><td>${escapeHtml(getEmployeeName(e))}</td><td>${escapeHtml(e.employment_type||"-")}</td><td>${escapeHtml(e.store||"-")}</td><td>${escapeHtml(summarizeTransportRecords(rs))}</td><td>${getTransportLastUpdated(rs)}</td><td><button class="small-btn js-transport-select" data-code="${escapeAttr(e.employee_code)}">詳細・修正</button></td></tr>`}).join("");tbody.querySelectorAll(".js-transport-select").forEach(b=>b.onclick=()=>selectTransportEmployee(b.dataset.code))}["transportSearchInput","transportStoreFilter","transportTypeFilter"].forEach(id=>{$(id)?.addEventListener("input",renderTransportSearch);$(id)?.addEventListener("change",renderTransportSearch)});function selectTransportEmployee(code){selectedTransportEmployee=transportEmployees.find(e=>e.employee_code===code)||null;const rs=getTransportRecordsForEmployee(code);$("transportSelectedName").textContent=selectedTransportEmployee?getEmployeeName(selectedTransportEmployee):"未選択";$("transportSelectedSub").textContent=selectedTransportEmployee?`${selectedTransportEmployee.employee_code} / ${selectedTransportEmployee.store||"-"} / ${selectedTransportEmployee.employment_type||"-"}`:"検索結果から選択してください。";$("transportRecordCount").textContent=`${rs.length}件`;$("transportLastUpdated").textContent=getTransportLastUpdated(rs);renderTransportRecords(rs);hideTransportationForm();loadTransportHistory(code)}function renderTransportRecords(rs){const tbody=$("transportRecordsBody");if(!tbody)return;if(!rs.length){tbody.innerHTML='<tr><td colspan="6">交通費が未登録です。</td></tr>';return}tbody.innerHTML=rs.map(r=>`<tr><td>${escapeHtml(r.store||"-")}</td><td>${escapeHtml(r.transportation_type||"-")}</td><td>${escapeHtml(r.from_station||"-")} → ${escapeHtml(r.to_station||"-")}</td><td>${formatMoney(r.amount)}</td><td>${formatDate(r.apply_start_date)}</td><td><button class="small-btn js-transport-edit" data-id="${r.id}">修正</button></td></tr>`).join("");tbody.querySelectorAll(".js-transport-edit").forEach(b=>b.onclick=()=>editTransportationRecord(Number(b.dataset.id)))}function showTransportationForm(){$("transportFormSection").style.display="block";$("transportFormSection").scrollIntoView({behavior:"smooth",block:"start"})}function hideTransportationForm(){$("transportFormSection").style.display="none"}function prepareNewTransportationRecord(){if(!selectedTransportEmployee)return alert("先にスタッフを選択してください。");showTransportationForm();$("transportFormTitle").textContent="交通費を追加";$("transportRecordId").value="";$("transportEditStore").value=selectedTransportEmployee.store||"";$("transportEditType").value=selectedTransportEmployee.employment_type==="正社員"?"1ヶ月定期":"片道";$("transportEditFrom").value="";$("transportEditTo").value="";$("transportEditAmount").value="";$("transportEditApplyDate").value=new Date().toISOString().slice(0,10);$("transportEditReason").value=""}function editTransportationRecord(id){const r=transportRecords.find(x=>Number(x.id)===id);if(!r)return;showTransportationForm();$("transportFormTitle").textContent="交通費を修正";$("transportRecordId").value=r.id;$("transportEditStore").value=r.store||"";$("transportEditType").value=r.transportation_type||"片道";$("transportEditFrom").value=r.from_station||"";$("transportEditTo").value=r.to_station||"";$("transportEditAmount").value=r.amount??"";$("transportEditApplyDate").value=r.apply_start_date||"";$("transportEditReason").value=""}async function saveTransportationRecord(){if(!selectedTransportEmployee)return alert("先にスタッフを選択してください。");const id=$("transportRecordId").value;const payload={employee_code:selectedTransportEmployee.employee_code,employee_id:selectedTransportEmployee.employee_id||null,store:$("transportEditStore").value,transportation_type:$("transportEditType").value,from_station:$("transportEditFrom").value.trim(),to_station:$("transportEditTo").value.trim(),amount:Number($("transportEditAmount").value),apply_start_date:$("transportEditApplyDate").value,confirmed:true,confirmed_at:new Date().toISOString(),updated_at:new Date().toISOString(),is_active:true};const reason=$("transportEditReason").value.trim();if(!payload.store||!payload.from_station||!payload.to_station||!payload.apply_start_date||Number.isNaN(payload.amount))return alert("必要項目を入力してください。");if(id){const before=transportRecords.find(x=>Number(x.id)===Number(id));const r=await supabaseClient.from("transportation_records").update(payload).eq("id",id);if(r.error)return alert("更新に失敗しました。"+r.error.message);await supabaseClient.from("transportation_histories").insert({transportation_record_id:Number(id),employee_code:selectedTransportEmployee.employee_code,employee_id:before?.employee_id||null,before_data:before||null,after_data:payload,apply_start_date:payload.apply_start_date,reason:reason||"管理画面から修正",updated_by:"管理本部"})}else{const r=await supabaseClient.from("transportation_records").insert(payload).select("id").single();if(r.error)return alert("追加に失敗しました。"+r.error.message);await supabaseClient.from("transportation_histories").insert({transportation_record_id:r.data?.id||null,employee_code:selectedTransportEmployee.employee_code,employee_id:payload.employee_id,before_data:null,after_data:payload,apply_start_date:payload.apply_start_date,reason:reason||"管理画面から追加",updated_by:"管理本部"})}await loadTransportManagement();selectTransportEmployee(selectedTransportEmployee.employee_code);alert("交通費を保存しました。")}async function loadTransportHistory(code){const tbody=$("transportHistoryBody");if(!tbody)return;const r=await supabaseClient.from("transportation_histories").select("created_at,before_data,after_data,apply_start_date,reason,updated_by").eq("employee_code",code).order("created_at",{ascending:false});if(r.error){tbody.innerHTML=`<tr><td colspan="6">履歴取得に失敗しました。${escapeHtml(r.error.message)}</td></tr>`;return}if(!r.data?.length){tbody.innerHTML='<tr><td colspan="6">変更履歴はありません。</td></tr>';return}tbody.innerHTML=r.data.map(h=>{const b=h.before_data?`${h.before_data.from_station||"-"} → ${h.before_data.to_station||"-"} / ${formatMoney(h.before_data.amount)}`:"新規追加";const a=h.after_data?`${h.after_data.from_station||"-"} → ${h.after_data.to_station||"-"} / ${formatMoney(h.after_data.amount)}`:"-";return`<tr><td>${formatDate(h.created_at)}</td><td>${escapeHtml(b)}</td><td>${escapeHtml(a)}</td><td>${formatDate(h.apply_start_date)}</td><td>${escapeHtml(h.reason||"-")}</td><td>${escapeHtml(h.updated_by||"-")}</td></tr>`}).join("")}function updateCounts(){if($("countEmployees"))$("countEmployees").textContent=allEmployees.length;if($("countTshirt"))$("countTshirt").textContent=allEmployees.filter(e=>!e.tshirt_sent).length;if($("countAccounts"))$("countAccounts").textContent=allEmployees.filter(e=>!e.harmos_sent_at).length;if($("countOnboarding"))$("countOnboarding").textContent=onboardingCandidates.filter(c=>c.form_status==="未回答").length}
-loadStoresForFilters();loadEmployees();loadOnboardingCandidates();loadTshirtTargets();loadTransportManagement();
-</script></body></html>
+
+  <div class="top-alert">
+    <div class="top-alert-inner">
+      <div><strong>要確認</strong>　入社フォーム未回答 3名 / Tシャツ未送付 2名 / 退職予定 1名</div>
+      <div>最終更新：2026/06/01 10:30</div>
+    </div>
+  </div>
+
+  <header class="global-header">
+    <div class="global-header-inner">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="refinas-logo.png" alt="Refinas logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;brand-logo-fallback&quot;>R</div>'" />
+        </div>
+        <div>
+          <h1>Refinas 社員管理システム</h1>
+          <p>Employee Management & Onboarding</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="header-btn">マニュアル</button>
+        <button class="header-btn">CSV出力</button>
+        <button class="header-btn primary">管理者ログイン中</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <button class="nav-item active" data-page="dashboard">ダッシュボード</button>
+      <button class="nav-item" data-page="employees">社員一覧</button>
+      <button class="nav-item" data-page="onboarding">入社手続き</button>
+      <button class="nav-item" data-page="tshirt">Tシャツ送付</button>
+      <button class="nav-item" data-page="transport">交通費管理</button>
+      <button class="nav-item" data-page="accounts">アカウント案内</button>
+      <button class="nav-item" data-page="retirement">退職管理</button>
+      <button class="nav-item" data-page="settings">設定</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <h2 id="heroTitle">社員情報を一元管理</h2>
+        <p id="heroDescription">
+          入社フォーム、社員一覧、交通費、Tシャツ送付、ハーモス案内、退職処理まで管理できます。採用管理は必要最低限に絞っています。
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <div class="hero-card-title">本日の確認事項</div>
+        <div class="hero-mini-grid">
+          <div class="hero-mini"><span>入社予定</span><strong>6</strong></div>
+          <div class="hero-mini"><span>未回答</span><strong>3</strong></div>
+          <div class="hero-mini"><span>Tシャツ未送付</span><strong>2</strong></div>
+          <div class="hero-mini"><span>退職予定</span><strong>1</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="operation-panel">
+      <div class="operation-tabs">
+        <button class="operation-tab active" data-page="dashboard">状況確認</button>
+        <button class="operation-tab" data-page="employees">社員一覧</button>
+        <button class="operation-tab" data-page="onboarding">入社手続き</button>
+        <button class="operation-tab" data-page="tshirt">Tシャツ</button>
+        <button class="operation-tab" data-page="transport">交通費</button>
+        <button class="operation-tab" data-page="accounts">ID案内</button>
+        <button class="operation-tab" data-page="retirement">退職</button>
+        <button class="operation-tab" data-page="settings">設定</button>
+      </div>
+
+      <section id="dashboard" class="page active-page">
+        <div class="page-title-row">
+          <div>
+            <h3>ダッシュボード</h3>
+            <p>社員管理の対応状況を確認します。</p>
+          </div>
+          <button class="primary-btn" data-page="onboarding" onclick="switchPage('onboarding')">入社予定者を登録</button>
+        </div>
+
+        <div class="cards">
+          <div class="card blue"><p>在籍中</p><h4>218</h4></div>
+          <div class="card warning"><p>入社予定</p><h4>6</h4></div>
+          <div class="card danger"><p>フォーム未回答</p><h4>3</h4></div>
+          <div class="card danger"><p>Tシャツ未送付</p><h4>2</h4></div>
+          <div class="card warning"><p>ID案内待ち</p><h4>4</h4></div>
+          <div class="card"><p>退職予定</p><h4>1</h4></div>
+        </div>
+
+        <div class="content-grid">
+          <div class="box">
+            <div class="box-header">
+              <h4>対応が必要なスタッフ</h4>
+              <button class="small-btn">すべて見る</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>氏名</th>
+                    <th>店舗</th>
+                    <th>雇用形態</th>
+                    <th>状態</th>
+                    <th>対応</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>山田太郎</td>
+                    <td>渋谷本店</td>
+                    <td>正社員</td>
+                    <td><span class="badge yellow">入社予定</span></td>
+                    <td><span class="badge red">フォーム未回答</span></td>
+                    <td><button class="small-btn">詳細</button></td>
+                  </tr>
+                  <tr>
+                    <td>佐藤花子</td>
+                    <td>横浜</td>
+                    <td>アルバイト</td>
+                    <td><span class="badge blue">回答済み</span></td>
+                    <td><span class="badge red">Tシャツ未送付</span></td>
+                    <td><button class="small-btn">送付済みにする</button></td>
+                  </tr>
+                  <tr>
+                    <td>鈴木一郎</td>
+                    <td>大阪梅田</td>
+                    <td>正社員</td>
+                    <td><span class="badge blue">回答済み</span></td>
+                    <td><span class="badge yellow">ID案内待ち</span></td>
+                    <td><button class="small-btn">ID案内送信</button></td>
+                  </tr>
+                  <tr>
+                    <td>田中美咲</td>
+                    <td>名古屋</td>
+                    <td>アルバイト</td>
+                    <td><span class="badge yellow">退職予定</span></td>
+                    <td><span class="badge gray">最終勤務日待ち</span></td>
+                    <td><button class="small-btn">退職詳細</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-header"><h4>お知らせ</h4></div>
+            <div class="box-body">
+              <div class="notice-list">
+                <div class="notice"><div class="notice-date">6/01</div><div>入社フォームURLを2名に送信しました。</div></div>
+                <div class="notice"><div class="notice-date">6/01</div><div>佐藤花子さんの入社フォーム回答を受信しました。</div></div>
+                <div class="notice"><div class="notice-date">5/31</div><div>Tシャツ送付待ちが2件あります。</div></div>
+                <div class="notice"><div class="notice-date">5/30</div><div>田中美咲さんが退職予定に変更されました。</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="employees" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>社員一覧</h3>
+            <p>在籍中・入社予定・退職予定・退職済みを管理します。通常は在籍中を中心に表示します。</p>
+          </div>
+          <button class="primary-btn">社員を追加</button>
+        </div>
+
+        <div class="filters">
+          <input id="employeeSearchInput" type="text" placeholder="氏名・メール・社員IDで検索" />
+          <select id="employeeStatusFilter"><option value="">全ステータス</option><option>在籍中</option><option>入社予定</option><option>退職予定</option><option>退職済み</option></select>
+          <select id="employeeStoreFilter"><option value="">全店舗</option></select>
+          <select id="employeeTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select>
+          <label style="display:flex; align-items:center; gap:6px; font-weight:800;"><input type="checkbox" style="height:auto;" /> 退職済みも表示</label>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>社員ID</th>
+                <th>氏名</th>
+                <th>店舗</th>
+                <th>職種</th>
+                <th>雇用形態</th>
+                <th>状態</th>
+                <th>最短勤務開始日</th>
+                <th>Tシャツ</th>
+                <th>ID案内</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="employeesTableBody">
+              <tr><td colspan="10">社員データを読み込み中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="onboarding" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>入社手続き</h3>
+            <p>採用部から入社予定の連絡が来た人だけを控えとして登録します。本人が入社フォーム回答後は、この仮データは削除し、社員名簿を正データとして扱います。</p>
+          </div>
+          <button class="primary-btn" type="button" onclick="createOnboardingCandidate()">控えとして登録</button>
+        </div>
+
+        <div class="box">
+          <div class="box-header"><h4>採用部連絡メモ</h4></div>
+          <div class="box-body">
+            <div class="form-grid">
+              <label>姓<input id="candidateLastName" type="text" placeholder="山田" /></label>
+              <label>名<input id="candidateFirstName" type="text" placeholder="太郎" /></label>
+              <label>研修予定店舗<select id="candidateTrainingStore"><option value="">選択してください</option></select></label>
+              <label>勤務開始予定日<input id="candidateStartDate" type="date" /></label>
+              <label>雇用形態<select id="candidateEmploymentType"><option>正社員</option><option>アルバイト</option><option>業務委託</option></select></label>
+              <label class="full">採用部メモ<textarea id="candidateMemo" placeholder="例：初回研修は本部、勤務開始日は調整中、連絡時の注意事項など"></textarea></label>
+            </div>
+            <div class="actions" style="justify-content:flex-start; margin:18px 0 0;">
+              <button class="primary-btn" type="button" onclick="createOnboardingCandidate()">控えとして登録してURL発行</button>
+              <button class="secondary-btn" type="button" onclick="clearCandidateForm()">入力をクリア</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">入社フォーム未回答者</div>
+        <div class="filters">
+          <input id="candidateSearchInput" type="text" placeholder="氏名で検索" />
+          <select id="candidateTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select>
+          <button class="secondary-btn" type="button" onclick="loadOnboardingCandidates()">更新</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>採用部連絡名</th>
+                <th>雇用形態</th>
+                <th>研修予定店舗</th>
+                <th>勤務開始予定日</th>
+                <th>フォームURL</th>
+                <th>状態</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="onboardingCandidatesBody">
+              <tr><td colspan="7">入社予定者を読み込み中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tshirt" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>Tシャツ送付管理</h3>
+            <p>入社フォーム回答後、Tシャツのサイズ・枚数・送付状況を管理します。枚数は手入力できます。</p>
+          </div>
+          <button class="primary-btn" type="button" onclick="loadTshirtTargets()">未送付を更新</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>氏名</th><th>店舗</th><th>雇用形態</th><th>サイズ</th><th>枚数</th><th>送付状況</th><th>送付日</th><th>操作</th></tr></thead>
+            <tbody id="tshirtTableBody">
+              <tr><td colspan="8">Tシャツ未送付データを読み込み中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="transport" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>交通費管理</h3>
+            <p>スタッフを検索して、対象スタッフの交通費だけを確認・修正します。変更時は履歴も残します。</p>
+          </div>
+          <button class="secondary-btn" type="button">交通費CSV出力</button>
+        </div>
+
+        <div class="box">
+          <div class="box-header"><h4>スタッフ検索</h4></div>
+          <div class="box-body">
+            <div class="filters" style="margin-bottom:0;">
+              <input id="transportSearchInput" type="text" placeholder="氏名・社員IDで検索" />
+              <select id="transportStoreFilter"><option value="">全店舗</option></select>
+              <select id="transportTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select>
+              <button class="primary-btn" type="button" onclick="loadTransportManagement()">検索</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">検索結果</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>社員ID</th><th>氏名</th><th>雇用形態</th><th>主な店舗</th><th>現在の交通費</th><th>最終更新</th><th>操作</th></tr></thead>
+            <tbody id="transportSearchBody">
+              <tr><td colspan="7">スタッフを読み込み中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-heading">選択中スタッフの交通費詳細</div>
+        <div class="detail-layout">
+          <div class="profile-card">
+            <p id="transportSelectedName" class="profile-name">未選択</p>
+            <p id="transportSelectedSub" class="profile-sub">検索結果からスタッフを選択してください。</p>
+            <div class="info-list">
+              <div class="info-item"><div class="info-label">現在の登録</div><div id="transportRecordCount">-</div></div>
+              <div class="info-item"><div class="info-label">最終更新</div><div id="transportLastUpdated">-</div></div>
+                          </div>
+          </div>
+
+          <div class="box">
+            <div class="box-header"><h4>登録中の交通費</h4><button class="secondary-btn" type="button" onclick="prepareNewTransportationRecord()">交通費を追加</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>店舗</th><th>種別</th><th>経路</th><th>金額</th><th>適用開始日</th><th>操作</th></tr></thead>
+                <tbody id="transportRecordsBody">
+                  <tr><td colspan="6">スタッフを選択してください。</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="transportFormSection" style="display:none;">
+          <div class="section-heading">交通費修正フォーム</div>
+          <div class="box">
+          <div class="box-header"><h4 id="transportFormTitle">交通費を追加・修正</h4></div>
+          <div class="box-body">
+            <input type="hidden" id="transportRecordId" />
+            <div class="form-grid">
+              <label>対象店舗<select id="transportEditStore"><option value="">選択してください</option></select></label>
+              <label>交通費種別<select id="transportEditType"><option>片道</option><option>1ヶ月定期</option></select></label>
+              <label>出発駅<input id="transportEditFrom" type="text" placeholder="例：川崎駅" /></label>
+              <label>到着駅<input id="transportEditTo" type="text" placeholder="例：横浜駅" /></label>
+              <label>金額<input id="transportEditAmount" type="number" min="0" placeholder="例：230" /></label>
+              <label>適用開始日<input id="transportEditApplyDate" type="date" /></label>
+              <label class="full">修正理由<textarea id="transportEditReason" placeholder="例：引っ越し、研修店舗変更、運賃改定、勤務可能店舗の追加など"></textarea></label>
+            </div>
+            <button class="primary-btn" type="button" onclick="saveTransportationRecord()">修正内容を保存</button>
+            <button class="secondary-btn" type="button" onclick="hideTransportationForm()">キャンセル</button>
+          </div>
+        </div>
+        </div>
+
+        <div class="section-heading">このスタッフの変更履歴</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>変更日</th><th>変更前</th><th>変更後</th><th>適用開始日</th><th>修正理由</th><th>更新者</th></tr></thead>
+            <tbody id="transportHistoryBody">
+              <tr><td colspan="6">スタッフを選択してください。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="accounts" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>アカウント案内</h3>
+            <p>社員ID / ハーモスID、初期PW、打刻QR、各種マニュアルURLの送信状況を管理します。打刻QR用のランダム文字列は内部IDとして扱い、スタッフには表示しません。</p>
+          </div>
+          <button class="primary-btn">ID案内を一括送信</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>氏名</th><th>メール</th><th>社員ID / ハーモスID</th><th>打刻QR</th><th>マニュアル</th><th>送信状況</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>山田太郎</td><td>yamada@example.com</td><td>R20260001</td><td><button class="small-btn">QR確認</button></td><td><span class="badge gray">未送信</span></td><td><span class="badge gray">未送信</span></td><td><button class="small-btn">送信</button></td></tr>
+              <tr><td>佐藤花子</td><td>sato@example.com</td><td>R20260002</td><td><button class="small-btn">QR確認</button></td><td><span class="badge green">送信済み</span></td><td><span class="badge green">送信済み</span></td><td><button class="small-btn">再送</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="retirement" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>退職管理</h3>
+            <p>退職予定・退職済みの管理、QR無効化、社内ツール停止チェックを行います。</p>
+          </div>
+          <button class="danger-btn">退職処理を開始</button>
+        </div>
+
+        <div class="detail-layout">
+          <div class="profile-card">
+            <p class="profile-name">田中美咲</p>
+            <p class="profile-sub">R20250088 / 名古屋 / アルバイト</p>
+            <span class="badge yellow">退職予定</span>
+            <div class="info-list">
+              <div class="info-item"><div class="info-label">退職申出日</div><div>2026/05/30</div></div>
+              <div class="info-item"><div class="info-label">最終勤務日</div><div>2026/06/20</div></div>
+              <div class="info-item"><div class="info-label">退職理由</div><div>本人都合</div></div>
+              <div class="info-item"><div class="info-label">QR状態</div><div>最終勤務日まで有効</div></div>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-header"><h4>退職チェックリスト</h4></div>
+            <div class="box-body">
+              <div class="checklist">
+                <div class="check-item"><span>ハーモス停止</span><button class="small-btn">未完了</button></div>
+                <div class="check-item"><span>打刻QR無効化</span><button class="small-btn">未完了</button></div>
+                <div class="check-item"><span>LINE WORKS停止</span><button class="small-btn">未完了</button></div>
+                <div class="check-item"><span>Tシャツ・備品返却確認</span><button class="small-btn">未完了</button></div>
+                <div class="check-item"><span>最終給与・交通費確認</span><button class="small-btn">未完了</button></div>
+              </div>
+              <br />
+              <button class="danger-btn">退職済みにする</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="page">
+        <div class="page-title-row">
+          <div>
+            <h3>設定</h3>
+            <p>社員IDルール、フォームURL、マニュアルURL、メール設定を管理します。</p>
+          </div>
+          <button class="primary-btn">保存する</button>
+        </div>
+
+        <div class="section-heading">基本設定</div>
+        <div class="form-grid">
+          <label>会社名<input type="text" value="Refinas" /></label>
+          <label>送信元メールアドレス<input type="email" value="hr@example.com" /></label>
+          <label>社員ID接頭辞<input type="text" value="R" /></label>
+          <label>入社フォームURL<input type="url" value="https://example.github.io/recruit-admin/onboarding.html" /></label>
+        </div>
+
+        <div class="section-heading">社内ツールURL</div>
+        <div class="form-grid">
+          <label>ハーモスURL<input type="url" value="https://ieyasu.co/refinas00" /></label>
+          <label>打刻QRベースURL<input type="url" value="https://example.github.io/attendance-card/" /></label>
+          <label>打刻QR内部IDルール<input type="text" value="ランダム文字列を内部発行・スタッフには非表示" /></label>
+          <label>勤怠マニュアルURL<input type="url" value="https://example.com/manual-attendance" /></label>
+          <label>入社マニュアルURL<input type="url" value="https://example.com/manual-onboarding" /></label>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">© Refinas fitness studio</footer>
+
+  <script>
+    // ==============================
+    // Supabase接続設定
+    // ==============================
+    // onboarding.html と同じ値に置き換えてください。
+    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_PUBLIC_KEY";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const navItems = document.querySelectorAll(".nav-item");
+    const operationTabs = document.querySelectorAll(".operation-tab");
+    const pages = document.querySelectorAll(".page");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroDescription = document.getElementById("heroDescription");
+
+    const employeesTableBody = document.getElementById("employeesTableBody");
+    const employeeSearchInput = document.getElementById("employeeSearchInput");
+    const employeeStatusFilter = document.getElementById("employeeStatusFilter");
+    const employeeStoreFilter = document.getElementById("employeeStoreFilter");
+    const employeeTypeFilter = document.getElementById("employeeTypeFilter");
+
+    let allEmployees = [];
+    let tshirtTargets = [];
+    let transportEmployees = [];
+    let transportRecords = [];
+    let selectedTransportEmployee = null;
+    let onboardingCandidates = [];
+
+    const pageInfo = {
+      dashboard: {
+        title: "社員情報を一元管理",
+        description: "入社フォーム、社員一覧、交通費、Tシャツ送付、ハーモス案内、退職処理まで管理できます。採用管理は必要最低限に絞っています。"
+      },
+      employees: {
+        title: "社員一覧を管理",
+        description: "在籍中、入社予定、退職予定、退職済みのスタッフを確認できます。"
+      },
+      onboarding: {
+        title: "入社手続きを管理",
+        description: "採用部から入社予定と連絡が来た人だけを控えとして登録します。正式な社員名簿は、本人が入力した入社フォーム回答を正として反映します。"
+      },
+      tshirt: {
+        title: "Tシャツ送付状況を管理",
+        description: "Tシャツの送付状況を確認し、送付済みに更新できます。送付済みにしたスタッフは一覧から消えます。"
+      },
+      transport: {
+        title: "交通費情報を確認",
+        description: "スタッフを検索して、対象スタッフの交通費だけを確認・修正します。変更時は履歴も残します。"
+      },
+      accounts: {
+        title: "アカウント案内を送信",
+        description: "社員ID / ハーモスID、初期PW、打刻QR、各種マニュアルをメール送信します。打刻QR用のランダム文字列は内部管理用で、スタッフには表示しません。"
+      },
+      retirement: {
+        title: "退職処理を管理",
+        description: "退職予定から退職済みまで、QR無効化や社内ツール停止チェックを管理します。"
+      },
+      settings: {
+        title: "システム設定",
+        description: "社員IDルール、フォームURL、社内ツールURL、メール設定を管理します。"
+      }
+    };
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      return String(value).slice(0, 10).replaceAll("-", "/");
+    }
+
+    function formatMoney(value) {
+      if (value === null || value === undefined || value === "") return "-";
+      return `${Number(value).toLocaleString()}円`;
+    }
+
+    function getEmployeeName(employee) {
+      return employee.employee_name || `${employee.last_name || ""}${employee.first_name || ""}` || "-";
+    }
+
+    function getStatusBadge(status) {
+      const value = status || "入社予定";
+      if (value === "在籍中") return `<span class="badge green">${value}</span>`;
+      if (value === "入社予定") return `<span class="badge yellow">${value}</span>`;
+      if (value === "退職予定") return `<span class="badge yellow">${value}</span>`;
+      if (value === "退職済み") return `<span class="badge gray">${value}</span>`;
+      return `<span class="badge gray">${escapeHtml(value)}</span>`;
+    }
+
+    function getTshirtBadge(employee) {
+      return employee.tshirt_sent
+        ? '<span class="badge green">送付済み</span>'
+        : '<span class="badge red">未送付</span>';
+    }
+
+    function getHarmosBadge(employee) {
+      return employee.harmos_sent_at
+        ? '<span class="badge green">送信済み</span>'
+        : '<span class="badge gray">未送信</span>';
+    }
+
+    function switchPage(page) {
+      pages.forEach(section => section.classList.remove("active-page"));
+      const targetPage = document.getElementById(page);
+      if (targetPage) targetPage.classList.add("active-page");
+
+      navItems.forEach(item => item.classList.toggle("active", item.dataset.page === page));
+      operationTabs.forEach(item => item.classList.toggle("active", item.dataset.page === page));
+
+      if (pageInfo[page]) {
+        heroTitle.textContent = pageInfo[page].title;
+        heroDescription.textContent = pageInfo[page].description;
+      }
+
+      const panel = document.querySelector(".operation-panel");
+      if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      if (page === "employees") loadEmployees();
+      if (page === "tshirt") loadTshirtTargets();
+      if (page === "transport") loadTransportManagement();
+      if (page === "onboarding") loadOnboardingCandidates();
+    }
+
+    navItems.forEach(item => item.addEventListener("click", () => switchPage(item.dataset.page)));
+    operationTabs.forEach(item => item.addEventListener("click", () => switchPage(item.dataset.page)));
+
+    function renderEmployees(list) {
+      if (!employeesTableBody) return;
+
+      if (!list.length) {
+        employeesTableBody.innerHTML = '<tr><td colspan="10">該当する社員データがありません。</td></tr>';
+        return;
+      }
+
+      employeesTableBody.innerHTML = list.map(employee => `
+        <tr>
+          <td>${escapeHtml(employee.employee_code || employee.harmos_id || "-")}</td>
+          <td>${escapeHtml(getEmployeeName(employee))}</td>
+          <td>${escapeHtml(employee.store || "-")}</td>
+          <td>${escapeHtml(employee.job_type || "-")}</td>
+          <td>${escapeHtml(employee.employment_type || "-")}</td>
+          <td>${getStatusBadge(employee.employment_status)}</td>
+          <td>${formatDate(employee.earliest_start_date)}</td>
+          <td>${getTshirtBadge(employee)}</td>
+          <td>${getHarmosBadge(employee)}</td>
+          <td><button class="small-btn" type="button">詳細</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function applyEmployeeFilters() {
+      const keyword = (employeeSearchInput?.value || "").trim().toLowerCase();
+      const status = employeeStatusFilter?.value || "";
+      const store = employeeStoreFilter?.value || "";
+      const type = employeeTypeFilter?.value || "";
+
+      const filtered = allEmployees.filter(employee => {
+        const target = [
+          employee.employee_code,
+          employee.harmos_id,
+          employee.employee_name,
+          employee.last_name,
+          employee.first_name,
+          employee.email
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        if (keyword && !target.includes(keyword)) return false;
+        if (status && employee.employment_status !== status) return false;
+        if (store && employee.store !== store) return false;
+        if (type && employee.employment_type !== type) return false;
+        return true;
+      });
+
+      renderEmployees(filtered);
+    }
+
+    async function loadEmployees() {
+      if (!employeesTableBody) return;
+      employeesTableBody.innerHTML = '<tr><td colspan="10">社員データを読み込み中...</td></tr>';
+
+      const { data, error } = await supabaseClient
+        .from("employees")
+        .select("employee_code,harmos_id,employee_name,last_name,first_name,email,store,job_type,employment_type,employment_status,earliest_start_date,tshirt_sent,harmos_sent_at,created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        employeesTableBody.innerHTML = `<tr><td colspan="10">社員データの取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;
+        return;
+      }
+
+      allEmployees = data || [];
+      applyEmployeeFilters();
+    }
+
+    [employeeSearchInput, employeeStatusFilter, employeeStoreFilter, employeeTypeFilter].forEach(element => {
+      if (!element) return;
+      element.addEventListener("input", applyEmployeeFilters);
+      element.addEventListener("change", applyEmployeeFilters);
+    });
+
+    async function loadStoresForFilters() {
+      const { data, error } = await supabaseClient
+        .from("stores")
+        .select("store_name, is_active")
+        .eq("is_active", true)
+        .order("store_name", { ascending: true });
+
+      if (error) {
+        console.error("店舗一覧の取得に失敗しました", error);
+        return;
+      }
+
+      const optionsHtml = (data || [])
+        .map(store => `<option value="${escapeAttr(store.store_name)}">${escapeHtml(store.store_name)}</option>`)
+        .join("");
+
+      if (employeeStoreFilter) {
+        employeeStoreFilter.innerHTML = '<option value="">全店舗</option>' + optionsHtml;
+      }
+
+      const transportStoreFilter = document.getElementById("transportStoreFilter");
+      if (transportStoreFilter) {
+        transportStoreFilter.innerHTML = '<option value="">全店舗</option>' + optionsHtml;
+      }
+
+      const transportEditStore = document.getElementById("transportEditStore");
+      if (transportEditStore) {
+        transportEditStore.innerHTML = '<option value="">選択してください</option>' + optionsHtml;
+      }
+
+      const candidateTrainingStore = document.getElementById("candidateTrainingStore");
+      if (candidateTrainingStore) {
+        candidateTrainingStore.innerHTML = '<option value="">選択してください</option>' + optionsHtml;
+      }
+    }
+
+    function generateToken(length = 32) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const values = new Uint32Array(length);
+      window.crypto.getRandomValues(values);
+      let result = "";
+      for (let i = 0; i < length; i++) result += chars[values[i] % chars.length];
+      return result;
+    }
+
+    function getOnboardingBaseUrl() {
+      const current = new URL(window.location.href);
+      return `${current.origin}${current.pathname.replace(/index\.html$/, "").replace(/\/$/, "")}/onboarding.html`;
+    }
+
+    function clearCandidateForm() {
+      const ids = ["candidateLastName", "candidateFirstName", "candidateTrainingStore", "candidateStartDate", "candidateMemo"];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      const type = document.getElementById("candidateEmploymentType");
+      if (type) type.value = "正社員";
+    }
+
+    async function createOnboardingCandidate() {
+      const lastName = document.getElementById("candidateLastName")?.value.trim();
+      const firstName = document.getElementById("candidateFirstName")?.value.trim();
+      const trainingStore = document.getElementById("candidateTrainingStore")?.value || null;
+      const plannedStartDate = document.getElementById("candidateStartDate")?.value || null;
+      const employmentType = document.getElementById("candidateEmploymentType")?.value || "正社員";
+      const memo = document.getElementById("candidateMemo")?.value.trim() || null;
+
+      if (!lastName || !firstName || !employmentType) {
+        alert("姓・名・雇用形態を入力してください。");
+        return;
+      }
+
+      const formToken = generateToken(32);
+      const formUrl = `${getOnboardingBaseUrl()}?token=${encodeURIComponent(formToken)}`;
+
+      const { error } = await supabaseClient
+        .from("onboarding_candidates")
+        .insert({
+          last_name: lastName,
+          first_name: firstName,
+          training_store: trainingStore,
+          planned_start_date: plannedStartDate,
+          employment_type: employmentType,
+          memo,
+          form_token: formToken,
+          form_url: formUrl,
+          form_status: "未回答"
+        });
+
+      if (error) {
+        alert("入社予定者の登録に失敗しました。" + error.message);
+        return;
+      }
+
+      clearCandidateForm();
+      await loadOnboardingCandidates();
+      alert("入社予定者を登録しました。フォームURLを一覧からコピーできます。");
+    }
+
+    function renderOnboardingCandidates(list) {
+      const tbody = document.getElementById("onboardingCandidatesBody");
+      if (!tbody) return;
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="7">未回答の入社予定者はいません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(candidate => `
+        <tr>
+          <td>${escapeHtml(`${candidate.last_name || ""}${candidate.first_name || ""}`)}</td>
+          <td>${escapeHtml(candidate.employment_type || "-")}</td>
+          <td>${escapeHtml(candidate.training_store || "-")}</td>
+          <td>${formatDate(candidate.planned_start_date)}</td>
+          <td><button class="small-btn js-copy-candidate-url" type="button" data-url="${escapeAttr(candidate.form_url || "")}">URLコピー</button></td>
+          <td><span class="badge red">未回答</span></td>
+          <td><button class="small-btn js-delete-candidate" type="button" data-id="${Number(candidate.id)}">削除</button></td>
+        </tr>
+      `).join("");
+
+      tbody.querySelectorAll(".js-copy-candidate-url").forEach(button => {
+        button.addEventListener("click", async () => {
+          const url = button.dataset.url || "";
+          if (!url) return alert("URLがありません。");
+          await navigator.clipboard.writeText(url);
+          alert("フォームURLをコピーしました。");
+        });
+      });
+
+      tbody.querySelectorAll(".js-delete-candidate").forEach(button => {
+        button.addEventListener("click", () => deleteOnboardingCandidate(Number(button.dataset.id)));
+      });
+    }
+
+    function applyCandidateFilters() {
+      const keyword = (document.getElementById("candidateSearchInput")?.value || "").trim().toLowerCase();
+      const type = document.getElementById("candidateTypeFilter")?.value || "";
+
+      const filtered = onboardingCandidates.filter(candidate => {
+        const name = `${candidate.last_name || ""}${candidate.first_name || ""}`.toLowerCase();
+        if (keyword && !name.includes(keyword)) return false;
+        if (type && candidate.employment_type !== type) return false;
+        return true;
+      });
+
+      renderOnboardingCandidates(filtered);
+    }
+
+    async function loadOnboardingCandidates() {
+      const tbody = document.getElementById("onboardingCandidatesBody");
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7">入社予定者を読み込み中...</td></tr>';
+
+      const { data, error } = await supabaseClient
+        .from("onboarding_candidates")
+        .select("id,last_name,first_name,training_store,planned_start_date,employment_type,memo,form_token,form_url,form_status,created_at")
+        .eq("form_status", "未回答")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7">入社予定者の取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;
+        return;
+      }
+
+      onboardingCandidates = data || [];
+      applyCandidateFilters();
+    }
+
+    async function deleteOnboardingCandidate(id) {
+      if (!id) return;
+      if (!confirm("この入社予定者の仮データを削除しますか？")) return;
+
+      const { error } = await supabaseClient
+        .from("onboarding_candidates")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        alert("削除に失敗しました。" + error.message);
+        return;
+      }
+
+      onboardingCandidates = onboardingCandidates.filter(candidate => Number(candidate.id) !== Number(id));
+      applyCandidateFilters();
+    }
+
+    function renderTshirtTargets(list) {
+      const tbody = document.getElementById("tshirtTableBody");
+      if (!tbody) return;
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="8">Tシャツ未送付のスタッフはいません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(employee => `
+        <tr data-employee-code="${escapeAttr(employee.employee_code || "")}">
+          <td>${escapeHtml(getEmployeeName(employee))}</td>
+          <td>${escapeHtml(employee.store || "-")}</td>
+          <td>${escapeHtml(employee.employment_type || "-")}</td>
+          <td>${escapeHtml(employee.tshirt_size || "-")}</td>
+          <td><input class="tshirt-qty-input" type="number" value="${Number(employee.tshirt_quantity || 1)}" min="0" style="width:80px;" /></td>
+          <td><span class="badge red">未送付</span></td>
+          <td>-</td>
+          <td><button class="small-btn js-tshirt-sent" type="button" data-employee-code="${escapeAttr(employee.employee_code || "")}">送付済みにする</button></td>
+        </tr>
+      `).join("");
+
+      tbody.querySelectorAll(".js-tshirt-sent").forEach(button => {
+        button.addEventListener("click", () => markTshirtSent(button.dataset.employeeCode));
+      });
+    }
+
+    async function loadTshirtTargets() {
+      const tbody = document.getElementById("tshirtTableBody");
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="8">Tシャツ未送付データを読み込み中...</td></tr>';
+
+      const { data, error } = await supabaseClient
+        .from("employees")
+        .select("employee_code,employee_name,last_name,first_name,store,employment_type,tshirt_size,tshirt_quantity,tshirt_sent,tshirt_sent_at")
+        .eq("tshirt_sent", false)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="8">Tシャツデータの取得に失敗しました。${escapeHtml(error.message)}</td></tr>`;
+        return;
+      }
+
+      tshirtTargets = data || [];
+      renderTshirtTargets(tshirtTargets);
+    }
+
+    async function markTshirtSent(employeeCode) {
+      if (!employeeCode) return;
+
+      const row = Array.from(document.querySelectorAll("tr[data-employee-code]")).find(tr => tr.dataset.employeeCode === employeeCode);
+      const qtyInput = row?.querySelector(".tshirt-qty-input");
+      const quantity = Number(qtyInput?.value || 1);
+
+      const { error } = await supabaseClient
+        .from("employees")
+        .update({
+          tshirt_quantity: quantity,
+          tshirt_sent: true,
+          tshirt_sent_at: new Date().toISOString()
+        })
+        .eq("employee_code", employeeCode);
+
+      if (error) {
+        alert("Tシャツ送付状況の更新に失敗しました。" + error.message);
+        return;
+      }
+
+      tshirtTargets = tshirtTargets.filter(employee => employee.employee_code !== employeeCode);
+      renderTshirtTargets(tshirtTargets);
+      loadEmployees();
+    }
+
+    function summarizeTransportRecords(records) {
+      if (!records.length) return "未登録";
+      if (records.length === 1) {
+        const record = records[0];
+        return `${record.from_station || "-"} → ${record.to_station || "-"} / ${formatMoney(record.amount)}`;
+      }
+      const amounts = records.map(record => Number(record.amount || 0));
+      const min = Math.min(...amounts);
+      const max = Math.max(...amounts);
+      return `${records.length}件登録 / ${formatMoney(min)}〜${formatMoney(max)}`;
+    }
+
+    function getTransportLastUpdated(records) {
+      if (!records.length) return "-";
+      const dates = records.map(record => record.updated_at || record.created_at).filter(Boolean).sort().reverse();
+      return formatDate(dates[0]);
+    }
+
+    function getTransportRecordsForEmployee(employeeCode) {
+      return transportRecords.filter(record => record.employee_code === employeeCode);
+    }
+
+    function applyTransportFilters() {
+      const tbody = document.getElementById("transportSearchBody");
+      if (!tbody) return;
+
+      const keyword = (document.getElementById("transportSearchInput")?.value || "").trim().toLowerCase();
+      const store = document.getElementById("transportStoreFilter")?.value || "";
+      const type = document.getElementById("transportTypeFilter")?.value || "";
+
+      const filtered = transportEmployees.filter(employee => {
+        const target = [employee.employee_code, employee.harmos_id, getEmployeeName(employee)].filter(Boolean).join(" ").toLowerCase();
+        if (keyword && !target.includes(keyword)) return false;
+        if (store && employee.store !== store) return false;
+        if (type && employee.employment_type !== type) return false;
+        return true;
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="7">該当するスタッフがいません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(employee => {
+        const records = getTransportRecordsForEmployee(employee.employee_code);
+        return `
+          <tr>
+            <td>${escapeHtml(employee.employee_code || "-")}</td>
+            <td>${escapeHtml(getEmployeeName(employee))}</td>
+            <td>${escapeHtml(employee.employment_type || "-")}</td>
+            <td>${escapeHtml(employee.store || "-")}</td>
+            <td>${escapeHtml(summarizeTransportRecords(records))}</td>
+            <td>${getTransportLastUpdated(records)}</td>
+            <td><button class="small-btn js-transport-select" type="button" data-employee-code="${escapeAttr(employee.employee_code || "")}">詳細・修正</button></td>
+          </tr>
+        `;
+      }).join("");
+
+      tbody.querySelectorAll(".js-transport-select").forEach(button => {
+        button.addEventListener("click", () => selectTransportEmployee(button.dataset.employeeCode));
+      });
+    }
+
+    async function loadTransportManagement() {
+      const tbody = document.getElementById("transportSearchBody");
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7">交通費データを読み込み中...</td></tr>';
+
+      const employeesResult = await supabaseClient
+        .from("employees")
+        .select("employee_code,harmos_id,employee_id,employee_name,last_name,first_name,store,employment_type,employment_status,created_at")
+        .order("created_at", { ascending: false });
+
+      if (employeesResult.error) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7">スタッフ取得に失敗しました。${escapeHtml(employeesResult.error.message)}</td></tr>`;
+        return;
+      }
+
+      const recordsResult = await supabaseClient
+        .from("transportation_records")
+        .select("id,employee_code,employee_id,transportation_type,store,from_station,to_station,amount,apply_start_date,confirmed,created_at,updated_at,is_active")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (recordsResult.error) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7">交通費取得に失敗しました。${escapeHtml(recordsResult.error.message)}</td></tr>`;
+        return;
+      }
+
+      transportEmployees = employeesResult.data || [];
+      transportRecords = recordsResult.data || [];
+      applyTransportFilters();
+    }
+
+    function selectTransportEmployee(employeeCode) {
+      selectedTransportEmployee = transportEmployees.find(employee => employee.employee_code === employeeCode) || null;
+      const records = getTransportRecordsForEmployee(employeeCode);
+
+      const nameEl = document.getElementById("transportSelectedName");
+      const subEl = document.getElementById("transportSelectedSub");
+      const countEl = document.getElementById("transportRecordCount");
+      const lastEl = document.getElementById("transportLastUpdated");
+      
+      if (nameEl) nameEl.textContent = selectedTransportEmployee ? getEmployeeName(selectedTransportEmployee) : "未選択";
+      if (subEl) subEl.textContent = selectedTransportEmployee ? `${selectedTransportEmployee.employee_code || "-"} / ${selectedTransportEmployee.store || "-"} / ${selectedTransportEmployee.employment_type || "-"}` : "検索結果からスタッフを選択してください。";
+      if (countEl) countEl.textContent = `${records.length}件`;
+      if (lastEl) lastEl.textContent = getTransportLastUpdated(records);
+
+      renderTransportRecords(records);
+      hideTransportationForm();
+      loadTransportHistory(employeeCode);
+    }
+
+    function renderTransportRecords(records) {
+      const tbody = document.getElementById("transportRecordsBody");
+      if (!tbody) return;
+
+      if (!records.length) {
+        tbody.innerHTML = '<tr><td colspan="6">交通費が未登録です。下のフォームから追加できます。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = records.map(record => `
+        <tr>
+          <td>${escapeHtml(record.store || "-")}</td>
+          <td>${escapeHtml(record.transportation_type || "-")}</td>
+          <td>${escapeHtml(record.from_station || "-")} → ${escapeHtml(record.to_station || "-")}</td>
+          <td>${formatMoney(record.amount)}</td>
+          <td>${formatDate(record.apply_start_date)}</td>
+          <td><button class="small-btn js-transport-edit" type="button" data-record-id="${Number(record.id)}">修正</button></td>
+        </tr>
+      `).join("");
+
+      tbody.querySelectorAll(".js-transport-edit").forEach(button => {
+        button.addEventListener("click", () => editTransportationRecord(Number(button.dataset.recordId)));
+      });
+    }
+
+    function editTransportationRecord(recordId) {
+      const record = transportRecords.find(item => Number(item.id) === Number(recordId));
+      if (!record) return;
+      showTransportationForm();
+      document.getElementById("transportFormTitle").textContent = "交通費を修正";
+      document.getElementById("transportRecordId").value = record.id;
+      document.getElementById("transportEditStore").value = record.store || "";
+      document.getElementById("transportEditType").value = record.transportation_type || "片道";
+      document.getElementById("transportEditFrom").value = record.from_station || "";
+      document.getElementById("transportEditTo").value = record.to_station || "";
+      document.getElementById("transportEditAmount").value = record.amount ?? "";
+      document.getElementById("transportEditApplyDate").value = record.apply_start_date || "";
+      document.getElementById("transportEditReason").value = "";
+    }
+
+    function showTransportationForm() {
+      const section = document.getElementById("transportFormSection");
+      if (section) {
+        section.style.display = "block";
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function hideTransportationForm() {
+      const section = document.getElementById("transportFormSection");
+      if (section) section.style.display = "none";
+    }
+
+    function prepareNewTransportationRecord() {
+      if (!selectedTransportEmployee?.employee_code) {
+        alert("先にスタッフを選択してください。");
+        return;
+      }
+      if (!document.getElementById("transportRecordId")) return;
+      showTransportationForm();
+      document.getElementById("transportFormTitle").textContent = "交通費を追加";
+      document.getElementById("transportRecordId").value = "";
+      document.getElementById("transportEditStore").value = selectedTransportEmployee?.store || "";
+      document.getElementById("transportEditType").value = selectedTransportEmployee?.employment_type === "正社員" ? "1ヶ月定期" : "片道";
+      document.getElementById("transportEditFrom").value = "";
+      document.getElementById("transportEditTo").value = "";
+      document.getElementById("transportEditAmount").value = "";
+      document.getElementById("transportEditApplyDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("transportEditReason").value = "";
+    }
+
+    async function saveTransportationRecord() {
+      if (!selectedTransportEmployee?.employee_code) {
+        alert("先にスタッフを選択してください。");
+        return;
+      }
+
+      const recordId = document.getElementById("transportRecordId").value;
+      const payload = {
+        employee_code: selectedTransportEmployee.employee_code,
+        employee_id: selectedTransportEmployee.employee_id || null,
+        store: document.getElementById("transportEditStore").value,
+        transportation_type: document.getElementById("transportEditType").value,
+        from_station: document.getElementById("transportEditFrom").value.trim(),
+        to_station: document.getElementById("transportEditTo").value.trim(),
+        amount: Number(document.getElementById("transportEditAmount").value),
+        apply_start_date: document.getElementById("transportEditApplyDate").value,
+        confirmed: true,
+        confirmed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      };
+      const reason = document.getElementById("transportEditReason").value.trim();
+
+      if (!payload.store || !payload.transportation_type || !payload.from_station || !payload.to_station || !payload.apply_start_date || Number.isNaN(payload.amount)) {
+        alert("店舗・種別・出発駅・到着駅・金額・適用開始日を入力してください。");
+        return;
+      }
+
+      if (recordId) {
+        const beforeRecord = transportRecords.find(item => Number(item.id) === Number(recordId));
+        const updateResult = await supabaseClient.from("transportation_records").update(payload).eq("id", recordId);
+        if (updateResult.error) {
+          alert("交通費の更新に失敗しました。" + updateResult.error.message);
+          return;
+        }
+        await supabaseClient.from("transportation_histories").insert({
+          transportation_record_id: Number(recordId),
+          employee_code: selectedTransportEmployee.employee_code,
+          employee_id: beforeRecord?.employee_id || null,
+          before_data: beforeRecord || null,
+          after_data: payload,
+          apply_start_date: payload.apply_start_date,
+          reason: reason || "管理画面から修正",
+          updated_by: "管理本部"
+        });
+      } else {
+        const insertResult = await supabaseClient.from("transportation_records").insert(payload).select("id").single();
+        if (insertResult.error) {
+          alert("交通費の追加に失敗しました。" + insertResult.error.message);
+          return;
+        }
+        await supabaseClient.from("transportation_histories").insert({
+          transportation_record_id: insertResult.data?.id || null,
+          employee_code: selectedTransportEmployee.employee_code,
+          employee_id: payload.employee_id,
+          before_data: null,
+          after_data: payload,
+          apply_start_date: payload.apply_start_date,
+          reason: reason || "管理画面から追加",
+          updated_by: "管理本部"
+        });
+      }
+
+      await loadTransportManagement();
+      selectTransportEmployee(selectedTransportEmployee.employee_code);
+      alert("交通費を保存しました。");
+    }
+
+    async function loadTransportHistory(employeeCode) {
+      const tbody = document.getElementById("transportHistoryBody");
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="6">変更履歴を読み込み中...</td></tr>';
+
+      const result = await supabaseClient
+        .from("transportation_histories")
+        .select("created_at,before_data,after_data,apply_start_date,reason,updated_by")
+        .eq("employee_code", employeeCode)
+        .order("created_at", { ascending: false });
+
+      if (result.error) {
+        tbody.innerHTML = `<tr><td colspan="6">変更履歴の取得に失敗しました。${escapeHtml(result.error.message)}</td></tr>`;
+        return;
+      }
+
+      if (!result.data || !result.data.length) {
+        tbody.innerHTML = '<tr><td colspan="6">変更履歴はありません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = result.data.map(history => {
+        const beforeText = history.before_data ? `${history.before_data.from_station || "-"} → ${history.before_data.to_station || "-"} / ${formatMoney(history.before_data.amount)}` : "新規追加";
+        const afterText = history.after_data ? `${history.after_data.from_station || "-"} → ${history.after_data.to_station || "-"} / ${formatMoney(history.after_data.amount)}` : "-";
+        return `
+          <tr>
+            <td>${formatDate(history.created_at)}</td>
+            <td>${escapeHtml(beforeText)}</td>
+            <td>${escapeHtml(afterText)}</td>
+            <td>${formatDate(history.apply_start_date)}</td>
+            <td>${escapeHtml(history.reason || "-")}</td>
+            <td>${escapeHtml(history.updated_by || "-")}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    ["transportSearchInput", "transportStoreFilter", "transportTypeFilter"].forEach(id => {
+      const element = document.getElementById(id);
+      if (!element) return;
+      element.addEventListener("input", applyTransportFilters);
+      element.addEventListener("change", applyTransportFilters);
+    });
+
+    ["candidateSearchInput", "candidateTypeFilter"].forEach(id => {
+      const element = document.getElementById(id);
+      if (!element) return;
+      element.addEventListener("input", applyCandidateFilters);
+      element.addEventListener("change", applyCandidateFilters);
+    });
+
+    loadStoresForFilters();
+    loadEmployees();
+    loadOnboardingCandidates();
+    loadTshirtTargets();
+    loadTransportManagement();
+  </script>
+</body>
+</html>

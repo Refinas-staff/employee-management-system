@@ -440,6 +440,15 @@
       <h2>送信が完了しました</h2>
       <p>入社情報の入力ありがとうございます。<br>ご入力いただいたメールアドレス宛に、ハーモス勤怠のID・初期パスワード、打刻用QRコードURL、各種マニュアルを送付します。<br>メールが届かない場合は、管理本部までご連絡ください。</p>
     </section>
+
+    <section id="invalidArea" class="complete">
+      <div class="complete-icon" style="background:#fee2e2; color:#b91c1c;">!</div>
+      <h2>フォームURLが無効です</h2>
+      <p id="invalidMessage">
+        この入社フォームURLは無効、またはすでに回答済みです。<br>
+        管理本部から送られた最新のURLをご確認ください。
+      </p>
+    </section>
   </main>
 
   <footer class="footer">© Refinas fitness studio</footer>
@@ -453,6 +462,8 @@
     const submitButton = document.getElementById("submitButton");
     const formArea = document.getElementById("formArea");
     const completeArea = document.getElementById("completeArea");
+    const invalidArea = document.getElementById("invalidArea");
+    const invalidMessage = document.getElementById("invalidMessage");
     const employmentTypeSelect = document.querySelector('select[name="employment_type"]');
     const transportEmptyArea = document.getElementById("transportEmptyArea");
     const commuterPassArea = document.getElementById("commuterPassArea");
@@ -464,6 +475,18 @@
     function getTokenFromUrl() {
       const params = new URLSearchParams(window.location.search);
       return params.get("token") || "";
+    }
+
+    function showInvalid(message) {
+      formArea.style.display = "none";
+      completeArea.style.display = "none";
+      invalidArea.style.display = "block";
+
+      if (message) {
+        invalidMessage.innerHTML = message;
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function generateRandomEmployeeId(length = 32) {
@@ -643,21 +666,32 @@
     }
 
     async function updateCandidateStatus(token) {
-  if (!token) return;
+      if (!token) return;
 
-  const { error } = await supabaseClient
-    .from("onboarding_candidates")
-    .delete()
-    .eq("form_token", token);
+      const { error } = await supabaseClient
+        .from("onboarding_candidates")
+        .delete()
+        .eq("form_token", token);
 
-  if (error) {
-    throw new Error("入社予定者の仮データ削除に失敗しました。" + error.message);
-  }
-}
+      if (error) {
+        throw new Error("入社予定者の仮データ削除に失敗しました。" + error.message);
+      }
+    }
+
+    async function validateOnboardingTokenOnLoad() {
+      const token = getTokenFromUrl();
+
+      try {
+        await ensureCandidateNotSubmitted(token);
+      } catch (error) {
+        showInvalid(error.message || "この入社フォームURLは無効です。");
+      }
+    }
 
     employmentTypeSelect.addEventListener("change", updateTransportArea);
     updateTransportArea();
     loadStores();
+    validateOnboardingTokenOnLoad();
 
     form.addEventListener("submit", async function(event) {
       event.preventDefault();
@@ -759,7 +793,7 @@
         const transportationRows = buildTransportationRows(employeeCode, attendanceEmployeeId, data);
         await insertTransportationRows(transportationRows);
 
-　　　　 await updateCandidateStatus(data.token);
+        await updateCandidateStatus(data.token);
         
         console.log("社員ID / ハーモスID", employeeCode);
         console.log("勤怠QR用内部employee_id", attendanceEmployeeId);

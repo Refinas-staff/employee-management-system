@@ -480,19 +480,19 @@
           <h2 class="section-title">離職票等書類記載・送付先情報</h2>
           <div class="form-grid">
             <label>
-              離職票等書類送付 郵便番号 <span class="required">必須</span>
-              <input type="text" name="document_postal_code" required placeholder="1500001" inputmode="numeric" pattern="[0-9]{7}" />
-              <span class="helper">ハイフンなし7桁で入力してください。</span>
-            </label>
-
-            <label>
-              退職後連絡先電話番号 <span class="required">必須</span>
+              電話番号 <span class="required">必須</span>
               <input type="tel" name="post_retirement_phone" required placeholder="09012345678" inputmode="numeric" pattern="[0-9]{10,11}" />
               <span class="helper">ハイフンなし10〜11桁で入力してください。</span>
             </label>
 
+            <label>
+              郵便番号 <span class="required">必須</span>
+              <input type="text" name="document_postal_code" required placeholder="1500001" inputmode="numeric" pattern="[0-9]{7}" />
+              <span class="helper">ハイフンなし7桁で入力してください。</span>
+            </label>
+
             <label class="full">
-              離職票等書類送付 住所 <span class="required">必須</span>
+              住所 <span class="required">必須</span>
               <input type="text" name="document_address" required placeholder="東京都〇〇区〇〇 1-2-3" />
             </label>
           </div>
@@ -876,19 +876,19 @@
       }
 
       if (!postalCodeRegex.test(data.document_postal_code)) {
-        alert("離職票等書類送付 郵便番号はハイフンなし7桁で入力してください。");
+        alert("郵便番号はハイフンなし7桁で入力してください。");
         resetSubmit();
         return;
       }
 
       if (!data.document_address) {
-        alert("離職票等書類送付 住所を入力してください。");
+        alert("住所を入力してください。");
         resetSubmit();
         return;
       }
 
       if (!phoneRegex.test(data.post_retirement_phone)) {
-        alert("退職後連絡先電話番号はハイフンなし10〜11桁で入力してください。");
+        alert("電話番号はハイフンなし10〜11桁で入力してください。");
         resetSubmit();
         return;
       }

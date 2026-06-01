@@ -790,8 +790,8 @@
 
   <div class="top-alert">
     <div class="top-alert-inner">
-      <div><strong>要確認</strong>　入社フォーム未回答 3名 / Tシャツ未送付 2名 / 退職予定 1名</div>
-      <div>最終更新：2026/06/01 10:30</div>
+      <div><strong>要確認</strong>　入社フォーム未回答 <span id="topUnansweredCount">-</span>名 / Tシャツ未送付 <span id="topTshirtUnsentCount">-</span>名 / Tシャツ未回収 <span id="topTshirtUnreturnedCount">-</span>名</div>
+      <div>最終更新：<span id="dashboardLastUpdated">-</span></div>
     </div>
   </div>
 
@@ -840,10 +840,10 @@
       <div class="hero-card">
         <div class="hero-card-title">本日の確認事項</div>
         <div class="hero-mini-grid">
-          <div class="hero-mini"><span>入社予定</span><strong>6</strong></div>
-          <div class="hero-mini"><span>未回答</span><strong>3</strong></div>
-          <div class="hero-mini"><span>Tシャツ未送付</span><strong>2</strong></div>
-          <div class="hero-mini"><span>退職予定</span><strong>1</strong></div>
+          <div class="hero-mini"><span>入社予定</span><strong id="heroOnboardingCount">-</strong></div>
+          <div class="hero-mini"><span>未回答</span><strong id="heroUnansweredCount">-</strong></div>
+          <div class="hero-mini"><span>Tシャツ未送付</span><strong id="heroTshirtUnsentCount">-</strong></div>
+          <div class="hero-mini"><span>Tシャツ未回収</span><strong id="heroTshirtUnreturnedCount">-</strong></div>
         </div>
       </div>
     </div>
@@ -868,23 +868,23 @@
             <h3>ダッシュボード</h3>
             <p>社員管理の対応状況を確認します。</p>
           </div>
-          <button class="primary-btn" data-page="onboarding" onclick="switchPage('onboarding')">入社予定者を登録</button>
+          <button class="primary-btn" type="button" onclick="loadDashboard()">最新情報に更新</button>
         </div>
 
         <div class="cards">
-          <div class="card blue"><p>在籍中</p><h4>218</h4></div>
-          <div class="card warning"><p>入社予定</p><h4>6</h4></div>
-          <div class="card danger"><p>フォーム未回答</p><h4>3</h4></div>
-          <div class="card danger"><p>Tシャツ未送付</p><h4>2</h4></div>
-          <div class="card warning"><p>ID案内待ち</p><h4>4</h4></div>
-          <div class="card"><p>退職予定</p><h4>1</h4></div>
+          <div class="card blue"><p>在籍中</p><h4 id="dashboardActiveCount">-</h4></div>
+          <div class="card warning"><p>入社予定</p><h4 id="dashboardOnboardingCount">-</h4></div>
+          <div class="card danger"><p>フォーム未回答</p><h4 id="dashboardUnansweredCount">-</h4></div>
+          <div class="card danger"><p>Tシャツ未送付</p><h4 id="dashboardTshirtUnsentCount">-</h4></div>
+          <div class="card warning"><p>Tシャツ未回収</p><h4 id="dashboardTshirtUnreturnedCount">-</h4></div>
+          <div class="card"><p>当月退職数</p><h4 id="dashboardMonthlyRetirementCount">-</h4></div>
         </div>
 
         <div class="content-grid">
           <div class="box">
             <div class="box-header">
               <h4>対応が必要なスタッフ</h4>
-              <button class="small-btn">すべて見る</button>
+              <button class="small-btn" type="button" onclick="loadDashboard()">更新</button>
             </div>
             <div class="table-wrap">
               <table>
@@ -898,39 +898,8 @@
                     <th>操作</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>山田太郎</td>
-                    <td>渋谷本店</td>
-                    <td>正社員</td>
-                    <td><span class="badge yellow">入社予定</span></td>
-                    <td><span class="badge red">フォーム未回答</span></td>
-                    <td><button class="small-btn">詳細</button></td>
-                  </tr>
-                  <tr>
-                    <td>佐藤花子</td>
-                    <td>横浜</td>
-                    <td>アルバイト</td>
-                    <td><span class="badge blue">回答済み</span></td>
-                    <td><span class="badge red">Tシャツ未送付</span></td>
-                    <td><button class="small-btn">送付済みにする</button></td>
-                  </tr>
-                  <tr>
-                    <td>鈴木一郎</td>
-                    <td>大阪梅田</td>
-                    <td>正社員</td>
-                    <td><span class="badge blue">回答済み</span></td>
-                    <td><span class="badge yellow">ID案内待ち</span></td>
-                    <td><button class="small-btn">ID案内送信</button></td>
-                  </tr>
-                  <tr>
-                    <td>田中美咲</td>
-                    <td>名古屋</td>
-                    <td>アルバイト</td>
-                    <td><span class="badge yellow">退職予定</span></td>
-                    <td><span class="badge gray">最終勤務日待ち</span></td>
-                    <td><button class="small-btn">退職詳細</button></td>
-                  </tr>
+                <tbody id="dashboardActionBody">
+                  <tr><td colspan="6">対応が必要なスタッフを読み込み中...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -939,18 +908,16 @@
           <div class="box">
             <div class="box-header"><h4>お知らせ</h4></div>
             <div class="box-body">
-              <div class="notice-list">
-                <div class="notice"><div class="notice-date">6/01</div><div>入社フォームURLを2名に送信しました。</div></div>
-                <div class="notice"><div class="notice-date">6/01</div><div>佐藤花子さんの入社フォーム回答を受信しました。</div></div>
-                <div class="notice"><div class="notice-date">5/31</div><div>Tシャツ送付待ちが2件あります。</div></div>
-                <div class="notice"><div class="notice-date">5/30</div><div>田中美咲さんが退職予定に変更されました。</div></div>
+              <div id="dashboardNoticeList" class="notice-list">
+                <div class="notice"><div class="notice-date">-</div><div>ダッシュボードを読み込み中です。</div></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="employees" class="page">
+
+<section id="employees" class="page">
         <div class="page-title-row">
           <div>
             <h3>社員一覧</h3>
@@ -1426,6 +1393,208 @@
         : '<span class="badge gray">未送信</span>';
     }
 
+    function setText(id, value) {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    }
+
+    function getThisMonthRange() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const start = new Date(year, month, 1);
+      const end = new Date(year, month + 1, 1);
+      return { start, end };
+    }
+
+    function isDateInThisMonth(value) {
+      if (!value) return false;
+      const date = new Date(String(value).slice(0, 10) + "T00:00:00");
+      if (Number.isNaN(date.getTime())) return false;
+      const { start, end } = getThisMonthRange();
+      return date >= start && date < end;
+    }
+
+    function isRetirementDatePast(employee) {
+      if (!employee.retirement_requested_date) return false;
+      const retirementDate = new Date(String(employee.retirement_requested_date).slice(0, 10) + "T00:00:00");
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return retirementDate < today && employee.employment_status === "退職予定";
+    }
+
+    function getDashboardActionRows(employees, candidates) {
+      const rows = [];
+
+      candidates.forEach(candidate => {
+        rows.push({
+          name: `${candidate.last_name || ""}${candidate.first_name || ""}` || "-",
+          store: candidate.training_store || "-",
+          type: candidate.employment_type || "-",
+          status: '<span class="badge yellow">入社予定</span>',
+          action: '<span class="badge red">入社フォーム未回答</span>',
+          button: '<button class="small-btn" type="button" onclick="switchPage(\'onboarding\')">確認</button>',
+          sort: 1
+        });
+      });
+
+      employees.forEach(employee => {
+        const name = escapeHtml(getEmployeeName(employee));
+        const store = escapeHtml(employee.store || "-");
+        const type = escapeHtml(employee.employment_type || "-");
+
+        if (!employee.tshirt_sent && employee.employment_status !== "退職済み") {
+          rows.push({
+            name,
+            store,
+            type,
+            status: getStatusBadge(employee.employment_status),
+            action: '<span class="badge red">Tシャツ未送付</span>',
+            button: '<button class="small-btn" type="button" onclick="switchPage(\'tshirt\')">確認</button>',
+            sort: 2
+          });
+        }
+
+        if (employee.tshirt_return_status === "未返却") {
+          rows.push({
+            name,
+            store,
+            type,
+            status: getStatusBadge(employee.employment_status),
+            action: '<span class="badge red">Tシャツ未回収</span>',
+            button: '<button class="small-btn" type="button" onclick="switchPage(\'retirement\')">確認</button>',
+            sort: 3
+          });
+        }
+
+        if (isRetirementDatePast(employee)) {
+          rows.push({
+            name,
+            store,
+            type,
+            status: getStatusBadge(employee.employment_status),
+            action: '<span class="badge yellow">退職予定日超過</span>',
+            button: '<button class="small-btn" type="button" onclick="switchPage(\'retirement\')">確認</button>',
+            sort: 4
+          });
+        }
+      });
+
+      return rows.sort((a, b) => a.sort - b.sort).slice(0, 20);
+    }
+
+    function renderDashboardActions(rows) {
+      const tbody = document.getElementById("dashboardActionBody");
+      if (!tbody) return;
+
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="6">現在、対応が必要なスタッフはいません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(row => `
+        <tr>
+          <td>${row.name}</td>
+          <td>${row.store}</td>
+          <td>${row.type}</td>
+          <td>${row.status}</td>
+          <td>${row.action}</td>
+          <td>${row.button}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderDashboardNotices(counts) {
+      const list = document.getElementById("dashboardNoticeList");
+      if (!list) return;
+
+      const today = new Date();
+      const label = `${today.getMonth() + 1}/${today.getDate()}`;
+
+      const notices = [
+        { title: `入社フォーム未回答が ${counts.unansweredCount} 件あります。`, show: counts.unansweredCount > 0 },
+        { title: `Tシャツ未送付が ${counts.tshirtUnsentCount} 件あります。`, show: counts.tshirtUnsentCount > 0 },
+        { title: `Tシャツ未回収が ${counts.tshirtUnreturnedCount} 件あります。`, show: counts.tshirtUnreturnedCount > 0 },
+        { title: `当月退職数は ${counts.monthlyRetirementCount} 名です。`, show: true }
+      ].filter(item => item.show);
+
+      list.innerHTML = notices.map(item => `
+        <div class="notice"><div class="notice-date">${label}</div><div>${escapeHtml(item.title)}</div></div>
+      `).join("");
+    }
+
+    async function loadDashboard() {
+      setText("dashboardActiveCount", "-");
+      setText("dashboardOnboardingCount", "-");
+      setText("dashboardUnansweredCount", "-");
+      setText("dashboardTshirtUnsentCount", "-");
+      setText("dashboardTshirtUnreturnedCount", "-");
+      setText("dashboardMonthlyRetirementCount", "-");
+
+      const actionBody = document.getElementById("dashboardActionBody");
+      if (actionBody) actionBody.innerHTML = '<tr><td colspan="6">対応が必要なスタッフを読み込み中...</td></tr>';
+
+      const employeesResult = await supabaseClient
+        .from("employees")
+        .select("employee_code,harmos_id,employee_name,last_name,first_name,email,store,job_type,employment_type,employment_status,earliest_start_date,tshirt_sent,tshirt_sent_at,harmos_sent_at,retirement_form_submitted_at,retirement_requested_date,retirement_last_work_date,retirement_actual_date,tshirt_return_status,tshirt_returned_at,is_active,created_at")
+        .order("created_at", { ascending: false });
+
+      if (employeesResult.error) {
+        if (actionBody) actionBody.innerHTML = `<tr><td colspan="6">社員データの取得に失敗しました。${escapeHtml(employeesResult.error.message)}</td></tr>`;
+        return;
+      }
+
+      const candidatesResult = await supabaseClient
+        .from("onboarding_candidates")
+        .select("id,last_name,first_name,training_store,planned_start_date,employment_type,form_status,created_at")
+        .eq("form_status", "未回答")
+        .order("created_at", { ascending: false });
+
+      if (candidatesResult.error) {
+        if (actionBody) actionBody.innerHTML = `<tr><td colspan="6">入社予定者の取得に失敗しました。${escapeHtml(candidatesResult.error.message)}</td></tr>`;
+        return;
+      }
+
+      allEmployees = employeesResult.data || [];
+      onboardingCandidates = candidatesResult.data || [];
+
+      const activeCount = allEmployees.filter(employee => employee.employment_status === "在籍中" || (employee.is_active === true && employee.employment_status !== "退職済み" && employee.employment_status !== "入社予定")).length;
+      const onboardingCount = allEmployees.filter(employee => employee.employment_status === "入社予定").length;
+      const unansweredCount = onboardingCandidates.length;
+      const tshirtUnsentCount = allEmployees.filter(employee => !employee.tshirt_sent && employee.employment_status !== "退職済み").length;
+      const tshirtUnreturnedCount = allEmployees.filter(employee => employee.tshirt_return_status === "未返却").length;
+      const monthlyRetirementCount = allEmployees.filter(employee => isDateInThisMonth(employee.retirement_actual_date || employee.retirement_requested_date)).length;
+
+      const counts = {
+        activeCount,
+        onboardingCount,
+        unansweredCount,
+        tshirtUnsentCount,
+        tshirtUnreturnedCount,
+        monthlyRetirementCount
+      };
+
+      setText("dashboardActiveCount", activeCount);
+      setText("dashboardOnboardingCount", onboardingCount);
+      setText("dashboardUnansweredCount", unansweredCount);
+      setText("dashboardTshirtUnsentCount", tshirtUnsentCount);
+      setText("dashboardTshirtUnreturnedCount", tshirtUnreturnedCount);
+      setText("dashboardMonthlyRetirementCount", monthlyRetirementCount);
+
+      setText("heroOnboardingCount", onboardingCount);
+      setText("heroUnansweredCount", unansweredCount);
+      setText("heroTshirtUnsentCount", tshirtUnsentCount);
+      setText("heroTshirtUnreturnedCount", tshirtUnreturnedCount);
+
+      setText("topUnansweredCount", unansweredCount);
+      setText("topTshirtUnsentCount", tshirtUnsentCount);
+      setText("topTshirtUnreturnedCount", tshirtUnreturnedCount);
+      setText("dashboardLastUpdated", new Date().toLocaleString("ja-JP", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }));
+
+      renderDashboardActions(getDashboardActionRows(allEmployees, onboardingCandidates));
+      renderDashboardNotices(counts);
+    }
+
     function switchPage(page) {
       pages.forEach(section => section.classList.remove("active-page"));
       const targetPage = document.getElementById(page);
@@ -1442,6 +1611,7 @@
       const panel = document.querySelector(".operation-panel");
       if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
 
+      if (page === "dashboard") loadDashboard();
       if (page === "employees") loadEmployees();
       if (page === "tshirt") loadTshirtTargets();
       if (page === "transport") loadTransportManagement();
@@ -2428,6 +2598,7 @@
     });
 
     loadStoresForFilters();
+    loadDashboard();
     loadEmployees();
     loadOnboardingCandidates();
     loadTshirtTargets();

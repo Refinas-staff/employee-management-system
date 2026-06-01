@@ -337,12 +337,25 @@
           <div class="form-grid">
             <label>最短勤務開始可能日 <span class="required">必須</span><input type="date" name="earliest_start_date" required /></label>
             <label>所属店舗 <span class="required">必須</span>
-              <select name="store" required>
-                <option value="">選択してください</option><option>渋谷本店</option><option>池袋</option><option>横浜</option><option>川崎</option><option>浦和</option><option>千葉</option><option>名古屋</option><option>名古屋栄</option><option>静岡</option><option>浜松</option><option>京都烏丸</option><option>京都河原町</option><option>大阪梅田</option><option>大阪なんば本店</option><option>大阪心斎橋</option><option>神戸三宮</option><option>福岡天神</option><option>札幌</option><option>仙台</option><option>沖縄那覇</option><option>本部</option>
+              <select name="store" required data-store-select>
+                <option value="">店舗を読み込み中...</option>
               </select>
             </label>
-            <label>職種 <span class="required">必須</span><select name="job_type" required><option value="">選択してください</option><option>トレーナー</option><option>受付</option><option>一般事務</option><option>店舗責任者</option><option>本部スタッフ</option></select></label>
-            <label>雇用形態 <span class="required">必須</span><select name="employment_type" required><option value="">選択してください</option><option>正社員</option><option>アルバイト</option></select></label>
+            <label>職種 <span class="required">必須</span>
+              <select name="job_type" required>
+                <option value="">選択してください</option>
+                <option>トレーナー</option>
+                <option>一般事務</option>
+              </select>
+            </label>
+            <label>雇用形態 <span class="required">必須</span>
+              <select name="employment_type" required>
+                <option value="">選択してください</option>
+                <option>正社員</option>
+                <option>アルバイト</option>
+                <option>業務委託</option>
+              </select>
+            </label>
           </div>
         </section>
 
@@ -351,6 +364,7 @@
           <div class="notice inner">雇用形態に応じて、必要な交通費情報を入力してください。<br>正社員の方は定期区間と1ヶ月定期代、アルバイトの方は勤務可能性のある店舗ごとの経路と片道金額を入力してください。</div>
 
           <div id="transportEmptyArea"><p class="helper">先に「雇用形態」を選択してください。</p></div>
+          <div id="contractorTransportArea" style="display:none;"><p class="helper">業務委託の方は、このフォームでの交通費入力は不要です。</p></div>
 
           <div id="commuterPassArea" style="display:none;">
             <div class="form-grid">
@@ -365,7 +379,7 @@
             <div class="notice inner">勤務する可能性がある店舗をすべて追加し、各店舗までの経路と片道金額を入力してください。<br>例：三軒茶屋駅 → 渋谷駅　180円</div>
             <div id="partTimeFareList">
               <div class="fare-row">
-                <label>勤務可能店舗 <span class="required">必須</span><select name="part_time_store[]"><option value="">選択してください</option><option>渋谷本店</option><option>池袋</option><option>横浜</option><option>川崎</option><option>浦和</option><option>千葉</option><option>名古屋</option><option>名古屋栄</option><option>静岡</option><option>浜松</option><option>京都烏丸</option><option>京都河原町</option><option>大阪梅田</option><option>大阪なんば本店</option><option>大阪心斎橋</option><option>神戸三宮</option><option>福岡天神</option><option>札幌</option><option>仙台</option><option>沖縄那覇</option><option>本部</option></select></label>
+                <label>勤務可能店舗 <span class="required">必須</span><select name="part_time_store[]" data-store-select><option value="">店舗を読み込み中...</option></select></label>
                 <label>出発駅 <span class="required">必須</span><input type="text" name="part_time_from_station[]" placeholder="例：三軒茶屋駅" /></label>
                 <label>到着駅 <span class="required">必須</span><input type="text" name="part_time_to_station[]" placeholder="例：渋谷駅" /></label>
                 <label>片道金額 <span class="required">必須</span><input type="number" name="part_time_fare[]" placeholder="例：180" min="0" /></label>
@@ -443,15 +457,16 @@
     const transportEmptyArea = document.getElementById("transportEmptyArea");
     const commuterPassArea = document.getElementById("commuterPassArea");
     const partTimeFareArea = document.getElementById("partTimeFareArea");
+    const contractorTransportArea = document.getElementById("contractorTransportArea");
 
-    const storeOptionsHtml = `<option value="">選択してください</option><option>渋谷本店</option><option>池袋</option><option>横浜</option><option>川崎</option><option>浦和</option><option>千葉</option><option>名古屋</option><option>名古屋栄</option><option>静岡</option><option>浜松</option><option>京都烏丸</option><option>京都河原町</option><option>大阪梅田</option><option>大阪なんば本店</option><option>大阪心斎橋</option><option>神戸三宮</option><option>福岡天神</option><option>札幌</option><option>仙台</option><option>沖縄那覇</option><option>本部</option>`;
+    let storeOptionsHtml = '<option value="">選択してください</option>';
 
     function getTokenFromUrl() {
       const params = new URLSearchParams(window.location.search);
       return params.get("token") || "";
     }
 
-    function generateRandomEmployeeId(length = 16) {
+    function generateRandomEmployeeId(length = 32) {
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       const values = new Uint32Array(length);
       window.crypto.getRandomValues(values);
@@ -464,13 +479,64 @@
       return dateString ? dateString.replaceAll("-", "") : "";
     }
 
+    async function getNextEmployeeCode(employmentType) {
+      const { data, error } = await supabaseClient.rpc("generate_employee_code", {
+        p_employment_type: employmentType
+      });
+
+      if (error) {
+        throw new Error("社員ID / ハーモスIDの発行に失敗しました。" + error.message);
+      }
+
+      return data;
+    }
+
+    async function loadStores() {
+      const { data, error } = await supabaseClient
+        .from("stores")
+        .select("store_name, is_active")
+        .eq("is_active", true)
+        .order("store_name", { ascending: true });
+
+      if (error) {
+        console.error("店舗一覧の取得に失敗しました", error);
+        storeOptionsHtml = '<option value="">店舗一覧を取得できませんでした</option>';
+      } else {
+        storeOptionsHtml = '<option value="">選択してください</option>' + (data || [])
+          .map(store => `<option value="${escapeHtml(store.store_name)}">${escapeHtml(store.store_name)}</option>`)
+          .join("");
+      }
+
+      refreshStoreSelects();
+    }
+
+    function refreshStoreSelects() {
+      document.querySelectorAll("select[data-store-select]").forEach(select => {
+        const currentValue = select.value;
+        select.innerHTML = storeOptionsHtml;
+        if (currentValue) select.value = currentValue;
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function updateTransportArea() {
       const employmentType = employmentTypeSelect.value;
       transportEmptyArea.style.display = "none";
       commuterPassArea.style.display = "none";
       partTimeFareArea.style.display = "none";
+      contractorTransportArea.style.display = "none";
+
       if (employmentType === "正社員") return commuterPassArea.style.display = "block";
       if (employmentType === "アルバイト") return partTimeFareArea.style.display = "block";
+      if (employmentType === "業務委託") return contractorTransportArea.style.display = "block";
       transportEmptyArea.style.display = "block";
     }
 
@@ -479,7 +545,7 @@
       const row = document.createElement("div");
       row.className = "fare-row";
       row.innerHTML = `
-        <label>勤務可能店舗 <span class="required">必須</span><select name="part_time_store[]">${storeOptionsHtml}</select></label>
+        <label>勤務可能店舗 <span class="required">必須</span><select name="part_time_store[]" data-store-select>${storeOptionsHtml}</select></label>
         <label>出発駅 <span class="required">必須</span><input type="text" name="part_time_from_station[]" placeholder="例：三軒茶屋駅" /></label>
         <label>到着駅 <span class="required">必須</span><input type="text" name="part_time_to_station[]" placeholder="例：渋谷駅" /></label>
         <label>片道金額 <span class="required">必須</span><input type="number" name="part_time_fare[]" placeholder="例：180" min="0" /></label>
@@ -494,10 +560,11 @@
       button.closest(".fare-row").remove();
     }
 
-    function buildTransportationRows(employeeId, data) {
+    function buildTransportationRows(employeeCode, attendanceEmployeeId, data) {
       if (data.employment_type === "正社員") {
         return [{
-          employee_id: employeeId,
+          employee_code: employeeCode,
+          employee_id: attendanceEmployeeId,
           transportation_type: "1ヶ月定期",
           store: data.store || null,
           from_station: data.commuter_from_station,
@@ -510,7 +577,8 @@
 
       if (data.employment_type === "アルバイト") {
         return (data.part_time_transportation || []).map(item => ({
-          employee_id: employeeId,
+          employee_code: employeeCode,
+          employee_id: attendanceEmployeeId,
           transportation_type: "片道",
           store: item.store,
           from_station: item.from_station,
@@ -524,6 +592,31 @@
       return [];
     }
 
+    async function insertTransportationRows(rows) {
+      if (!rows.length) return;
+
+      const { error } = await supabaseClient
+        .from("transportation_records")
+        .insert(rows);
+
+      if (!error) return;
+
+      // employee_code列をまだ追加していない環境でもテストできるようにする互換処理
+      if (String(error.message || "").includes("employee_code")) {
+        const fallbackRows = rows.map(({ employee_code, ...rest }) => rest);
+        const { error: fallbackError } = await supabaseClient
+          .from("transportation_records")
+          .insert(fallbackRows);
+
+        if (fallbackError) {
+          throw new Error("交通費情報の保存に失敗しました。" + fallbackError.message);
+        }
+        return;
+      }
+
+      throw new Error("交通費情報の保存に失敗しました。" + error.message);
+    }
+
     async function ensureCandidateNotSubmitted(token) {
       if (!token) return null;
       const { data, error } = await supabaseClient
@@ -531,13 +624,46 @@
         .select("id, form_status")
         .eq("form_token", token)
         .maybeSingle();
+
       if (error) throw new Error("入社予定者情報の確認に失敗しました。" + error.message);
       if (data && data.form_status !== "未回答") throw new Error("この入社フォームはすでに回答済みです。再入力はできません。");
       return data;
     }
 
+    async function updateCandidateStatus(token, attendanceEmployeeId, employeeCode) {
+      if (!token) return;
+
+      const updatePayload = {
+        form_status: "回答済み",
+        submitted_at: new Date().toISOString(),
+        reflected_employee_id: attendanceEmployeeId,
+        reflected_employee_code: employeeCode,
+        updated_at: new Date().toISOString()
+      };
+
+      let { error } = await supabaseClient
+        .from("onboarding_candidates")
+        .update(updatePayload)
+        .eq("form_token", token);
+
+      if (!error) return;
+
+      // reflected_employee_code列がない環境向けの互換処理
+      if (String(error.message || "").includes("reflected_employee_code")) {
+        const { reflected_employee_code, ...fallbackPayload } = updatePayload;
+        const result = await supabaseClient
+          .from("onboarding_candidates")
+          .update(fallbackPayload)
+          .eq("form_token", token);
+        error = result.error;
+      }
+
+      if (error) throw new Error("入社予定者ステータスの更新に失敗しました。" + error.message);
+    }
+
     employmentTypeSelect.addEventListener("change", updateTransportArea);
     updateTransportArea();
+    loadStores();
 
     form.addEventListener("submit", async function(event) {
       event.preventDefault();
@@ -591,12 +717,16 @@
       }
 
       try {
-        const candidate = await ensureCandidateNotSubmitted(data.token);
-        const attendanceEmployeeId = generateRandomEmployeeId(16);
+        await ensureCandidateNotSubmitted(data.token);
+
+        const attendanceEmployeeId = generateRandomEmployeeId(32); // 内部用・スタッフには非公開
+        const employeeCode = await getNextEmployeeCode(data.employment_type); // 社員ID / ハーモスID
         const initialPassword = formatBirthdayToPassword(data.birthday);
 
         const employeePayload = {
           employee_id: attendanceEmployeeId,
+          employee_code: employeeCode,
+          harmos_id: employeeCode,
           employee_name: data.full_name,
           last_name: data.last_name,
           first_name: data.first_name,
@@ -621,36 +751,23 @@
           account_name_kana: data.account_name_kana,
           tshirt_size: data.tshirt_size,
           tshirt_quantity: Number(data.tshirt_quantity || 1),
-          harmos_id: attendanceEmployeeId,
           employment_status: "入社予定",
           is_active: true
         };
 
-        const { error: employeeError } = await supabaseClient.from("employees").insert(employeePayload);
+        const { error: employeeError } = await supabaseClient
+          .from("employees")
+          .insert(employeePayload);
+
         if (employeeError) throw new Error("社員情報の保存に失敗しました。" + employeeError.message);
 
-        const transportationRows = buildTransportationRows(attendanceEmployeeId, data);
-        if (transportationRows.length > 0) {
-          const { error: transportError } = await supabaseClient.from("transportation_records").insert(transportationRows);
-          if (transportError) throw new Error("交通費情報の保存に失敗しました。" + transportError.message);
-        }
+        const transportationRows = buildTransportationRows(employeeCode, attendanceEmployeeId, data);
+        await insertTransportationRows(transportationRows);
+        await updateCandidateStatus(data.token, attendanceEmployeeId, employeeCode);
 
-        if (data.token) {
-          const { error: candidateError } = await supabaseClient
-            .from("onboarding_candidates")
-            .update({
-              form_status: "回答済み",
-              submitted_at: new Date().toISOString(),
-              reflected_employee_id: attendanceEmployeeId,
-              updated_at: new Date().toISOString()
-            })
-            .eq("form_token", data.token);
-          if (candidateError) throw new Error("入社予定者ステータスの更新に失敗しました。" + candidateError.message);
-        }
-
-        console.log("発行された勤怠employee_id", attendanceEmployeeId);
+        console.log("社員ID / ハーモスID", employeeCode);
+        console.log("勤怠QR用内部employee_id", attendanceEmployeeId);
         console.log("ハーモス初期PW候補", initialPassword);
-        console.log("フォーム保存完了", { candidate });
 
         formArea.style.display = "none";
         completeArea.style.display = "block";

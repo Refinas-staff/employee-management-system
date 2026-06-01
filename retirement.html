@@ -190,6 +190,74 @@
     .required { color: #dc2626; font-size: 12px; margin-left: 4px; }
     .helper { font-size: 12px; color: var(--text-muted); font-weight: 500; line-height: 1.5; }
 
+    .readonly-field {
+      background: #f1f5f9;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .rating-block {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border: 1px solid var(--brand-border);
+      border-radius: 10px;
+      background: #fff;
+      margin-bottom: 16px;
+    }
+
+    .rating-title {
+      font-weight: 900;
+      color: var(--brand-dark);
+      line-height: 1.6;
+    }
+
+    .rating-scale {
+      display: grid;
+      grid-template-columns: 120px repeat(5, 1fr) 120px;
+      gap: 8px;
+      align-items: center;
+      text-align: center;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .rating-scale label {
+      display: grid;
+      justify-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .rating-scale input {
+      width: 22px;
+      height: 22px;
+      min-height: auto;
+      padding: 0;
+    }
+
+    .radio-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .radio-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .radio-row input {
+      width: 20px;
+      height: 20px;
+      min-height: auto;
+      padding: 0;
+    }
+
     .check-row {
       display: flex;
       align-items: flex-start;
@@ -308,6 +376,17 @@
     }
 
     @media (max-width: 700px) {
+      .rating-scale {
+        grid-template-columns: 1fr;
+        text-align: left;
+      }
+
+      .rating-scale label {
+        grid-template-columns: 26px 1fr;
+        justify-items: start;
+        align-items: center;
+      }
+
       .form-grid { grid-template-columns: 1fr; }
       .card { padding: 20px; }
       .hero h2 { font-size: 25px; }
@@ -354,19 +433,19 @@
         <section class="card">
           <h2 class="section-title">基本情報</h2>
           <div class="form-grid">
-            <label>姓（漢字） <span class="required">必須</span><input type="text" name="last_name" required placeholder="山田" /></label>
-            <label>名（漢字） <span class="required">必須</span><input type="text" name="first_name" required placeholder="太郎" /></label>
-            <label>生年月日 <span class="required">必須</span><input type="date" name="birthday" required /></label>
-            <label>雇用形態 <span class="required">必須</span>
-              <select name="employment_type" required>
+            <label>姓（漢字） <span class="required">自動表示</span><input class="readonly-field" type="text" name="last_name" required placeholder="山田" readonly /></label>
+            <label>名（漢字） <span class="required">自動表示</span><input class="readonly-field" type="text" name="first_name" required placeholder="太郎" readonly /></label>
+            <label>生年月日 <span class="required">自動表示</span><input class="readonly-field" type="date" name="birthday" required readonly /></label>
+            <label>雇用形態 <span class="required">自動表示</span>
+              <select class="readonly-field" name="employment_type" required disabled>
                 <option value="">選択してください</option>
                 <option>正社員</option>
                 <option>アルバイト</option>
                 <option>業務委託</option>
               </select>
             </label>
-            <label>メイン店舗 <span class="required">必須</span><input type="text" name="main_store" required placeholder="例：渋谷本店" /></label>
-            <label>入社日 <span class="required">必須</span><input type="date" name="joined_date" required /></label>
+            <label>メイン店舗 <span class="required">自動表示</span><input class="readonly-field" type="text" name="main_store" required placeholder="例：渋谷本店" readonly /></label>
+            <label>入社日 <span class="required">自動表示</span><input class="readonly-field" type="date" name="joined_date" required readonly /></label>
           </div>
         </section>
 
@@ -398,7 +477,7 @@
         </section>
 
         <section class="card">
-          <h2 class="section-title">退職後連絡先・書類送付先</h2>
+          <h2 class="section-title">離職票等書類記載・送付先情報</h2>
           <div class="form-grid">
             <label>
               離職票等書類送付 郵便番号 <span class="required">必須</span>
@@ -415,6 +494,75 @@
             <label class="full">
               離職票等書類送付 住所 <span class="required">必須</span>
               <input type="text" name="document_address" required placeholder="東京都〇〇区〇〇 1-2-3" />
+            </label>
+          </div>
+        </section>
+
+
+        <section class="card">
+          <h2 class="section-title">会社の成長の為に簡単なアンケートにご回答をお願いします。</h2>
+
+          <div class="rating-block">
+            <div class="rating-title">入社前に聞いていた働き方とズレはありましたか？ <span class="required">必須</span></div>
+            <div class="rating-scale">
+              <div>思わない</div>
+              <label><span>1</span><input type="radio" name="pre_join_work_style_gap" value="1" required /></label>
+              <label><span>2</span><input type="radio" name="pre_join_work_style_gap" value="2" /></label>
+              <label><span>3</span><input type="radio" name="pre_join_work_style_gap" value="3" /></label>
+              <label><span>4</span><input type="radio" name="pre_join_work_style_gap" value="4" /></label>
+              <label><span>5</span><input type="radio" name="pre_join_work_style_gap" value="5" /></label>
+              <div>思う</div>
+            </div>
+          </div>
+
+          <div class="rating-block">
+            <div class="rating-title">入社後から退職までに働き方に変化はありましたか？ <span class="required">必須</span></div>
+            <div class="rating-scale">
+              <div>思わない</div>
+              <label><span>1</span><input type="radio" name="work_style_changed" value="1" required /></label>
+              <label><span>2</span><input type="radio" name="work_style_changed" value="2" /></label>
+              <label><span>3</span><input type="radio" name="work_style_changed" value="3" /></label>
+              <label><span>4</span><input type="radio" name="work_style_changed" value="4" /></label>
+              <label><span>5</span><input type="radio" name="work_style_changed" value="5" /></label>
+              <div>思う</div>
+            </div>
+          </div>
+
+          <div class="rating-block">
+            <div class="rating-title">仕事量はどうでしたか？ <span class="required">必須</span></div>
+            <div class="rating-scale">
+              <div>適切</div>
+              <label><span>1</span><input type="radio" name="workload_level" value="1" required /></label>
+              <label><span>2</span><input type="radio" name="workload_level" value="2" /></label>
+              <label><span>3</span><input type="radio" name="workload_level" value="3" /></label>
+              <label><span>4</span><input type="radio" name="workload_level" value="4" /></label>
+              <label><span>5</span><input type="radio" name="workload_level" value="5" /></label>
+              <div>多すぎた</div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label class="full">
+              将来的にリフィナスに復帰の可能性はありますか？ <span class="required">必須</span>
+              <div class="radio-group">
+                <label class="radio-row"><input type="radio" name="possible_return" value="はい" required />はい</label>
+                <label class="radio-row"><input type="radio" name="possible_return" value="いいえ" />いいえ</label>
+              </div>
+            </label>
+
+            <label class="full">
+              会社の問題点について、会社の誰と話しましたか？ <span class="required">必須</span>
+              <textarea name="discussed_company_issues" required placeholder="例：店長、マネージャー、管理本部、誰にも話していない など"></textarea>
+            </label>
+
+            <label class="full">
+              スタジオや会社組織の雰囲気はどうでしたか？ <span class="required">必須</span>
+              <textarea name="company_atmosphere" required placeholder="スタジオや会社組織の雰囲気について、率直にご入力ください。"></textarea>
+            </label>
+
+            <label class="full">
+              退職の主な理由は何でしたか？ <span class="required">必須</span>
+              <textarea name="main_retirement_reason" required placeholder="退職に至った主な理由をご入力ください。"></textarea>
             </label>
           </div>
         </section>
@@ -488,7 +636,7 @@
 
   <script>
     const SUPABASE_URL = "https://xcxrurktphdnpdumyzhn.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_PUBLIC_KEY";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const form = document.getElementById("retirementForm");
@@ -625,6 +773,13 @@
         document_address: formData.document_address,
         post_retirement_phone: formData.post_retirement_phone,
         return_items_note: formData.return_items_note || null,
+        pre_join_work_style_gap: Number(formData.pre_join_work_style_gap),
+        work_style_changed: Number(formData.work_style_changed),
+        workload_level: Number(formData.workload_level),
+        possible_return: formData.possible_return,
+        discussed_company_issues: formData.discussed_company_issues,
+        company_atmosphere: formData.company_atmosphere,
+        main_retirement_reason: formData.main_retirement_reason,
         tshirt_return_confirmed: true,
         handover_confirmed: true,
         submitted_at: new Date().toISOString()
@@ -685,6 +840,15 @@
       const rawFormData = new FormData(form);
       const data = Object.fromEntries(rawFormData.entries());
 
+      if (employeeData) {
+        data.last_name = employeeData.last_name || "";
+        data.first_name = employeeData.first_name || "";
+        data.birthday = employeeData.birthday || "";
+        data.employment_type = employeeData.employment_type || "";
+        data.main_store = employeeData.store || "";
+        data.joined_date = employeeData.earliest_start_date || "";
+      }
+
       const postalCodeRegex = /^[0-9]{7}$/;
       const phoneRegex = /^[0-9]{10,11}$/;
 
@@ -701,6 +865,12 @@
 
       if (!data.requested_retirement_date) {
         alert("退職予定日を入力してください。");
+        resetSubmit();
+        return;
+      }
+
+      if (!data.pre_join_work_style_gap || !data.work_style_changed || !data.workload_level || !data.possible_return || !data.discussed_company_issues || !data.company_atmosphere || !data.main_retirement_reason) {
+        alert("アンケートの必須項目を入力してください。");
         resetSubmit();
         return;
       }

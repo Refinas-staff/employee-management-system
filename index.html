@@ -964,10 +964,18 @@
           <select id="employeeStoreFilter"><option value="">全店舗</option></select>
           <select id="employeeTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select>
           <input
-            id="employeeFormAnsweredDateFilter"
+            id="employeeFormAnsweredDateFromFilter"
             type="text"
-            placeholder="フォーム回答日"
-            style="width:160px;"
+            placeholder="フォーム回答日 開始"
+            style="width:170px;"
+            onfocus="this.type='date'"
+            onblur="if(!this.value)this.type='text'"
+          />
+          <input
+            id="employeeFormAnsweredDateToFilter"
+            type="text"
+            placeholder="フォーム回答日 終了"
+            style="width:170px;"
             onfocus="this.type='date'"
             onblur="if(!this.value)this.type='text'"
           />
@@ -1465,7 +1473,8 @@
     const employeeStatusFilter = document.getElementById("employeeStatusFilter");
     const employeeStoreFilter = document.getElementById("employeeStoreFilter");
     const employeeTypeFilter = document.getElementById("employeeTypeFilter");
-    const employeeFormAnsweredDateFilter = document.getElementById("employeeFormAnsweredDateFilter");
+    const employeeFormAnsweredDateFromFilter = document.getElementById("employeeFormAnsweredDateFromFilter");
+    const employeeFormAnsweredDateToFilter = document.getElementById("employeeFormAnsweredDateToFilter");
 
     let allEmployees = [];
     let filteredEmployees = [];
@@ -2006,7 +2015,8 @@
       const status = employeeStatusFilter?.value || "";
       const store = employeeStoreFilter?.value || "";
       const type = employeeTypeFilter?.value || "";
-      const formAnsweredDate = employeeFormAnsweredDateFilter?.value || "";
+      const formAnsweredDateFrom = employeeFormAnsweredDateFromFilter?.value || "";
+      const formAnsweredDateTo = employeeFormAnsweredDateToFilter?.value || "";
 
       const filtered = allEmployees.filter(employee => {
         const target = [
@@ -2022,7 +2032,9 @@
         if (status && employee.employment_status !== status) return false;
         if (store && employee.store !== store) return false;
         if (type && employee.employment_type !== type) return false;
-        if (formAnsweredDate && String(employee.created_at || "").slice(0, 10) !== formAnsweredDate) return false;
+        const answeredDate = String(employee.created_at || "").slice(0, 10);
+        if (formAnsweredDateFrom && answeredDate < formAnsweredDateFrom) return false;
+        if (formAnsweredDateTo && answeredDate > formAnsweredDateTo) return false;
         return true;
       });
 
@@ -2111,7 +2123,7 @@
         String(now.getDate()).padStart(2, "0")
       ].join("-");
 
-      downloadTextFile(`harmos_export_filtered_${dateLabel}.csv`, csvRows.join("\\n"));
+      downloadTextFile(`harmos_export_filtered_${dateLabel}.csv`, csvRows.join("\n"));
     }
 
     async function loadEmployees() {
@@ -2132,7 +2144,7 @@
       applyEmployeeFilters();
     }
 
-    [employeeSearchInput, employeeStatusFilter, employeeStoreFilter, employeeTypeFilter, employeeFormAnsweredDateFilter].forEach(element => {
+    [employeeSearchInput, employeeStatusFilter, employeeStoreFilter, employeeTypeFilter, employeeFormAnsweredDateFromFilter, employeeFormAnsweredDateToFilter].forEach(element => {
       if (!element) return;
       element.addEventListener("input", applyEmployeeFilters);
       element.addEventListener("change", applyEmployeeFilters);

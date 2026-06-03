@@ -963,7 +963,14 @@
           <select id="employeeStatusFilter"><option value="">全ステータス</option><option>在籍中</option><option>入社予定</option><option>退職予定</option><option>退職済み</option></select>
           <select id="employeeStoreFilter"><option value="">全店舗</option></select>
           <select id="employeeTypeFilter"><option value="">全雇用形態</option><option>正社員</option><option>アルバイト</option><option>業務委託</option></select>
-          <label style="display:flex; align-items:center; gap:6px; font-weight:800;"><input type="checkbox" style="height:auto;" /> 退職済みも表示</label>
+          <input
+            id="employeeFormAnsweredDateFilter"
+            type="text"
+            placeholder="フォーム回答日"
+            style="width:160px;"
+            onfocus="this.type='date'"
+            onblur="if(!this.value)this.type='text'"
+          />
         </div>
 
         <div class="table-wrap">
@@ -1458,8 +1465,10 @@
     const employeeStatusFilter = document.getElementById("employeeStatusFilter");
     const employeeStoreFilter = document.getElementById("employeeStoreFilter");
     const employeeTypeFilter = document.getElementById("employeeTypeFilter");
+    const employeeFormAnsweredDateFilter = document.getElementById("employeeFormAnsweredDateFilter");
 
     let allEmployees = [];
+    let filteredEmployees = [];
     let selectedEmployeeDetail = null;
     let selectedEmployeeDetailOriginal = null;
     let tshirtTargets = [];
@@ -1997,6 +2006,7 @@
       const status = employeeStatusFilter?.value || "";
       const store = employeeStoreFilter?.value || "";
       const type = employeeTypeFilter?.value || "";
+      const formAnsweredDate = employeeFormAnsweredDateFilter?.value || "";
 
       const filtered = allEmployees.filter(employee => {
         const target = [
@@ -2012,9 +2022,11 @@
         if (status && employee.employment_status !== status) return false;
         if (store && employee.store !== store) return false;
         if (type && employee.employment_type !== type) return false;
+        if (formAnsweredDate && String(employee.created_at || "").slice(0, 10) !== formAnsweredDate) return false;
         return true;
       });
 
+      filteredEmployees = filtered;
       renderEmployees(filtered);
     }
 
@@ -2060,24 +2072,12 @@
     }
 
     async function exportHarmosCsv() {
-      const { startIso, endIso, label } = getCurrentMonthRangeForExport();
+      applyEmployeeFilters();
 
-      const { data, error } = await supabaseClient
-        .from("employees")
-        .select("employee_code,harmos_id,last_name,first_name,last_name_kana,first_name_kana,email,employment_type,created_at")
-        .gte("created_at", startIso)
-        .lt("created_at", endIso)
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        alert("ハーモス用CSVの取得に失敗しました。" + error.message);
-        return;
-      }
-
-      const rows = data || [];
+      const rows = filteredEmployees || [];
 
       if (!rows.length) {
-        alert(`当月（${label}）に登録された社員データはありません。`);
+        alert("現在表示されている社員データがありません。");
         return;
       }
 
@@ -2104,7 +2104,14 @@
         ].map(csvEscape).join(","))
       ];
 
-      downloadTextFile(`harmos_export_${label}.csv`, csvRows.join("\n"));
+      const now = new Date();
+      const dateLabel = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getDate()).padStart(2, "0")
+      ].join("-");
+
+      downloadTextFile(`harmos_export_filtered_${dateLabel}.csv`, csvRows.join("\\n"));
     }
 
     async function loadEmployees() {
@@ -2125,7 +2132,7 @@
       applyEmployeeFilters();
     }
 
-    [employeeSearchInput, employeeStatusFilter, employeeStoreFilter, employeeTypeFilter].forEach(element => {
+    [employeeSearchInput, employeeStatusFilter, employeeStoreFilter, employeeTypeFilter, employeeFormAnsweredDateFilter].forEach(element => {
       if (!element) return;
       element.addEventListener("input", applyEmployeeFilters);
       element.addEventListener("change", applyEmployeeFilters);

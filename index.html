@@ -165,7 +165,8 @@
       overflow-x: auto;
     }
 
-    .nav-item {
+    .nav-item,
+    .header-menu-link {
       border: none;
       background: transparent;
       color: #334155;
@@ -174,15 +175,30 @@
       cursor: pointer;
       border-bottom: 4px solid transparent;
       white-space: nowrap;
+      text-decoration: none;
+      font-size: 15px;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
     }
 
-    .nav-item:hover {
+    .nav-item:hover,
+    .header-menu-link:hover {
       background: #f8fafc;
     }
 
     .nav-item.active {
       color: var(--brand-blue);
       border-bottom-color: var(--brand-red);
+    }
+
+    .header-menu-link.disabled {
+      color: #94a3b8;
+      cursor: default;
+    }
+
+    .header-menu-link.disabled:hover {
+      background: transparent;
     }
 
     .hero {
@@ -846,14 +862,14 @@
 
   <nav class="nav-bar">
     <div class="nav-inner">
-      <button class="nav-item active" data-page="dashboard">ダッシュボード</button>
-      <button class="nav-item" data-page="employees">社員一覧</button>
-      <button class="nav-item" data-page="onboarding">入社手続き</button>
-      <button class="nav-item" data-page="tshirt">Tシャツ送付</button>
-      <button class="nav-item" data-page="transport">交通費管理</button>
-      <button class="nav-item" data-page="accounts">アカウント案内</button>
-      <button class="nav-item" data-page="retirement">退職管理</button>
-      <button class="nav-item" data-page="settings">設定</button>
+      <button class="nav-item active" type="button" data-page="dashboard">ダッシュボード</button>
+      <a class="header-menu-link" href="https://refinas-staff.github.io/format-csv/" target="_blank" rel="noopener noreferrer">CSV整形</a>
+      <span class="header-menu-link disabled">開発中</span>
+      <span class="header-menu-link disabled">開発中</span>
+      <span class="header-menu-link disabled">開発中</span>
+      <span class="header-menu-link disabled">開発中</span>
+      <span class="header-menu-link disabled">開発中</span>
+      <span class="header-menu-link disabled">開発中</span>
     </div>
   </nav>
 
@@ -1462,7 +1478,7 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeHJ1cmt0cGhkbnBkdW15emhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDgxNTIsImV4cCI6MjA5NTY4NDE1Mn0.2B1QoJ0OUUm_HtjGaINawjNn7w0rcWr_Or_i4JXCQNI";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const navItems = document.querySelectorAll(".nav-item");
+    const navItems = document.querySelectorAll(".nav-item[data-page]");
     const operationTabs = document.querySelectorAll(".operation-tab");
     const pages = document.querySelectorAll(".page");
     const heroTitle = document.getElementById("heroTitle");
@@ -2099,6 +2115,7 @@
         "名",
         "セイ",
         "メイ",
+        "生年月日",
         "メールアドレス",
         "雇用形態"
       ];
@@ -2111,6 +2128,7 @@
           employee.first_name || "",
           employee.last_name_kana || "",
           employee.first_name_kana || "",
+          employee.birthday ? String(employee.birthday).slice(0, 10) : "",
           employee.email || "",
           employee.employment_type || ""
         ].map(csvEscape).join(","))
